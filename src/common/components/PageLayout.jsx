@@ -17,11 +17,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
+import GlobalNavbar from './GlobalNavbar';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
   root: {
     height: '100%',
     display: 'flex',
+    backgroundColor: 'transparent',
+    paddingTop: '64px', // Space for fixed navbar
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column',
     },
@@ -32,6 +35,8 @@ const useStyles = makeStyles()((theme, { miniVariant }) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'rgb(243, 244, 246)',
+    borderRight: 'none',
     '@media print': {
       display: 'none',
     },
@@ -93,51 +98,54 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
   const toggleDrawer = () => setMiniVariant(!miniVariant);
 
   return (
-    <div className={classes.root}>
-      {desktop ? (
-        <Drawer
-          variant="permanent"
-          className={classes.desktopDrawer}
-          classes={{ paper: classes.desktopDrawer }}
-        >
-          <Toolbar>
-            {!miniVariant && (
-              <>
-                <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
-                  <BackIcon />
-                </IconButton>
-                <PageTitle breadcrumbs={breadcrumbs} />
-              </>
-            )}
-            <IconButton color="inherit" edge="start" sx={{ ml: miniVariant ? -2 : 'auto' }} onClick={toggleDrawer}>
-              {(miniVariant !== (theme.direction === 'rtl')) ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          {menu}
-        </Drawer>
-      ) : (
-        <Drawer
-          variant="temporary"
-          open={openDrawer}
-          onClose={() => setOpenDrawer(false)}
-          classes={{ paper: classes.mobileDrawer }}
-        >
-          {menu}
-        </Drawer>
-      )}
-      {!desktop && (
-        <AppBar className={classes.mobileToolbar} position="static" color="inherit">
-          <Toolbar>
-            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => setOpenDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-            <PageTitle breadcrumbs={breadcrumbs} />
-          </Toolbar>
-        </AppBar>
-      )}
-      <div className={classes.content}>{children}</div>
-    </div>
+    <>
+      <GlobalNavbar />
+      <div className={classes.root}>
+        {desktop ? (
+          <Drawer
+            variant="permanent"
+            className={classes.desktopDrawer}
+            classes={{ paper: classes.desktopDrawer }}
+          >
+            <Toolbar>
+              {!miniVariant && (
+                <>
+                  <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
+                    <BackIcon />
+                  </IconButton>
+                  <PageTitle breadcrumbs={breadcrumbs} />
+                </>
+              )}
+              <IconButton color="inherit" edge="start" sx={{ ml: miniVariant ? -2 : 'auto' }} onClick={toggleDrawer}>
+                {(miniVariant !== (theme.direction === 'rtl')) ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>
+            </Toolbar>
+            <Divider />
+            {menu}
+          </Drawer>
+        ) : (
+          <Drawer
+            variant="temporary"
+            open={openDrawer}
+            onClose={() => setOpenDrawer(false)}
+            classes={{ paper: classes.mobileDrawer }}
+          >
+            {menu}
+          </Drawer>
+        )}
+        {!desktop && (
+          <AppBar className={classes.mobileToolbar} position="static" color="inherit">
+            <Toolbar>
+              <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => setOpenDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+              <PageTitle breadcrumbs={breadcrumbs} />
+            </Toolbar>
+          </AppBar>
+        )}
+        <div className={classes.content}>{children}</div>
+      </div>
+    </>
   )
 };
 

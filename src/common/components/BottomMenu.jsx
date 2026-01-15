@@ -91,7 +91,7 @@ const BottomMenu = () => {
             id = deviceIds[0];
           }
         }
-        
+
         if (id != null) {
           navigate(`/reports/combined?deviceId=${id}`);
         } else {
@@ -114,7 +114,7 @@ const BottomMenu = () => {
   };
 
   return (
-    <Paper square elevation={3}>
+    <Paper>
       <BottomNavigation value={currentSelection()} onChange={handleSelection} showLabels>
         <BottomNavigationAction
           label={t('mapTitle')}
