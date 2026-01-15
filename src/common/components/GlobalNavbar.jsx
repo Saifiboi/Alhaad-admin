@@ -173,7 +173,7 @@ const GlobalNavbar = () => {
                 <Box className={classes.logoSection} onClick={handleLogoClick}>
                     <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
                     <Typography variant="h6" className={classes.appName}>
-                        Traccar
+                        AL-HAAD
                     </Typography>
                 </Box>
 
