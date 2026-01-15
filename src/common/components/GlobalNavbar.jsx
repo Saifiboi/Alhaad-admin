@@ -36,24 +36,15 @@ const useStyles = makeStyles()((theme) => ({
             transform: 'scale(1.02)',
         },
     },
-    logoPlaceholder: {
+    logoImage: {
         width: 40,
         height: 40,
         borderRadius: '10px',
-        background: theme.palette.mode === 'dark'
-            ? 'linear-gradient(135deg, rgb(248, 115, 24) 0%, rgb(255, 160, 80) 100%)'
-            : 'linear-gradient(135deg, rgb(248, 115, 24) 0%, rgb(255, 100, 0) 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 'bold',
-        color: '#ffffff !important',
-        fontSize: '18px',
+        objectFit: 'cover',
         boxShadow: theme.palette.mode === 'dark'
             ? '0 4px 12px rgba(248, 115, 24, 0.3)'
             : '0 4px 12px rgba(248, 115, 24, 0.2)',
         cursor: 'pointer',
-        userSelect: 'none',
     },
     appName: {
         fontWeight: 600,
@@ -180,9 +171,7 @@ const GlobalNavbar = () => {
         <AppBar position="fixed" className={classes.appBar} elevation={0}>
             <Toolbar className={classes.toolbar}>
                 <Box className={classes.logoSection} onClick={handleLogoClick}>
-                    <Box className={classes.logoPlaceholder}>
-                        T
-                    </Box>
+                    <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
                     <Typography variant="h6" className={classes.appName}>
                         Traccar
                     </Typography>
