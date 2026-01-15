@@ -2,9 +2,8 @@ export default {
   MuiCssBaseline: {
     styleOverrides: (theme) => ({
       body: {
-        backgroundImage: theme.palette.mode === 'light' 
-          ? 'linear-gradient(135deg, rgb(230, 220, 243) 0%, rgb(244, 231, 223) 50%, rgb(243, 244, 246) 100%)'
-          : 'linear-gradient(135deg, rgb(31, 26, 66) 0%, rgb(39, 32, 40) 25%, rgb(24, 28, 50) 50%, rgb(15, 23, 42) 75%, rgb(15, 23, 42) 100%)',
+        backgroundColor: theme.palette.background.default,
+        backgroundImage: theme.palette.background.gradient,
         backgroundAttachment: 'fixed',
         backgroundSize: 'cover',
         minHeight: '100vh',
@@ -23,8 +22,8 @@ export default {
   MuiOutlinedInput: {
     styleOverrides: {
       root: ({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' 
-          ? 'rgba(30, 28, 41, 0.8)' 
+        backgroundColor: theme.palette.mode === 'dark'
+          ? 'rgba(30, 28, 41, 0.8)'
           : theme.palette.background.paper,
         borderRadius: '12px',
         transition: 'all 0.3s ease',
@@ -69,6 +68,9 @@ export default {
     styleOverrides: {
       root: ({ theme }) => ({
         backgroundImage: 'none',
+        backgroundColor: theme.palette.glass.background,
+        backdropFilter: 'blur(12px)',
+        border: `1px solid ${theme.palette.glass.border}`,
         transition: 'all 0.3s ease',
       }),
       elevation1: ({ theme }) => ({
@@ -253,38 +255,27 @@ export default {
         transition: 'all 0.3s ease',
         '&.Mui-selected': {
           backgroundColor: theme.palette.mode === 'dark'
-            ? 'rgba(248, 115, 24, 0.15)'
-            : 'rgba(248, 115, 24, 0.1)',
+            ? 'rgba(30, 41, 59, 0.5)'
+            : theme.palette.primary.main,
           '&:hover': {
             backgroundColor: theme.palette.mode === 'dark'
-              ? 'rgba(248, 115, 24, 0.25)'
-              : 'rgba(248, 115, 24, 0.2)',
+              ? 'rgba(30, 41, 59, 0.6)'
+              : theme.palette.primary.main,
           },
           '& .MuiListItemIcon-root': {
-            color: theme.palette.primary.main,
+            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
           },
           '& .MuiListItemText-primary': {
-            color: theme.palette.primary.main,
+            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
             fontWeight: 600,
           },
         },
         '&:hover': {
           backgroundColor: theme.palette.mode === 'dark'
-            ? 'rgba(248, 115, 24, 0.05)'
-            : 'rgba(248, 115, 24, 0.05)',
+            ? 'rgba(255, 255, 255, 0.1)'
+            : 'rgba(241, 245, 249, 0.8)',
         },
       }),
     },
-  },
-  MuiCssBaseline: {
-    styleOverrides: (theme) => ({
-      body: {
-        backgroundColor: theme.palette.background.default,
-        backgroundImage: theme.palette.background.gradient,
-        backgroundAttachment: 'fixed',
-        backgroundSize: 'cover',
-        minHeight: '100vh',
-      },
-    }),
   },
 };

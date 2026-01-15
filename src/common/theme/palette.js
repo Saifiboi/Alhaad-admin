@@ -5,14 +5,16 @@ const validatedColor = (color) => (/^#([0-9A-Fa-f]{3}){1,2}$/.test(color) ? colo
 export default (server, darkMode) => ({
   mode: darkMode ? 'dark' : 'light',
   background: {
-    default: darkMode ? 'transparent' : 'transparent',
-    paper: darkMode ? 'rgba(30, 28, 41, 0.95)' : '#ffffff',
-    gradient: darkMode ? 'linear-gradient(135deg, rgb(31, 26, 66) 0%, rgb(39, 32, 40) 33%, rgb(15, 23, 42) 66%, rgb(15, 23, 42) 100%)' : 'linear-gradient(135deg, rgb(230, 220, 243) 0%, rgb(244, 231, 223) 50%, rgb(243, 244, 246) 100%)',
+    default: darkMode ? '#0f172a' : '#f3f4f6',
+    paper: darkMode ? 'rgba(15, 23, 42, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+    gradient: darkMode
+      ? 'radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.15) 0px, transparent 50%)'
+      : 'radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.15) 0px, transparent 50%)',
   },
   primary: {
-    main: validatedColor(server?.attributes?.colorPrimary) || (darkMode ? 'rgb(248, 115, 24)' : 'rgb(248, 115, 24)'),
-    light: darkMode ? 'rgb(255, 145, 60)' : 'rgb(248, 115, 24)',
-    dark: darkMode ? 'rgb(248, 115, 24)' : 'rgb(200, 80, 0)',
+    main: validatedColor(server?.attributes?.colorPrimary) || (darkMode ? '#f97316' : '#f97316'),
+    light: darkMode ? '#fb923c' : '#f97316',
+    dark: darkMode ? '#ea580c' : '#c2410c',
   },
   secondary: {
     main: validatedColor(server?.attributes?.colorSecondary) || (darkMode ? '#34d399' : '#10b981'),
@@ -30,8 +32,8 @@ export default (server, darkMode) => ({
   },
   // Modern glassmorphism colors
   glass: {
-    background: darkMode ? 'rgba(26, 31, 58, 0.7)' : 'rgba(255, 255, 255, 0.7)',
-    border: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    background: darkMode ? 'rgba(15, 23, 42, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+    border: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(226, 232, 240, 0.8)',
   },
   // Accent colors for interactive elements
   accent: {
@@ -40,7 +42,7 @@ export default (server, darkMode) => ({
   },
   // Surface colors for layered UI
   surface: {
-    elevated: darkMode ? '#252b4a' : '#ffffff',
+    elevated: darkMode ? '#1e293b' : '#ffffff',
     overlay: darkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.3)',
   },
 });
