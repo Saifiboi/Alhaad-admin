@@ -98,12 +98,12 @@ const Dock = ({ items, onLaunch, activeIds }) => {
 
     return (
         <Box className={classes.dockContainer}>
-            {items.map((item) => (
+            {items.filter(item => !item.hideInDock).map((item) => (
                 <DockItem
                     key={item.id}
                     item={item}
                     onClick={onLaunch}
-                    isActive={activeIds.includes(item.id)}
+                    isActive={activeIds.includes(item.id) || (item.relatedIds && item.relatedIds.some(id => activeIds.includes(id)))}
                 />
             ))}
         </Box>

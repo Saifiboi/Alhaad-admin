@@ -91,7 +91,7 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     left: '50%',
     [theme.breakpoints.up('md')]: {
       left: `calc(50% + ${desktopPadding} / 2)`,
-      bottom: theme.spacing(3),
+      bottom: theme.spacing(15),
     },
     [theme.breakpoints.down('md')]: {
       left: '50%',

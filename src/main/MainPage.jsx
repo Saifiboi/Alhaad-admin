@@ -21,7 +21,16 @@ import Dock from '../common/components/Dock';
 import DesktopWindow from '../common/components/DesktopWindow';
 import { desktopApps } from './DesktopApps.jsx';
 import WindowModeContext from '../common/components/WindowModeContext';
+import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext } from 'react-router-dom';
+import DesktopRoutes from './DesktopRoutes';
 
+const RouterIsolator = ({ children }) => (
+  <UNSAFE_LocationContext.Provider value={null}>
+    <UNSAFE_NavigationContext.Provider value={null}>
+      {children}
+    </UNSAFE_NavigationContext.Provider>
+  </UNSAFE_LocationContext.Provider>
+);
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -134,38 +143,63 @@ const MainPage = () => {
   useFilter(keyword, filter, filterSort, filterMap, positions, setFilteredDevices, setFilteredPositions);
 
   const handleLaunch = (app) => {
-    setWindows((prev) => {
-      const isAlreadyOpen = prev[app.id];
-      const maxZ = Math.max(0, ...Object.values(prev).map(w => w.zIndex || 0));
+    let targetId = app.id;
+    // Check if main window is not open but a related one is
+    if (!windows[targetId] && app.relatedIds) {
+      const relatedId = app.relatedIds.find(rid => windows[rid]);
+      if (relatedId) {
+        targetId = relatedId;
+      }
+    }
 
-      if (isAlreadyOpen) {
-        // Bring to front
+    if (windows[targetId]) {
+      if (windows[targetId].minimized) {
+        // Restore
+        setWindows((prev) => {
+          const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+          return { ...prev, [targetId]: { ...prev[targetId], minimized: false, zIndex: maxZ + 1 } };
+        });
+        setActiveWindowId(targetId);
+      } else if (activeWindowId === targetId) {
+        // Minimize
+        setWindows((prev) => ({ ...prev, [targetId]: { ...prev[targetId], minimized: true } }));
+        setActiveWindowId(null);
+      } else {
+        // Focus
+        setWindows((prev) => {
+          const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+          return { ...prev, [targetId]: { ...prev[targetId], zIndex: maxZ + 1 } };
+        });
+        setActiveWindowId(targetId);
+      }
+    } else {
+      // Open New
+      setWindows((prev) => {
+        const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+        const defaultWidth = 600;
+        const defaultHeight = 500;
+        const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
+        const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
+
         return {
           ...prev,
           [app.id]: {
-            ...prev[app.id],
+            ...app,
+            x,
+            y,
             zIndex: maxZ + 1,
-            minimized: false // restore if minimized
+            component: (
+              <RouterIsolator>
+                <MemoryRouter initialEntries={[app.path]}>
+                  <DesktopRoutes />
+                </MemoryRouter>
+              </RouterIsolator>
+            )
           }
         };
-      }
-
-      const defaultWidth = 600;
-      const defaultHeight = 500;
-      const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
-      const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
-
-      return {
-        ...prev,
-        [app.id]: {
-          ...app,
-          zIndex: maxZ + 1,
-          x,
-          y,
-        }
-      };
-    });
-    setActiveWindowId(app.id);
+      });
+      setActiveWindowId(app.id);
+    }
   };
 
   const handleCloseWindow = (id) => {
@@ -227,6 +261,7 @@ const MainPage = () => {
               setFilterSort={setFilterSort}
               filterMap={filterMap}
               setFilterMap={setFilterMap}
+              onAddDevice={() => handleLaunch({ id: 'device', title: 'Device', path: '/settings/device' })}
             />
           </Paper>
           <div className={classes.middle}>
@@ -253,7 +288,7 @@ const MainPage = () => {
               onLaunch={handleLaunch}
               activeIds={Object.keys(windows)}
             />
-            {Object.values(windows).map(win => !win.minimized && (
+            {Object.values(windows).map(win => (
               <DesktopWindow
                 key={win.id}
                 id={win.id}
@@ -265,6 +300,7 @@ const MainPage = () => {
                 zIndex={win.zIndex}
                 x={win.x}
                 y={win.y}
+                minimized={win.minimized}
               >
                 {win.component}
               </DesktopWindow>

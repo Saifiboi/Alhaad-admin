@@ -40,6 +40,7 @@ const MainToolbar = ({
   setFilterSort,
   filterMap,
   setFilterMap,
+  onAddDevice,
 }) => {
   const { classes } = useStyles();
   const theme = useTheme();
@@ -169,7 +170,7 @@ const MainToolbar = ({
           </FormGroup>
         </div>
       </Popover>
-      <IconButton edge="end" onClick={() => navigate('/settings/device')} disabled={deviceReadonly}>
+      <IconButton edge="end" onClick={() => onAddDevice ? onAddDevice() : navigate('/settings/device')} disabled={deviceReadonly}>
         <Tooltip open={!deviceReadonly && Object.keys(devices).length === 0} title={t('deviceRegisterFirst')} arrow>
           <AddIcon />
         </Tooltip>

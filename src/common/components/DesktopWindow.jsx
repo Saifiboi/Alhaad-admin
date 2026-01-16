@@ -67,6 +67,7 @@ const DesktopWindow = ({
     defaultHeight = 500,
     x,
     y,
+    minimized,
 }) => {
     const { classes } = useStyles();
     const theme = useTheme();
@@ -83,7 +84,7 @@ const DesktopWindow = ({
             minHeight={200}
             bounds="parent"
             dragHandleClassName="window-header"
-            style={{ zIndex }}
+            style={{ zIndex, display: minimized ? 'none' : undefined }}
             onMouseDown={() => onFocus(id)}
             onTouchStart={() => onFocus(id)}
         >
