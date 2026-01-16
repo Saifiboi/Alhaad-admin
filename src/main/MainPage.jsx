@@ -134,20 +134,37 @@ const MainPage = () => {
   useFilter(keyword, filter, filterSort, filterMap, positions, setFilteredDevices, setFilteredPositions);
 
   const handleLaunch = (app) => {
-    const defaultWidth = 600;
-    const defaultHeight = 500;
-    const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
-    const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
+    setWindows((prev) => {
+      const isAlreadyOpen = prev[app.id];
+      const maxZ = Math.max(0, ...Object.values(prev).map(w => w.zIndex || 0));
 
-    setWindows((prev) => ({
-      ...prev,
-      [app.id]: {
-        ...app,
-        zIndex: Object.keys(prev).length + 10,
-        x,
-        y,
+      if (isAlreadyOpen) {
+        // Bring to front
+        return {
+          ...prev,
+          [app.id]: {
+            ...prev[app.id],
+            zIndex: maxZ + 1,
+            minimized: false // restore if minimized
+          }
+        };
       }
-    }));
+
+      const defaultWidth = 600;
+      const defaultHeight = 500;
+      const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
+      const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
+
+      return {
+        ...prev,
+        [app.id]: {
+          ...app,
+          zIndex: maxZ + 1,
+          x,
+          y,
+        }
+      };
+    });
     setActiveWindowId(app.id);
   };
 
