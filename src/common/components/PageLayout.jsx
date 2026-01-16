@@ -18,6 +18,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
 import GlobalNavbar from './GlobalNavbar';
+import { useContext } from 'react';
+import WindowModeContext from './WindowModeContext';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
   root: {
@@ -83,19 +85,35 @@ const PageTitle = ({ breadcrumbs }) => {
   );
 };
 
-const PageLayout = ({ menu, breadcrumbs, children }) => {
+
+
+const PageLayout = ({ menu, breadcrumbs, children, isWindow: isWindowProp = false }) => {
   const [miniVariant, setMiniVariant] = useState(false);
   const { classes } = useStyles({ miniVariant });
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const isWindowContext = useContext(WindowModeContext);
+  const isWindow = isWindowProp || isWindowContext;
+
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
+
 
   const [searchParams] = useSearchParams();
 
   const [openDrawer, setOpenDrawer] = useState(!desktop && searchParams.has('menu'));
 
   const toggleDrawer = () => setMiniVariant(!miniVariant);
+
+  if (isWindow && desktop) {
+    return (
+      <div className={classes.content} style={{ height: '100%', overflow: 'hidden' }}>
+        <div style={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

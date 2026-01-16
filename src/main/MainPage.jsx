@@ -1,13 +1,13 @@
 import {
-  useState, useCallback, useEffect,
+  useState, useCallback, useEffect, createContext,
 } from 'react';
 import { Paper } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
-import BottomMenu from '../common/components/BottomMenu';
 import StatusCard from '../common/components/StatusCard';
 import { devicesActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
@@ -17,6 +17,11 @@ import MainToolbar from './MainToolbar';
 import MainMap from './MainMap';
 import { useAttributePreference } from '../common/util/preferences';
 import GlobalNavbar from '../common/components/GlobalNavbar';
+import Dock from '../common/components/Dock';
+import DesktopWindow from '../common/components/DesktopWindow';
+import { desktopApps } from './DesktopApps.jsx';
+import WindowModeContext from '../common/components/WindowModeContext';
+
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -24,6 +29,7 @@ const useStyles = makeStyles()((theme) => ({
     backgroundColor: 'transparent',
     transition: 'background-color 0.3s ease',
     paddingTop: '64px', // Space for fixed navbar
+    position: 'relative',
   },
   sidebar: {
     pointerEvents: 'none',
@@ -88,6 +94,8 @@ const MainPage = () => {
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -113,6 +121,10 @@ const MainPage = () => {
 
   const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
 
+  // Window Manager State
+  const [windows, setWindows] = useState({});
+  const [activeWindowId, setActiveWindowId] = useState(null);
+
   useEffect(() => {
     if (!desktop && mapOnSelect && selectedDeviceId) {
       setDevicesOpen(false);
@@ -121,8 +133,60 @@ const MainPage = () => {
 
   useFilter(keyword, filter, filterSort, filterMap, positions, setFilteredDevices, setFilteredPositions);
 
+  const handleLaunch = (app) => {
+    const defaultWidth = 600;
+    const defaultHeight = 500;
+    const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
+    const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
+
+    setWindows((prev) => ({
+      ...prev,
+      [app.id]: {
+        ...app,
+        zIndex: Object.keys(prev).length + 10,
+        x,
+        y,
+      }
+    }));
+    setActiveWindowId(app.id);
+  };
+
+  const handleCloseWindow = (id) => {
+    setWindows((prev) => {
+      const newWindows = { ...prev };
+      delete newWindows[id];
+      return newWindows;
+    });
+  };
+
+  const handleMinimizeWindow = (id) => {
+    // Optional: Implement minimize behavior (e.g. hide but keep in state)
+    // For now, just close or do nothing? User requirement: "minimize etc"
+    // We can add a 'minimized' state.
+    setWindows(prev => ({
+      ...prev,
+      [id]: { ...prev[id], minimized: !prev[id].minimized }
+    }));
+  };
+
+  const handleFocusWindow = (id) => {
+    setActiveWindowId(id);
+    setWindows(prev => ({
+      ...prev,
+      [id]: { ...prev[id], zIndex: Math.max(...Object.values(prev).map(w => w.zIndex || 0)) + 1 }
+    }));
+  }
+
+  // Effect to sync URL with Windows (Deep linking support basics)
+  useEffect(() => {
+    const app = desktopApps.find(a => location.pathname.startsWith(a.path));
+    if (app && !windows[app.id]) {
+      handleLaunch(app);
+    }
+  }, [location.pathname]);
+
   return (
-    <>
+    <WindowModeContext.Provider value={true}>
       <GlobalNavbar />
       <div className={classes.root}>
         {desktop && (
@@ -162,12 +226,35 @@ const MainPage = () => {
               <DeviceList devices={filteredDevices} />
             </Paper>
           </div>
-          {desktop && (
-            <div className={classes.footer}>
-              <BottomMenu />
-            </div>
-          )}
         </div>
+
+        {/* Dock and Windows */}
+        {desktop && (
+          <>
+            <Dock
+              items={desktopApps}
+              onLaunch={handleLaunch}
+              activeIds={Object.keys(windows)}
+            />
+            {Object.values(windows).map(win => !win.minimized && (
+              <DesktopWindow
+                key={win.id}
+                id={win.id}
+                title={win.title}
+                icon={win.icon}
+                onClose={handleCloseWindow}
+                onMinimize={handleMinimizeWindow}
+                onFocus={handleFocusWindow}
+                zIndex={win.zIndex}
+                x={win.x}
+                y={win.y}
+              >
+                {win.component}
+              </DesktopWindow>
+            ))}
+          </>
+        )}
+
         <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
         {selectedDeviceId && (
           <StatusCard
@@ -178,7 +265,7 @@ const MainPage = () => {
           />
         )}
       </div>
-    </>
+    </WindowModeContext.Provider>
   );
 };
 
