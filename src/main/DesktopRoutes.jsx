@@ -27,6 +27,7 @@ import CommandsPage from '../settings/CommandsPage';
 import CommandPage from '../settings/CommandPage';
 import ServerPage from '../settings/ServerPage';
 import PreferencesPage from '../settings/PreferencesPage';
+import AnnouncementPage from '../settings/AnnouncementPage';
 import AccumulatorsPage from '../settings/AccumulatorsPage';
 
 const DesktopRoutes = () => {
@@ -76,6 +77,7 @@ const DesktopRoutes = () => {
 
             <Route path="/settings/server" element={<ServerPage />} />
             <Route path="/settings/preferences" element={<PreferencesPage />} />
+            <Route path="/settings/announcement" element={<AnnouncementPage />} />
 
             <Route path="/settings/accumulators/:deviceId" element={<AccumulatorsPage />} />
 

@@ -1,5 +1,5 @@
 import {
-  useState, useCallback, useEffect, createContext,
+  useState, useCallback, useEffect, createContext, useMemo,
 } from 'react';
 import { Paper } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -23,6 +23,7 @@ import { desktopApps } from './DesktopApps.jsx';
 import WindowModeContext from '../common/components/WindowModeContext';
 import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext } from 'react-router-dom';
 import DesktopRoutes from './DesktopRoutes';
+import { useAdministrator, useManager } from '../common/util/permissions';
 
 const RouterIsolator = ({ children }) => (
   <UNSAFE_LocationContext.Provider value={null}>
@@ -107,6 +108,19 @@ const MainPage = () => {
   const navigate = useNavigate();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const admin = useAdministrator();
+  const manager = useManager();
+
+  const authorizedApps = useMemo(() => desktopApps.filter((app) => {
+    if (app.id === 'server' || app.id === 'announcement') {
+      return admin;
+    }
+    if (app.id === 'users') {
+      return manager;
+    }
+    return true;
+  }), [admin, manager]);
 
   const mapOnSelect = useAttributePreference('mapOnSelect', true);
 
@@ -230,11 +244,11 @@ const MainPage = () => {
 
   // Effect to sync URL with Windows (Deep linking support basics)
   useEffect(() => {
-    const app = desktopApps.find(a => location.pathname.startsWith(a.path));
+    const app = authorizedApps.find(a => location.pathname.startsWith(a.path));
     if (app && !windows[app.id]) {
       handleLaunch(app);
     }
-  }, [location.pathname]);
+  }, [location.pathname, authorizedApps]);
 
   return (
     <WindowModeContext.Provider value={true}>
@@ -284,7 +298,7 @@ const MainPage = () => {
         {desktop && (
           <>
             <Dock
-              items={desktopApps}
+              items={authorizedApps}
               onLaunch={handleLaunch}
               activeIds={Object.keys(windows)}
             />

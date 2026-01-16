@@ -11,6 +11,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import SendIcon from '@mui/icons-material/Send';
 import StorageIcon from '@mui/icons-material/Storage';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 export const desktopApps = [
     {
@@ -75,6 +76,12 @@ export const desktopApps = [
         icon: <SendIcon />,
         path: '/settings/commands',
         relatedIds: ['command']
+    },
+    {
+        id: 'announcement',
+        title: 'Announcement',
+        icon: <CampaignIcon />,
+        path: '/settings/announcement',
     },
     {
         id: 'server',
