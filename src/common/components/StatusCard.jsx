@@ -116,7 +116,9 @@ const StatusRow = ({ name, content }) => {
   );
 };
 
-const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPadding = 0 }) => {
+const StatusCard = ({
+  deviceId, position, onClose, disableActions, desktopPadding = 0, onEdit, onCommand, onShare, onReplay, onGeofenceCreated,
+}) => {
   const { classes } = useStyles({ desktopPadding });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -165,8 +167,12 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ deviceId: position.deviceId, geofenceId: item.id }),
     });
-    navigate(`/settings/geofence/${item.id}`);
-  }, [navigate, position]);
+    if (onGeofenceCreated) {
+      onGeofenceCreated(item.id);
+    } else {
+      navigate(`/settings/geofence/${item.id}`);
+    }
+  }, [navigate, position, onGeofenceCreated, t]);
 
   return (
     <>
@@ -249,7 +255,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </Tooltip>
                 <Tooltip title={t('reportReplay')}>
                   <IconButton
-                    onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
+                    onClick={() => (onReplay ? onReplay() : navigate(`/replay?deviceId=${deviceId}`))}
                     disabled={disableActions || !position}
                   >
                     <RouteIcon />
@@ -257,7 +263,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </Tooltip>
                 <Tooltip title={t('commandTitle')}>
                   <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}/command`)}
+                    onClick={() => (onCommand ? onCommand() : navigate(`/settings/device/${deviceId}/command`))}
                     disabled={disableActions}
                   >
                     <SendIcon />
@@ -265,7 +271,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </Tooltip>
                 <Tooltip title={t('sharedEdit')}>
                   <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}`)}
+                    onClick={() => (onEdit ? onEdit() : navigate(`/settings/device/${deviceId}`))}
                     disabled={disableActions || deviceReadonly}
                   >
                     <EditIcon />
@@ -293,7 +299,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
           <MenuItem component="a" target="_blank" href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${position.latitude}%2C${position.longitude}&heading=${position.course}`}>{t('linkStreetView')}</MenuItem>
           {navigationAppTitle && <MenuItem component="a" target="_blank" href={navigationAppLink.replace('{latitude}', position.latitude).replace('{longitude}', position.longitude)}>{navigationAppTitle}</MenuItem>}
           {!shareDisabled && !user.temporary && (
-            <MenuItem onClick={() => navigate(`/settings/device/${deviceId}/share`)}><Typography color="secondary">{t('deviceShare')}</Typography></MenuItem>
+            <MenuItem onClick={() => (onShare ? onShare() : navigate(`/settings/device/${deviceId}/share`))}><Typography color="secondary">{t('deviceShare')}</Typography></MenuItem>
           )}
         </Menu>
       )}

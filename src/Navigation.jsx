@@ -62,7 +62,7 @@ import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import AuditPage from './reports/AuditPage';
 
-import { useTheme, useMediaQuery } from '@mui/material';
+import { useTheme, useMediaQuery, Typography } from '@mui/material';
 
 const Navigation = () => {
   const dispatch = useDispatch();
@@ -123,20 +123,17 @@ const Navigation = () => {
       <Route path="/" element={<App />}>
         <Route index element={<MainPage />} />
 
-        <Route path="position/:id" element={<PositionPage />} />
-        <Route path="network/:positionId" element={<NetworkPage />} />
-        <Route path="event/:id" element={<EventPage />} />
         <Route path="replay" element={<ReplayPage />} />
         <Route path="geofences" element={<GeofencesPage />} />
-        <Route path="emulator" element={<EmulatorPage />} />
+        <Route path="settings/geofences" element={<GeofencesPage />} />
 
-        {desktop ? (
+        {!desktop && (
           <>
-            <Route path="settings/*" element={<MainPage />} />
-            <Route path="reports/*" element={<MainPage />} />
-          </>
-        ) : (
-          <>
+            <Route path="position/:id" element={<PositionPage />} />
+            <Route path="network/:positionId" element={<NetworkPage />} />
+            <Route path="event/:id" element={<EventPage />} />
+            <Route path="emulator" element={<EmulatorPage />} />
+
             <Route path="settings">
               <Route path="accumulators/:deviceId" element={<AccumulatorsPage />} />
               <Route path="announcement" element={<AnnouncementPage />} />
@@ -194,6 +191,10 @@ const Navigation = () => {
             </Route>
           </>
         )}
+        {desktop && (
+          <Route path="position/:id" element={<PositionPage />} />
+        )}
+        <Route path="*" element={<Typography variant="h4" sx={{ p: 4 }}>404 Not Found</Typography>} />
       </Route>
     </Routes>
   );

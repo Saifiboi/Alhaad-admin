@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions } from '../store';
+import { devicesActions, replayActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -24,6 +24,7 @@ import WindowModeContext from '../common/components/WindowModeContext';
 import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext } from 'react-router-dom';
 import DesktopRoutes from './DesktopRoutes';
 import { useAdministrator, useManager } from '../common/util/permissions';
+import { useTranslation } from '../common/components/LocalizationProvider';
 
 const RouterIsolator = ({ children }) => (
   <UNSAFE_LocationContext.Provider value={null}>
@@ -106,6 +107,7 @@ const MainPage = () => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const t = useTranslation();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -122,6 +124,7 @@ const MainPage = () => {
     return true;
   }), [admin, manager]);
 
+  const user = useSelector((state) => state.session.user);
   const mapOnSelect = useAttributePreference('mapOnSelect', true);
 
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
@@ -158,9 +161,39 @@ const MainPage = () => {
 
   const handleLaunch = (app) => {
     let targetId = app.id;
+
+    if (app.id === 'send_command') {
+      if (selectedDeviceId) {
+        handleLaunch({
+          id: 'command',
+          title: t('sharedCommand'),
+          path: `/settings/device/${selectedDeviceId}/command`,
+        });
+      } else {
+        setDevicesOpen(true);
+      }
+      return;
+    }
+
+    if (app.id === 'account') {
+      if (user) {
+        handleLaunch({
+          id: 'user',
+          title: t('settingsUser'),
+          path: `/settings/user/${user.id}`,
+        });
+      }
+      return;
+    }
+
+    if (app.id === 'geofences' || app.id === 'replay') {
+      navigate(app.path);
+      return;
+    }
+
     // Check if main window is not open but a related one is
     if (!windows[targetId] && app.relatedIds) {
-      const relatedId = app.relatedIds.find(rid => windows[rid]);
+      const relatedId = app.relatedIds.find((rid) => windows[rid]);
       if (relatedId) {
         targetId = relatedId;
       }
@@ -208,8 +241,8 @@ const MainPage = () => {
                   <DesktopRoutes />
                 </MemoryRouter>
               </RouterIsolator>
-            )
-          }
+            ),
+          },
         };
       });
       setActiveWindowId(app.id);
@@ -217,6 +250,11 @@ const MainPage = () => {
   };
 
   const handleCloseWindow = (id) => {
+    // Clear replay state when closing replay window
+    if (id === 'replay') {
+      dispatch(replayActions.clear());
+    }
+
     setWindows((prev) => {
       const newWindows = { ...prev };
       delete newWindows[id];
@@ -225,34 +263,24 @@ const MainPage = () => {
   };
 
   const handleMinimizeWindow = (id) => {
-    // Optional: Implement minimize behavior (e.g. hide but keep in state)
-    // For now, just close or do nothing? User requirement: "minimize etc"
-    // We can add a 'minimized' state.
-    setWindows(prev => ({
+    setWindows((prev) => ({
       ...prev,
-      [id]: { ...prev[id], minimized: !prev[id].minimized }
+      [id]: { ...prev[id], minimized: !prev[id].minimized },
     }));
   };
 
   const handleFocusWindow = (id) => {
     setActiveWindowId(id);
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], zIndex: Math.max(...Object.values(prev).map(w => w.zIndex || 0)) + 1 }
-    }));
-  }
+    setWindows((prev) => {
+      const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+      return { ...prev, [id]: { ...prev[id], zIndex: maxZ + 1 } };
+    });
+  };
 
-  // Effect to sync URL with Windows (Deep linking support basics)
-  useEffect(() => {
-    const app = authorizedApps.find(a => location.pathname.startsWith(a.path));
-    if (app && !windows[app.id]) {
-      handleLaunch(app);
-    }
-  }, [location.pathname, authorizedApps]);
-
+  // Window Mode Context Provider
   return (
     <WindowModeContext.Provider value={true}>
-      <GlobalNavbar />
+      <GlobalNavbar onAccount={() => handleLaunch({ id: 'account' })} />
       <div className={classes.root}>
         {desktop && (
           <MainMap
@@ -329,6 +357,21 @@ const MainPage = () => {
             position={selectedPosition}
             onClose={() => dispatch(devicesActions.selectId(null))}
             desktopPadding={theme.dimensions.drawerWidthDesktop}
+            onEdit={() => handleLaunch({
+              id: 'device', title: t('sharedDevice'), path: `/settings/device/${selectedDeviceId}`,
+            })}
+            onCommand={() => handleLaunch({
+              id: 'command', title: t('sharedCommand'), path: `/settings/device/${selectedDeviceId}/command`,
+            })}
+            onShare={() => handleLaunch({
+              id: 'share', title: t('deviceShare'), path: `/settings/device/${selectedDeviceId}/share`,
+            })}
+            onReplay={() => handleLaunch({
+              id: 'replay', title: t('reportReplay'), path: `/replay?deviceId=${selectedDeviceId}`,
+            })}
+            onGeofenceCreated={(geofenceId) => handleLaunch({
+              id: 'geofence', title: t('sharedGeofence'), path: `/settings/geofence/${geofenceId}`,
+            })}
           />
         )}
       </div>

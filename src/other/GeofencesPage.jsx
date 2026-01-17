@@ -8,6 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { makeStyles } from 'tss-react/mui';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery, useTheme } from '@mui/material';
 import MapView from '../map/core/MapView';
 import MapCurrentLocation from '../map/MapCurrentLocation';
 import MapGeofenceEdit from '../map/draw/MapGeofenceEdit';
@@ -18,12 +19,16 @@ import { errorsActions } from '../store';
 import MapScale from '../map/MapScale';
 import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
+import GlobalNavbar from '../common/components/GlobalNavbar';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    [theme.breakpoints.up('md')]: {
+      paddingTop: '64px',
+    },
   },
   content: {
     flexGrow: 1,
@@ -56,10 +61,12 @@ const useStyles = makeStyles()((theme) => ({
 }));
 
 const GeofencesPage = () => {
-  const { classes } = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const t = useTranslation();
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const { classes } = useStyles();
 
   const [selectedGeofenceId, setSelectedGeofenceId] = useState();
 
@@ -95,6 +102,7 @@ const GeofencesPage = () => {
 
   return (
     <div className={classes.root}>
+      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} />}
       <div className={classes.content}>
         <Paper square className={classes.drawer}>
           <Toolbar>
@@ -104,7 +112,7 @@ const GeofencesPage = () => {
             <Typography variant="h6" className={classes.title}>{t('sharedGeofences')}</Typography>
             <label htmlFor="upload-gpx">
               <input accept=".gpx" id="upload-gpx" type="file" className={classes.fileInput} onChange={handleFile} />
-              <IconButton edge="end" component="span" onClick={() => {}}>
+              <IconButton edge="end" component="span" onClick={() => { }}>
                 <Tooltip title={t('sharedUpload')}>
                   <UploadFileIcon />
                 </Tooltip>

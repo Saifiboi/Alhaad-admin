@@ -12,6 +12,8 @@ import SendIcon from '@mui/icons-material/Send';
 import StorageIcon from '@mui/icons-material/Storage';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import LayersIcon from '@mui/icons-material/Layers';
+import PersonIcon from '@mui/icons-material/Person';
 
 export const desktopApps = [
     {
@@ -71,11 +73,14 @@ export const desktopApps = [
         relatedIds: ['maintenance_item']
     },
     {
-        id: 'saved_commands',
-        title: 'Saved Commands',
+        id: 'commands',
+        title: 'Commands',
         icon: <SendIcon />,
-        path: '/settings/commands',
-        relatedIds: ['command']
+        relatedIds: ['command', 'saved_commands'],
+        options: [
+            { id: 'send_command', title: 'Send Command' },
+            { id: 'saved_commands', title: 'Saved Commands', path: '/settings/commands' },
+        ]
     },
     {
         id: 'announcement',
@@ -96,9 +101,21 @@ export const desktopApps = [
         path: '/settings/preferences',
     },
     {
+        id: 'geofences',
+        title: 'Geofences',
+        icon: <LayersIcon />,
+        path: '/geofences',
+        relatedIds: ['geofence']
+    },
+    {
         id: 'reports',
         title: 'Reports',
         icon: <DescriptionIcon />,
         path: '/reports/combined',
+    },
+    {
+        id: 'account',
+        title: 'Account',
+        icon: <PersonIcon />,
     },
 ];

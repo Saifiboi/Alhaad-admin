@@ -29,6 +29,9 @@ import ServerPage from '../settings/ServerPage';
 import PreferencesPage from '../settings/PreferencesPage';
 import AnnouncementPage from '../settings/AnnouncementPage';
 import AccumulatorsPage from '../settings/AccumulatorsPage';
+import ReplayPage from '../other/ReplayPage';
+import GeofencePage from '../settings/GeofencePage';
+import GeofencesPage from '../other/GeofencesPage';
 
 const DesktopRoutes = () => {
     return (
@@ -81,7 +84,12 @@ const DesktopRoutes = () => {
 
             <Route path="/settings/accumulators/:deviceId" element={<AccumulatorsPage />} />
 
+            <Route path="/settings/geofence/:id" element={<GeofencePage />} />
+            <Route path="/settings/geofence" element={<GeofencePage />} />
+            <Route path="/settings/geofences" element={<GeofencesPage />} />
+
             <Route path="/reports/combined" element={<CombinedReportPage />} />
+            <Route path="/replay" element={<ReplayPage />} />
         </Routes>
     );
 };

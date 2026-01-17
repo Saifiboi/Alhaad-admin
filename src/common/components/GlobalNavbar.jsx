@@ -98,7 +98,7 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = () => {
+const GlobalNavbar = ({ onAccount }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -131,7 +131,11 @@ const GlobalNavbar = () => {
 
     const handleAccount = () => {
         handleClose();
-        navigate(`/settings/user/${user.id}`);
+        if (onAccount) {
+            onAccount();
+        } else {
+            navigate(`/settings/user/${user.id}`);
+        }
     };
 
     const handleLogout = async () => {
