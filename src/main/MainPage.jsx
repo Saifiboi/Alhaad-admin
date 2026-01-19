@@ -153,42 +153,43 @@ const MainPage = () => {
   const [activeWindowId, setActiveWindowId] = useState(null);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
+  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+
   // Detect Dock position and adjust sidebar height
   useEffect(() => {
     if (!desktop) return;
 
     const adjustSidebarHeight = () => {
       const dockElement = document.querySelector('[class*="dockContainer"]');
-      if (!dockElement) {
+      const sidebarElement = document.querySelector(`.${classes.sidebar}`);
+
+      if (!dockElement || !sidebarElement) {
         setSidebarHeight(null);
         return;
       }
 
       const dockRect = dockElement.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
+      const sidebarRect = sidebarElement.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const sidebarWidth = theme.dimensions.drawerWidthDesktop || 280;
-      const sidebarLeft = theme.spacing(1.5) || 12; // margin-left
-      const sidebarRight = sidebarLeft + sidebarWidth;
 
-      // Check if dock is at the bottom (horizontal layout)
-      const isDockAtBottom = dockRect.bottom > viewportHeight - 100 &&
-        dockRect.left > sidebarRight - 50; // -50px tolerance for overlap
+      const topOffset = 64; // navbar height
+      const sidebarMargin = 12; // 1.5 spacing
+      const gapAboveDock = 8;
 
-      if (isDockAtBottom) {
-        // Dock is at bottom and might collide - adjust sidebar height
+      // Check if dock is at the bottom
+      const isDockAtBottom = dockRect.bottom > viewportHeight - 150;
+
+      // Check for horizontal overlap with a safety margin
+      const isOverlappingHorizontally = dockRect.left < (sidebarRect.right + 20);
+
+      if (isDockAtBottom && isOverlappingHorizontally) {
+        // Calculate height to end above dock
         const dockHeight = dockRect.height;
-        const dockBottomMargin = viewportHeight - dockRect.bottom;
-        const topOffset = 64; // navbar height
-        const sidebarBottomMargin = 12; // theme.spacing(1.5)
-        const gapAboveDock = 8; // gap between sidebar and dock
-        const availableHeight = viewportHeight - topOffset - dockHeight - sidebarBottomMargin - gapAboveDock - dockBottomMargin;
+        const availableHeight = dockRect.top - topOffset - gapAboveDock - sidebarMargin;
         setSidebarHeight(`${availableHeight}px`);
       } else {
-        // Dock is on the side or not colliding - use full available height
-        const topOffset = 64; // navbar height
-        const sidebarBottomMargin = 12; // theme.spacing(1.5)
-        const availableHeight = viewportHeight - topOffset - sidebarBottomMargin;
+        // Use full available height
+        const availableHeight = viewportHeight - topOffset - sidebarMargin;
         setSidebarHeight(`${availableHeight}px`);
       }
     };
@@ -288,7 +289,7 @@ const MainPage = () => {
       setWindows((prev) => {
         const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
         const defaultWidth = 680;
-        const defaultHeight = 440;
+        const defaultHeight = 413;
         const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
         const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
 
@@ -378,7 +379,10 @@ const MainPage = () => {
         )}
         <div
           className={classes.sidebar}
-          style={sidebarHeight ? { height: sidebarHeight } : {}}
+          style={{
+            height: sidebarHeight || `calc(100vh - 64px - ${theme.spacing(anyMaximized ? 0 : 1.5)})`,
+            marginBottom: anyMaximized ? 0 : theme.spacing(1.5),
+          }}
         >
           <Paper className={classes.header}>
             <MainToolbar
@@ -415,11 +419,13 @@ const MainPage = () => {
         {/* Dock and Windows */}
         {desktop && (
           <>
-            <Dock
-              items={authorizedApps}
-              onLaunch={handleLaunch}
-              activeIds={Object.keys(windows)}
-            />
+            {!anyMaximized && (
+              <Dock
+                items={authorizedApps}
+                onLaunch={handleLaunch}
+                activeIds={Object.keys(windows)}
+              />
+            )}
             {Object.values(windows).map(win => (
               <DesktopWindow
                 key={win.id}
