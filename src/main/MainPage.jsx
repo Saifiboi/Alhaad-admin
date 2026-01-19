@@ -268,7 +268,7 @@ const MainPage = () => {
       if (windows[targetId].minimized) {
         // Restore
         setWindows((prev) => {
-          const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
           return { ...prev, [targetId]: { ...prev[targetId], minimized: false, zIndex: maxZ + 1 } };
         });
         setActiveWindowId(targetId);
@@ -279,7 +279,7 @@ const MainPage = () => {
       } else {
         // Focus
         setWindows((prev) => {
-          const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
           return { ...prev, [targetId]: { ...prev[targetId], zIndex: maxZ + 1 } };
         });
         setActiveWindowId(targetId);
@@ -287,7 +287,7 @@ const MainPage = () => {
     } else {
       // Open New
       setWindows((prev) => {
-        const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+        const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
         const defaultWidth = 680;
         const defaultHeight = 413;
         const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
@@ -339,7 +339,7 @@ const MainPage = () => {
   const handleFocusWindow = (id) => {
     setActiveWindowId(id);
     setWindows((prev) => {
-      const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
+      const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
       return { ...prev, [id]: { ...prev[id], zIndex: maxZ + 1 } };
     });
   };
@@ -438,7 +438,7 @@ const MainPage = () => {
                 onFocus={handleFocusWindow}
                 onDragStop={handleDragStop}
                 onResizeStop={handleResizeStop}
-                zIndex={win.zIndex}
+                zIndex={win.maximized ? 1500 : win.zIndex}
                 x={win.x}
                 y={win.y}
                 defaultWidth={win.width || 680}
