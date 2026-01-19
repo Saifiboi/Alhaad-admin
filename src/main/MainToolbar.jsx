@@ -26,6 +26,9 @@ const useStyles = makeStyles()((theme) => ({
     gap: theme.spacing(2),
     width: theme.dimensions.drawerWidthTablet,
   },
+  input: {
+    fontSize: '0.7rem',
+  },
 }));
 
 const MainToolbar = ({
@@ -65,6 +68,7 @@ const MainToolbar = ({
         {devicesOpen ? <MapIcon /> : <DnsIcon />}
       </IconButton>
       <OutlinedInput
+        className={classes.input}
         ref={inputRef}
         placeholder={t('sharedSearchDevices')}
         value={keyword}
