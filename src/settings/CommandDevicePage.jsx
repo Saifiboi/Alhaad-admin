@@ -50,24 +50,28 @@ const CommandDevicePage = () => {
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceCommand']}>
-      <Container maxWidth="xs" className={classes.container}>
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">
-              {t('sharedRequired')}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.details}>
-            <BaseCommandView
-              deviceId={id}
-              item={item}
-              setItem={setItem}
-              includeSaved
-              savedId={savedId}
-              setSavedId={setSavedId}
-            />
-          </AccordionDetails>
-        </Accordion>
+      <Container maxWidth="lg" className={classes.container}>
+        <div className={classes.content}>
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">
+                {t('sharedRequired')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.grid}>
+              <div className={classes.fullWidth}>
+                <BaseCommandView
+                  deviceId={id}
+                  item={item}
+                  setItem={setItem}
+                  includeSaved
+                  savedId={savedId}
+                  setSavedId={setSavedId}
+                />
+              </div>
+            </AccordionDetails>
+          </Accordion>
+        </div>
         <div className={classes.buttons}>
           <Button
             type="button"

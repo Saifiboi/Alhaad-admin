@@ -6,6 +6,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import RemoveIcon from '@mui/icons-material/Remove';
+import CropSquareIcon from '@mui/icons-material/CropSquare';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme) => ({
@@ -63,17 +65,23 @@ const DesktopWindow = ({
     onMinimize,
     onFocus,
     zIndex,
-    defaultWidth = 600,
-    defaultHeight = 500,
+    defaultWidth = 1000,
+    defaultHeight = 750,
     x,
     y,
     minimized,
+    maximized,
+    onMaximize,
+    onDragStop,
+    onResizeStop,
 }) => {
     const { classes } = useStyles();
     const theme = useTheme();
 
     return (
         <Rnd
+            size={maximized ? { width: '100%', height: '100%' } : { width: defaultWidth, height: defaultHeight }}
+            position={maximized ? { x: 0, y: 0 } : { x: x || 50, y: y || 50 }}
             default={{
                 x: x || 50,
                 y: y || 50,
@@ -83,10 +91,16 @@ const DesktopWindow = ({
             minWidth={300}
             minHeight={200}
             bounds="parent"
+            disableDragging={maximized}
+            enableResizing={!maximized}
             dragHandleClassName="window-header"
             style={{ zIndex, display: minimized ? 'none' : undefined }}
             onMouseDown={() => onFocus(id)}
             onTouchStart={() => onFocus(id)}
+            onDragStop={(e, d) => onDragStop(id, d.x, d.y)}
+            onResizeStop={(e, direction, ref, delta, position) => {
+                onResizeStop(id, ref.offsetWidth, ref.offsetHeight, position.x, position.y);
+            }}
         >
             <Paper className={classes.window} elevation={0} sx={{ height: '100%' }}>
                 <div className={`window-header ${classes.header}`} onDoubleClick={() => onMinimize(id)}>
@@ -103,6 +117,13 @@ const DesktopWindow = ({
                             onClick={(e) => { e.stopPropagation(); onMinimize(id); }}
                         >
                             <RemoveIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                            size="small"
+                            className={classes.controlButton}
+                            onClick={(e) => { e.stopPropagation(); onMaximize(id); }}
+                        >
+                            {maximized ? <FilterNoneIcon fontSize="small" sx={{ transform: 'scale(0.8)' }} /> : <CropSquareIcon fontSize="small" />}
                         </IconButton>
                         <IconButton
                             size="small"

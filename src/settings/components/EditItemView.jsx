@@ -48,23 +48,25 @@ const EditItemView = ({
 
   return (
     <PageLayout menu={menu} breadcrumbs={breadcrumbs}>
-      <Container maxWidth="xs" className={classes.container}>
-        {item ? children : (
-          <Accordion defaultExpanded>
-            <AccordionSummary>
-              <Typography variant="subtitle1">
-                <Skeleton width="10em" />
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {[...Array(3)].map((_, i) => (
-                <Skeleton key={-i} width="100%">
-                  <TextField />
-                </Skeleton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        )}
+      <Container maxWidth="lg" className={classes.container}>
+        <div className={classes.content}>
+          {item ? children : (
+            <Accordion defaultExpanded>
+              <AccordionSummary>
+                <Typography variant="subtitle1">
+                  <Skeleton width="10em" />
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={-i} width="100%">
+                    <TextField />
+                  </Skeleton>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          )}
+        </div>
         <div className={classes.buttons}>
           <Button
             color="primary"

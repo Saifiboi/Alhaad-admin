@@ -6,7 +6,7 @@ import {
   AccordionDetails,
   Typography,
   FormControlLabel,
-  Checkbox,
+  Switch,
   TextField,
   Button,
 } from '@mui/material';
@@ -69,14 +69,14 @@ const DevicePage = () => {
       breadcrumbs={['settingsTitle', 'sharedDevice']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
@@ -91,13 +91,31 @@ const DevicePage = () => {
               />
             </AccordionDetails>
           </Accordion>
+          {item.id && (
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle1">
+                  {t('attributeDeviceImage')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <MuiFileInput
+                  className={classes.fullWidth}
+                  placeholder={t('attributeDeviceImage')}
+                  value={imageFile}
+                  onChange={handleFileInput}
+                  inputProps={{ accept: 'image/*' }}
+                />
+              </AccordionDetails>
+            </Accordion>
+          )}
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedExtra')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <SelectField
                 value={item.groupId}
                 onChange={(event) => setItem({ ...item, groupId: Number(event.target.value) })}
@@ -145,43 +163,28 @@ const DevicePage = () => {
                 }}
                 disabled={!admin}
               />
-              <FormControlLabel
-                control={<Checkbox checked={item.disabled} onChange={(event) => setItem({ ...item, disabled: event.target.checked })} />}
-                label={t('sharedDisabled')}
-                disabled={!admin}
-              />
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => setShowQr(true)}
-              >
-                {t('sharedQrCode')}
-              </Button>
+              <div className={classes.row}>
+                <FormControlLabel
+                  control={<Switch checked={item.disabled} onChange={(event) => setItem({ ...item, disabled: event.target.checked })} />}
+                  label={t('sharedDisabled')}
+                  disabled={!admin}
+                />
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setShowQr(true)}
+                >
+                  {t('sharedQrCode')}
+                </Button>
+              </div>
             </AccordionDetails>
           </Accordion>
-          {item.id && (
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="subtitle1">
-                  {t('attributeDeviceImage')}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails className={classes.details}>
-                <MuiFileInput
-                  placeholder={t('attributeDeviceImage')}
-                  value={imageFile}
-                  onChange={handleFileInput}
-                  inputProps={{ accept: 'image/*' }}
-                />
-              </AccordionDetails>
-            </Accordion>
-          )}
           <EditAttributesAccordion
             attributes={item.attributes}
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={{ ...commonDeviceAttributes, ...deviceAttributes }}
           />
-        </>
+        </div>
       )}
       <QrCodeDialog open={showQr} onClose={() => setShowQr(false)} />
     </EditItemView>

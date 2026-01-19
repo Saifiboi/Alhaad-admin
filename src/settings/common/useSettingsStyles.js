@@ -12,12 +12,19 @@ export default makeStyles()((theme) => ({
     marginTop: theme.spacing(2),
   },
   buttons: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: theme.spacing(2, 4),
+    backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.divider}`,
     display: 'flex',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-end',
+    gap: theme.spacing(2),
+    zIndex: 1,
     '& > *': {
-      flexBasis: '33%',
+      minWidth: '120px',
     },
   },
   details: {
@@ -26,8 +33,30 @@ export default makeStyles()((theme) => ({
     gap: theme.spacing(2),
     paddingBottom: theme.spacing(3),
   },
+  content: {
+    paddingBottom: theme.spacing(10), // Space for fixed footer
+  },
   verticalActions: {
     display: 'flex',
     flexDirection: 'column',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: theme.spacing(2),
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '1fr',
+    },
+  },
+  fullWidth: {
+    gridColumn: '1 / -1',
+  },
+  row: {
+    display: 'flex',
+    gap: theme.spacing(2),
+    gridColumn: '1 / -1',
+    '& > *': {
+      flex: 1,
+    },
   },
 }));

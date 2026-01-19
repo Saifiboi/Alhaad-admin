@@ -28,14 +28,14 @@ const DriverPage = () => {
       breadcrumbs={['settingsTitle', 'sharedDriver']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
@@ -53,7 +53,7 @@ const DriverPage = () => {
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={{}}
           />
-        </>
+        </div>
       )}
     </EditItemView>
   );

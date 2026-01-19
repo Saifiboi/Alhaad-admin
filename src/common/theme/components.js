@@ -256,17 +256,17 @@ export default {
         '&.Mui-selected': {
           backgroundColor: theme.palette.mode === 'dark'
             ? 'rgba(30, 41, 59, 0.5)'
-            : theme.palette.primary.main,
+            : 'rgba(249, 115, 22, 0.20)',
           '&:hover': {
             backgroundColor: theme.palette.mode === 'dark'
               ? 'rgba(30, 41, 59, 0.6)'
-              : theme.palette.primary.main,
+              : 'rgba(249, 115, 22, 0.2)',
           },
           '& .MuiListItemIcon-root': {
-            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
+            color: theme.palette.primary.main,
           },
           '& .MuiListItemText-primary': {
-            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
+            color: theme.palette.primary.main,
             fontWeight: 600,
           },
         },

@@ -7,7 +7,7 @@ import {
   Typography,
   TextField,
   FormControlLabel,
-  Checkbox,
+  Switch,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditItemView from './components/EditItemView';
@@ -45,15 +45,16 @@ const GeofencePage = () => {
       breadcrumbs={['settingsTitle', 'sharedGeofence']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
+                className={classes.fullWidth}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
@@ -66,20 +67,22 @@ const GeofencePage = () => {
                 {t('sharedExtra')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
+                className={classes.fullWidth}
                 value={item.description || ''}
                 onChange={(event) => setItem({ ...item, description: event.target.value })}
                 label={t('sharedDescription')}
               />
               <SelectField
+                className={classes.fullWidth}
                 value={item.calendarId}
                 onChange={(event) => setItem({ ...item, calendarId: Number(event.target.value) })}
                 endpoint="/api/calendars"
                 label={t('sharedCalendar')}
               />
               <FormControlLabel
-                control={<Checkbox checked={item.attributes.hide} onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, hide: e.target.checked } })} />}
+                control={<Switch checked={item.attributes.hide} onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, hide: e.target.checked } })} />}
                 label={t('sharedFilterMap')}
               />
             </AccordionDetails>
@@ -89,7 +92,7 @@ const GeofencePage = () => {
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={geofenceAttributes}
           />
-        </>
+        </div>
       )}
     </EditItemView>
   );

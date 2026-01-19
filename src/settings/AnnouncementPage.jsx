@@ -41,41 +41,47 @@ const AnnouncementPage = () => {
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['serverAnnouncement']}>
-      <Container maxWidth="xs" className={classes.container}>
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">
-              {t('sharedRequired')}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.details}>
-            <SelectField
-              multiple
-              value={users}
-              onChange={(e) => setUsers(e.target.value)}
-              endpoint="/api/users"
-              label={t('settingsUsers')}
-            />
-            <SelectField
-              value={notificator}
-              onChange={(e) => setNotificator(e.target.value)}
-              endpoint="/api/notifications/notificators?announcement=true"
-              keyGetter={(it) => it.type}
-              titleGetter={(it) => t(prefixString('notificator', it.type))}
-              label={t('notificationNotificators')}
-            />
-            <TextField
-              value={message.subject}
-              onChange={(e) => setMessage({ ...message, subject: e.target.value })}
-              label={t('sharedSubject')}
-            />
-            <TextField
-              value={message.body}
-              onChange={(e) => setMessage({ ...message, body: e.target.value })}
-              label={t('commandMessage')}
-            />
-          </AccordionDetails>
-        </Accordion>
+      <Container maxWidth="lg" className={classes.container}>
+        <div className={classes.content}>
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">
+                {t('sharedRequired')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.grid}>
+              <SelectField
+                multiple
+                value={users}
+                onChange={(e) => setUsers(e.target.value)}
+                endpoint="/api/users"
+                label={t('settingsUsers')}
+              />
+              <SelectField
+                value={notificator}
+                onChange={(e) => setNotificator(e.target.value)}
+                endpoint="/api/notifications/notificators?announcement=true"
+                keyGetter={(it) => it.type}
+                titleGetter={(it) => t(prefixString('notificator', it.type))}
+                label={t('notificationNotificators')}
+              />
+              <TextField
+                className={classes.fullWidth}
+                value={message.subject || ''}
+                onChange={(e) => setMessage({ ...message, subject: e.target.value })}
+                label={t('sharedSubject')}
+              />
+              <TextField
+                className={classes.fullWidth}
+                value={message.body || ''}
+                onChange={(e) => setMessage({ ...message, body: e.target.value })}
+                label={t('commandMessage')}
+                multiline
+                rows={4}
+              />
+            </AccordionDetails>
+          </Accordion>
+        </div>
         <div className={classes.buttons}>
           <Button
             type="button"

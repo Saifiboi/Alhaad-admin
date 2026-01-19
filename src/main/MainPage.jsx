@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions } from '../store';
+import { devicesActions, replayActions, errorsActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -36,11 +36,14 @@ const RouterIsolator = ({ children }) => (
 
 const useStyles = makeStyles()((theme) => ({
   root: {
-    height: '100%',
     backgroundColor: 'transparent',
     transition: 'background-color 0.3s ease',
-    paddingTop: '64px', // Space for fixed navbar
-    position: 'relative',
+    position: 'absolute',
+    top: '64px',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: 'hidden',
   },
   sidebar: {
     pointerEvents: 'none',
@@ -151,6 +154,8 @@ const MainPage = () => {
   const [windows, setWindows] = useState({});
   const [activeWindowId, setActiveWindowId] = useState(null);
 
+  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+
   useEffect(() => {
     if (!desktop && mapOnSelect && selectedDeviceId) {
       setDevicesOpen(false);
@@ -171,6 +176,7 @@ const MainPage = () => {
         });
       } else {
         setDevicesOpen(true);
+        dispatch(errorsActions.push(t('errorDeviceSelected')));
       }
       return;
     }
@@ -223,10 +229,10 @@ const MainPage = () => {
       // Open New
       setWindows((prev) => {
         const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
-        const defaultWidth = 600;
-        const defaultHeight = 500;
+        const defaultWidth = 1000;
+        const defaultHeight = 750;
         const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
-        const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
+        const y = Math.max(64, (window.innerHeight - defaultHeight) / 2);
 
         return {
           ...prev,
@@ -234,6 +240,8 @@ const MainPage = () => {
             ...app,
             x,
             y,
+            width: defaultWidth,
+            height: defaultHeight,
             zIndex: maxZ + 1,
             component: (
               <RouterIsolator>
@@ -277,6 +285,27 @@ const MainPage = () => {
     });
   };
 
+  const handleMaximizeWindow = (id) => {
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], maximized: !prev[id].maximized },
+    }));
+  };
+
+  const handleDragStop = (id, x, y) => {
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], x, y },
+    }));
+  };
+
+  const handleResizeStop = (id, width, height, x, y) => {
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], width, height, x, y },
+    }));
+  };
+
   // Window Mode Context Provider
   return (
     <WindowModeContext.Provider value={true}>
@@ -289,7 +318,7 @@ const MainPage = () => {
             onEventsClick={onEventsClick}
           />
         )}
-        <div className={classes.sidebar}>
+        <div className={classes.sidebar} style={anyMaximized ? { display: 'none' } : {}}>
           <Paper className={classes.header}>
             <MainToolbar
               filteredDevices={filteredDevices}
@@ -338,11 +367,17 @@ const MainPage = () => {
                 icon={win.icon}
                 onClose={handleCloseWindow}
                 onMinimize={handleMinimizeWindow}
+                onMaximize={handleMaximizeWindow}
                 onFocus={handleFocusWindow}
+                onDragStop={handleDragStop}
+                onResizeStop={handleResizeStop}
                 zIndex={win.zIndex}
                 x={win.x}
                 y={win.y}
+                defaultWidth={win.width || 1000}
+                defaultHeight={win.height || 750}
                 minimized={win.minimized}
+                maximized={win.maximized}
               >
                 {win.component}
               </DesktopWindow>

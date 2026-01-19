@@ -2,11 +2,10 @@ import { useState } from 'react';
 
 import {
   Button,
-  Checkbox,
+  Switch,
   OutlinedInput,
   FormControl,
   FormControlLabel,
-  Grid,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -154,30 +153,31 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
           {t('sharedAttributes')}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails className={classes.details}>
+      <AccordionDetails className={classes.grid}>
         {convertToList(attributes).map(({
           key, value, type, subtype,
         }) => {
           if (type === 'boolean') {
             return (
-              <Grid container direction="row" justifyContent="space-between" key={key}>
+              <div key={key} className={classes.row} style={{ alignItems: 'center' }}>
                 <FormControlLabel
                   control={(
-                    <Checkbox
+                    <Switch
                       checked={value}
                       onChange={(e) => updateAttribute(key, e.target.checked)}
                     />
                   )}
                   label={getAttributeName(key, subtype)}
+                  sx={{ flexGrow: 1 }}
                 />
                 <IconButton size="small" className={classes.removeButton} onClick={() => deleteAttribute(key)}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
-              </Grid>
+              </div>
             );
           }
           return (
-            <FormControl key={key}>
+            <FormControl key={key} fullWidth>
               <InputLabel>{getAttributeName(key, subtype)}</InputLabel>
               <OutlinedInput
                 label={getAttributeName(key, subtype)}
@@ -197,10 +197,11 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
           );
         })}
         <Button
+          className={classes.fullWidth}
           variant="outlined"
           color="primary"
-          onClick={() => setAddDialogShown(true)}
           startIcon={<AddIcon />}
+          onClick={() => setAddDialogShown(true)}
         >
           {t('sharedAdd')}
         </Button>

@@ -6,8 +6,7 @@ import {
   AccordionDetails,
   Typography,
   FormControlLabel,
-  Checkbox,
-  FormGroup,
+  Switch,
   Button,
   TextField,
 } from '@mui/material';
@@ -54,15 +53,16 @@ const NotificationPage = () => {
       breadcrumbs={['settingsTitle', 'sharedNotification']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <SelectField
+                className={classes.fullWidth}
                 value={item.type}
                 onChange={(e) => setItem({ ...item, type: e.target.value })}
                 endpoint="/api/notifications/types"
@@ -99,25 +99,26 @@ const NotificationPage = () => {
                   label={t('sharedSavedCommand')}
                 />
               )}
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={testNotificators}
-                disabled={!item.notificators}
-              >
-                {t('sharedTestNotificators')}
-              </Button>
-              <FormGroup>
+              <div className={classes.row}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={testNotificators}
+                  disabled={!item.notificators}
+                >
+                  {t('sharedTestNotificators')}
+                </Button>
                 <FormControlLabel
                   control={(
-                    <Checkbox
+                    <Switch
                       checked={item.always}
                       onChange={(e) => setItem({ ...item, always: e.target.checked })}
                     />
                   )}
                   label={t('notificationAlways')}
                 />
-              </FormGroup>
+              </div>
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -126,8 +127,9 @@ const NotificationPage = () => {
                 {t('sharedExtra')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
+                className={classes.fullWidth}
                 value={item.description || ''}
                 onChange={(e) => setItem({ ...item, description: e.target.value })}
                 label={t('sharedDescription')}
@@ -138,20 +140,18 @@ const NotificationPage = () => {
                 endpoint="/api/calendars"
                 label={t('sharedCalendar')}
               />
-              <FormGroup>
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={item.attributes && item.attributes.priority}
-                      onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, priority: e.target.checked } })}
-                    />
-                  )}
-                  label={t('sharedPriority')}
-                />
-              </FormGroup>
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={item.attributes && item.attributes.priority}
+                    onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, priority: e.target.checked } })}
+                  />
+                )}
+                label={t('sharedPriority')}
+              />
             </AccordionDetails>
           </Accordion>
-        </>
+        </div>
       )}
     </EditItemView>
   );

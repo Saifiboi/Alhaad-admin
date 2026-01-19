@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Autocomplete,
-  Checkbox,
+  Switch,
   FormControlLabel,
   MenuItem,
   TextField,
@@ -13,6 +13,7 @@ import { useEffectAsync } from '../../reactHelper';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
 import { prefixString } from '../../common/util/stringUtils';
 import useCommandAttributes from '../../common/attributes/useCommandAttributes';
+import useSettingsStyles from '../common/useSettingsStyles';
 
 const BaseCommandView = ({
   deviceId,
@@ -22,6 +23,7 @@ const BaseCommandView = ({
   savedId,
   setSavedId,
 }) => {
+  const { classes } = useSettingsStyles();
   const t = useTranslation();
   const limitCommands = useRestriction('limitCommands');
 
@@ -83,8 +85,9 @@ const BaseCommandView = ({
   };
 
   return (
-    <>
+    <div className={classes.grid}>
       <Autocomplete
+        className={classes.fullWidth}
         size="small"
         options={options}
         groupBy={
@@ -118,8 +121,9 @@ const BaseCommandView = ({
           if (type === 'boolean') {
             return (
               <FormControlLabel
+                key={key}
                 control={
-                  <Checkbox
+                  <Switch
                     checked={item.attributes[key]}
                     onChange={(e) => {
                       const updateItem = { ...item, attributes: { ...item.attributes } };
@@ -134,6 +138,7 @@ const BaseCommandView = ({
           }
           return (
             <TextField
+              key={key}
               type={type === 'number' ? 'number' : 'text'}
               value={item.attributes[key]}
               onChange={(e) => {
@@ -149,7 +154,7 @@ const BaseCommandView = ({
       {textEnabled && (
         <FormControlLabel
           control={
-            <Checkbox
+            <Switch
               checked={item.textChannel}
               onChange={(e) => setItem({ ...item, textChannel: e.target.checked })}
             />
@@ -160,7 +165,7 @@ const BaseCommandView = ({
       {!item.textChannel && (
         <FormControlLabel
           control={
-            <Checkbox
+            <Switch
               checked={item.attributes?.noQueue}
               onChange={(e) =>
                 setItem({
@@ -173,7 +178,7 @@ const BaseCommandView = ({
           label={t('commandNoQueue')}
         />
       )}
-    </>
+    </div>
   );
 };
 

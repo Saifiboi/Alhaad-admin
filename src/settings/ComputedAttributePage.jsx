@@ -70,14 +70,14 @@ const ComputedAttributePage = () => {
       breadcrumbs={['settingsTitle', 'sharedComputedAttribute']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 value={item.description || ''}
                 onChange={(e) => setItem({ ...item, description: e.target.value })}
@@ -102,11 +102,12 @@ const ComputedAttributePage = () => {
                   return filtered;
                 }}
                 options={options}
-                getOptionLabel={(option) => typeof option === 'object' ? option.inputValue || option.name : option }
+                getOptionLabel={(option) => typeof option === 'object' ? option.inputValue || option.name : option}
                 renderOption={(props, option) => <li {...props}>{option.name || option}</li>}
                 renderInput={(params) => <TextField {...params} label={t('sharedAttribute')} />}
               />
               <TextField
+                className={classes.fullWidth}
                 value={item.expression || ''}
                 onChange={(e) => setItem({ ...item, expression: e.target.value })}
                 label={t('sharedExpression')}
@@ -133,7 +134,7 @@ const ComputedAttributePage = () => {
                 {t('sharedExtra')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 type="number"
                 value={item.priority || 0}
@@ -148,7 +149,7 @@ const ComputedAttributePage = () => {
                 {t('sharedTest')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <SelectField
                 value={deviceId}
                 onChange={(e) => setDeviceId(Number(e.target.value))}
@@ -171,7 +172,7 @@ const ComputedAttributePage = () => {
               />
             </AccordionDetails>
           </Accordion>
-        </>
+        </div>
       )}
     </EditItemView>
   );

@@ -48,9 +48,6 @@ const useStyles = makeStyles()((theme) => ({
   neutral: {
     color: theme.palette.neutral.main,
   },
-  selected: {
-    backgroundColor: theme.palette.action.selected,
-  },
 }));
 
 const DeviceRow = ({ devices, index, style }) => {
@@ -89,7 +86,6 @@ const DeviceRow = ({ devices, index, style }) => {
         onClick={() => dispatch(devicesActions.selectId(item.id))}
         disabled={!admin && item.disabled}
         selected={selectedDeviceId === item.id}
-        className={selectedDeviceId === item.id ? classes.selected : null}
       >
         <ListItemAvatar>
           <Avatar>
@@ -140,10 +136,10 @@ const DeviceRow = ({ devices, index, style }) => {
                       ? (<BatteryCharging60Icon fontSize="small" className={classes.warning} />)
                       : (<Battery60Icon fontSize="small" className={classes.warning} />)
                   )) || (
-                    position.attributes.charge
-                      ? (<BatteryCharging20Icon fontSize="small" className={classes.error} />)
-                      : (<Battery20Icon fontSize="small" className={classes.error} />)
-                  )}
+                      position.attributes.charge
+                        ? (<BatteryCharging20Icon fontSize="small" className={classes.error} />)
+                        : (<Battery20Icon fontSize="small" className={classes.error} />)
+                    )}
                 </IconButton>
               </Tooltip>
             )}

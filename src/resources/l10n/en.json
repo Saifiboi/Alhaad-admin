@@ -175,6 +175,7 @@
     "errorGeneral": "Invalid parameters or constraints violation",
     "errorConnection": "Connection error",
     "errorSocket": "Web socket connection error",
+    "errorDeviceSelected": "Select device first",
     "errorZero": "Can't be zero",
     "userEmail": "Email",
     "userPassword": "Password",
