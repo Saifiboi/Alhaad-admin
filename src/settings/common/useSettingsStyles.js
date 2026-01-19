@@ -9,29 +9,29 @@ export default makeStyles()((theme) => ({
     paddingRight: theme.spacing(1),
   },
   container: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1.5),
   },
   buttons: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    padding: theme.spacing(2, 4),
+    padding: theme.spacing(1, 4),
     backgroundColor: theme.palette.background.paper,
     borderTop: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1.5),
     zIndex: 1,
     '& > *': {
-      minWidth: '120px',
+      minWidth: '100px',
     },
   },
   details: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2),
-    paddingBottom: theme.spacing(3),
+    gap: theme.spacing(1.5),
+    paddingBottom: theme.spacing(2.5),
   },
   content: {
     paddingBottom: theme.spacing(10), // Space for fixed footer
@@ -43,7 +43,7 @@ export default makeStyles()((theme) => ({
   grid: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1.5),
     [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '1fr',
     },
@@ -53,7 +53,7 @@ export default makeStyles()((theme) => ({
   },
   row: {
     display: 'flex',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1.5),
     gridColumn: '1 / -1',
     '& > *': {
       flex: 1,

@@ -9,37 +9,40 @@ import { useTheme } from '@mui/material/styles';
 const useStyles = makeStyles()((theme) => ({
     dockContainer: {
         position: 'fixed',
-        bottom: theme.spacing(2),
+        bottom: theme.spacing(1),
         left: '50%',
         transform: 'translateX(-50%)',
-        zIndex: 1300, // Above almost everything
+        zIndex: 1400, // Above windows, below Navbar
         display: 'flex',
         justifyContent: 'center',
-        padding: theme.spacing(1, 2),
+        padding: theme.spacing(0.25, 1),
         backgroundColor: 'rgba(255, 255, 255, 0.2)', // Very transparent
         backdropFilter: 'blur(15px)',
-        borderRadius: '24px',
+        borderRadius: '16px',
         border: `1px solid ${theme.palette.divider}`,
         transition: 'all 0.3s ease',
         '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.4)',
-            transform: 'translateX(-50%) scale(1.02)',
+            transform: 'translateX(-50%) scale(1.01)',
         },
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     },
     dockItem: {
-        margin: theme.spacing(0, 1),
+        margin: theme.spacing(0, 0.25),
         transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         '&:hover': {
-            transform: 'translateY(-10px) scale(1.2)',
+            transform: 'translateY(-5px) scale(1.1)',
         },
     },
     iconButton: {
         backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(1.5),
+        padding: theme.spacing(0.75),
+        '& .MuiSvgIcon-root': {
+            fontSize: '1.25rem',
+        },
         boxShadow: theme.shadows[4],
         '&:hover': {
             backgroundColor: theme.palette.primary.main,

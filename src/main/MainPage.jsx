@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions, errorsActions } from '../store';
+import { devicesActions, replayActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -36,14 +36,11 @@ const RouterIsolator = ({ children }) => (
 
 const useStyles = makeStyles()((theme) => ({
   root: {
+    height: '100%',
     backgroundColor: 'transparent',
     transition: 'background-color 0.3s ease',
-    position: 'absolute',
-    top: '64px',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: 'hidden',
+    paddingTop: '64px', // Space for fixed navbar
+    position: 'relative',
   },
   sidebar: {
     pointerEvents: 'none',
@@ -53,10 +50,11 @@ const useStyles = makeStyles()((theme) => ({
       position: 'fixed',
       left: 0,
       top: '64px',
-      height: `calc(100% - 64px - ${theme.spacing(3)})`,
+      height: `calc(100vh - 64px - ${theme.spacing(1.5)})`,
       width: theme.dimensions.drawerWidthDesktop,
       margin: theme.spacing(0, 1.5, 1.5, 1.5),
       zIndex: 3,
+      transition: 'height 0.3s ease',
     },
     [theme.breakpoints.down('md')]: {
       height: '100%',
@@ -153,8 +151,68 @@ const MainPage = () => {
   // Window Manager State
   const [windows, setWindows] = useState({});
   const [activeWindowId, setActiveWindowId] = useState(null);
+  const [sidebarHeight, setSidebarHeight] = useState(null);
 
-  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+  // Detect Dock position and adjust sidebar height
+  useEffect(() => {
+    if (!desktop) return;
+
+    const adjustSidebarHeight = () => {
+      const dockElement = document.querySelector('[class*="dockContainer"]');
+      if (!dockElement) {
+        setSidebarHeight(null);
+        return;
+      }
+
+      const dockRect = dockElement.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const sidebarWidth = theme.dimensions.drawerWidthDesktop || 280;
+      const sidebarLeft = theme.spacing(1.5) || 12; // margin-left
+      const sidebarRight = sidebarLeft + sidebarWidth;
+
+      // Check if dock is at the bottom (horizontal layout)
+      const isDockAtBottom = dockRect.bottom > viewportHeight - 100 &&
+        dockRect.left > sidebarRight - 50; // -50px tolerance for overlap
+
+      if (isDockAtBottom) {
+        // Dock is at bottom and might collide - adjust sidebar height
+        const dockHeight = dockRect.height;
+        const dockBottomMargin = viewportHeight - dockRect.bottom;
+        const topOffset = 64; // navbar height
+        const sidebarBottomMargin = 12; // theme.spacing(1.5)
+        const gapAboveDock = 8; // gap between sidebar and dock
+        const availableHeight = viewportHeight - topOffset - dockHeight - sidebarBottomMargin - gapAboveDock - dockBottomMargin;
+        setSidebarHeight(`${availableHeight}px`);
+      } else {
+        // Dock is on the side or not colliding - use full available height
+        const topOffset = 64; // navbar height
+        const sidebarBottomMargin = 12; // theme.spacing(1.5)
+        const availableHeight = viewportHeight - topOffset - sidebarBottomMargin;
+        setSidebarHeight(`${availableHeight}px`);
+      }
+    };
+
+    // Initial adjustment
+    adjustSidebarHeight();
+
+    // Re-adjust on window resize
+    window.addEventListener('resize', adjustSidebarHeight);
+
+    // Re-adjust when dock might change (use MutationObserver)
+    const observer = new MutationObserver(adjustSidebarHeight);
+    const targetNode = document.body;
+    observer.observe(targetNode, { childList: true, subtree: true });
+
+    // Periodic check in case dock position changes
+    const interval = setInterval(adjustSidebarHeight, 1000);
+
+    return () => {
+      window.removeEventListener('resize', adjustSidebarHeight);
+      observer.disconnect();
+      clearInterval(interval);
+    };
+  }, [desktop, theme]);
 
   useEffect(() => {
     if (!desktop && mapOnSelect && selectedDeviceId) {
@@ -176,7 +234,6 @@ const MainPage = () => {
         });
       } else {
         setDevicesOpen(true);
-        dispatch(errorsActions.push(t('errorDeviceSelected')));
       }
       return;
     }
@@ -229,10 +286,10 @@ const MainPage = () => {
       // Open New
       setWindows((prev) => {
         const maxZ = Math.max(0, ...Object.values(prev).map((w) => w.zIndex || 0));
-        const defaultWidth = 1000;
-        const defaultHeight = 750;
+        const defaultWidth = 680;
+        const defaultHeight = 440;
         const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
-        const y = Math.max(64, (window.innerHeight - defaultHeight) / 2);
+        const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
 
         return {
           ...prev,
@@ -318,7 +375,10 @@ const MainPage = () => {
             onEventsClick={onEventsClick}
           />
         )}
-        <div className={classes.sidebar} style={anyMaximized ? { display: 'none' } : {}}>
+        <div
+          className={classes.sidebar}
+          style={sidebarHeight ? { height: sidebarHeight } : {}}
+        >
           <Paper className={classes.header}>
             <MainToolbar
               filteredDevices={filteredDevices}
@@ -374,8 +434,8 @@ const MainPage = () => {
                 zIndex={win.zIndex}
                 x={win.x}
                 y={win.y}
-                defaultWidth={win.width || 1000}
-                defaultHeight={win.height || 750}
+                defaultWidth={win.width || 680}
+                defaultHeight={win.height || 440}
                 minimized={win.minimized}
                 maximized={win.maximized}
               >

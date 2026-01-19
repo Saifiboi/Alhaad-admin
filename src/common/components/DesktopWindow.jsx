@@ -25,7 +25,7 @@ const useStyles = makeStyles()((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: theme.spacing(0.5, 1),
+        padding: theme.spacing(0.25, 0.75),
         backgroundColor: theme.palette.action.selected, // Slightly darker header
         cursor: 'move',
         userSelect: 'none',
@@ -34,8 +34,8 @@ const useStyles = makeStyles()((theme) => ({
     title: {
         flexGrow: 1,
         marginLeft: theme.spacing(1),
-        fontWeight: 500,
-        fontSize: '0.9rem',
+        fontWeight: 400,
+        fontSize: '0.85rem',
     },
     content: {
         flexGrow: 1,
@@ -90,11 +90,25 @@ const DesktopWindow = ({
             }}
             minWidth={300}
             minHeight={200}
-            bounds="parent"
+            bounds={maximized ? undefined : "parent"}
+            maxWidth="100%"
+            maxHeight="100%"
             disableDragging={maximized}
             enableResizing={!maximized}
             dragHandleClassName="window-header"
-            style={{ zIndex, display: minimized ? 'none' : undefined }}
+            style={{
+                zIndex,
+                display: minimized ? 'none' : undefined,
+                ...(maximized && {
+                    position: 'fixed',
+                    top: '64px',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: '100%',
+                    height: 'calc(100vh - 64px)',
+                })
+            }}
             onMouseDown={() => onFocus(id)}
             onTouchStart={() => onFocus(id)}
             onDragStop={(e, d) => onDragStop(id, d.x, d.y)}
