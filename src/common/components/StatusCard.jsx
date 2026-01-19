@@ -56,11 +56,11 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(1, 1, 0, 2),
+    padding: theme.spacing(0.5, 1, 0, 1.5),
   },
   content: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5),
     maxHeight: theme.dimensions.cardContentMaxHeight,
     overflow: 'auto',
   },
@@ -91,7 +91,7 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     left: '50%',
     [theme.breakpoints.up('md')]: {
       left: `calc(50% + ${desktopPadding} / 2)`,
-      bottom: theme.spacing(15),
+      bottom: theme.spacing(8),
     },
     [theme.breakpoints.down('md')]: {
       left: '50%',
@@ -107,10 +107,10 @@ const StatusRow = ({ name, content }) => {
   return (
     <TableRow>
       <TableCell className={classes.cell}>
-        <Typography variant="body2">{name}</Typography>
+        <Typography variant="caption">{name}</Typography>
       </TableCell>
       <TableCell className={classes.cell}>
-        <Typography variant="body2" color="textSecondary">{content}</Typography>
+        <Typography variant="caption" color="textSecondary">{content}</Typography>
       </TableCell>
     </TableRow>
   );
@@ -200,7 +200,7 @@ const StatusCard = ({
                 </CardMedia>
               ) : (
                 <div className={`${classes.header} draggable-header`}>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="caption" color="textSecondary" fontWeight="bold">
                     {device.name}
                   </Typography>
                   <IconButton
@@ -234,7 +234,7 @@ const StatusCard = ({
                     <TableFooter>
                       <TableRow>
                         <TableCell colSpan={2} className={classes.cell}>
-                          <Typography variant="body2">
+                          <Typography variant="caption">
                             <Link component={RouterLink} to={`/position/${position.id}`}>{t('sharedShowDetails')}</Link>
                           </Typography>
                         </TableCell>
@@ -246,44 +246,49 @@ const StatusCard = ({
               <CardActions classes={{ root: classes.actions }} disableSpacing>
                 <Tooltip title={t('sharedExtra')}>
                   <IconButton
+                    size="small"
                     color="secondary"
                     onClick={(e) => setAnchorEl(e.currentTarget)}
                     disabled={!position}
                   >
-                    <PendingIcon />
+                    <PendingIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('reportReplay')}>
                   <IconButton
+                    size="small"
                     onClick={() => (onReplay ? onReplay() : navigate(`/replay?deviceId=${deviceId}`))}
                     disabled={disableActions || !position}
                   >
-                    <RouteIcon />
+                    <RouteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('commandTitle')}>
                   <IconButton
+                    size="small"
                     onClick={() => (onCommand ? onCommand() : navigate(`/settings/device/${deviceId}/command`))}
                     disabled={disableActions}
                   >
-                    <SendIcon />
+                    <SendIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedEdit')}>
                   <IconButton
+                    size="small"
                     onClick={() => (onEdit ? onEdit() : navigate(`/settings/device/${deviceId}`))}
                     disabled={disableActions || deviceReadonly}
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedRemove')}>
                   <IconButton
+                    size="small"
                     color="error"
                     onClick={() => setRemoving(true)}
                     disabled={disableActions || deviceReadonly}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </CardActions>

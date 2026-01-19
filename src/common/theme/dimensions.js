@@ -8,8 +8,8 @@ export default {
   eventsDrawerWidth: '320px',
   bottomBarHeight: 56,
   popupMapOffset: 300,
-  popupMaxWidth: 288,
-  popupImageHeight: 144,
+  popupMaxWidth: 240,
+  popupImageHeight: 120,
   cardContentMaxHeight: '40vh',
   qrCodeSize: 192,
 };
