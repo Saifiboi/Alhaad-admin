@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import TextField from '@mui/material/TextField';
 import {
   Accordion,
@@ -23,6 +23,7 @@ import { sessionActions } from '../store';
 import EditAttributesAccordion from './components/EditAttributesAccordion';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import SelectField from '../common/components/SelectField';
+import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
@@ -57,6 +58,16 @@ const ServerPage = () => {
     }
   });
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
+
   const handleSave = useCatch(async () => {
     const response = await fetchOrThrow('/api/server', {
       method: 'PUT',
@@ -64,7 +75,7 @@ const ServerPage = () => {
       body: JSON.stringify(item),
     });
     dispatch(sessionActions.updateServer(await response.json()));
-    navigate(-1);
+    handleBack();
   });
 
   return (
@@ -293,7 +304,7 @@ const ServerPage = () => {
                 definitions={{ ...commonUserAttributes, ...commonDeviceAttributes, ...serverAttributes }}
               />
               <div className={classes.buttons}>
-                <Button variant="outlined" color="primary" onClick={() => navigate(-1)}>
+                <Button variant="outlined" color="primary" onClick={handleBack}>
                   {t('sharedCancel')}
                 </Button>
                 <Button variant="contained" color="primary" onClick={handleSave}>

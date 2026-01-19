@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Accordion,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import BaseCommandView from './components/BaseCommandView';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
@@ -27,6 +28,16 @@ const CommandDevicePage = () => {
   const [savedId, setSavedId] = useState(0);
   const [item, setItem] = useState({});
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
+
   const handleSend = useCatch(async () => {
     let command;
     if (savedId) {
@@ -43,7 +54,7 @@ const CommandDevicePage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(command),
     });
-    navigate(-1);
+    handleBack();
   });
 
   const validate = () => savedId || (item && item.type);
@@ -77,7 +88,7 @@ const CommandDevicePage = () => {
             type="button"
             color="primary"
             variant="outlined"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
           >
             {t('sharedCancel')}
           </Button>

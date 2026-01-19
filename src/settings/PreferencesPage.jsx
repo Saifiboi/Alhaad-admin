@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CachedIcon from '@mui/icons-material/Cached';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useTranslation, useTranslationKeys } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
@@ -70,6 +71,16 @@ const PreferencesPage = () => {
     name: t(it),
   }));
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
+
   const handleSave = useCatch(async () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {
       method: 'PUT',
@@ -77,7 +88,7 @@ const PreferencesPage = () => {
       body: JSON.stringify({ ...user, attributes }),
     });
     dispatch(sessionActions.updateUser(await response.json()));
-    navigate(-1);
+    handleBack();
   });
 
   const handleReboot = useCatch(async () => {
@@ -343,7 +354,7 @@ const PreferencesPage = () => {
                 </AccordionDetails>
               </Accordion>
               <div className={classes.buttons}>
-                <Button variant="outlined" color="primary" onClick={() => navigate(-1)}>
+                <Button variant="outlined" color="primary" onClick={handleBack}>
                   {t('sharedCancel')}
                 </Button>
                 <Button variant="contained" color="primary" onClick={handleSave}>

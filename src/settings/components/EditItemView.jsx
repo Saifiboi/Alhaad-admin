@@ -1,3 +1,4 @@
+import { useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container, Button, Accordion, AccordionDetails, AccordionSummary, Skeleton, Typography, TextField,
@@ -5,6 +6,7 @@ import {
 import { useCatch, useEffectAsync } from '../../reactHelper';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import PageLayout from '../../common/components/PageLayout';
+import WindowModeContext from '../../common/components/WindowModeContext';
 import useSettingsStyles from '../common/useSettingsStyles';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
 
@@ -17,6 +19,8 @@ const EditItemView = ({
 
   const { id } = useParams();
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
   useEffectAsync(async () => {
     if (!item) {
       if (id) {
@@ -27,6 +31,14 @@ const EditItemView = ({
       }
     }
   }, [id, item, defaultItem]);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
 
   const handleSave = useCatch(async () => {
     let url = `/api/${endpoint}`;
@@ -43,7 +55,7 @@ const EditItemView = ({
     if (onItemSaved) {
       onItemSaved(await response.json());
     }
-    navigate(-1);
+    handleBack();
   });
 
   return (
@@ -71,7 +83,7 @@ const EditItemView = ({
           <Button
             color="primary"
             variant="outlined"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             disabled={!item}
           >
             {t('sharedCancel')}

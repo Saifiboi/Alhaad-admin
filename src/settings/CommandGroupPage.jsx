@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import { useCatch } from '../reactHelper';
@@ -35,6 +36,16 @@ const CommandGroupPage = () => {
 
   const [item, setItem] = useState({ type: 'custom', attributes: {} });
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
+
   const handleSend = useCatch(async () => {
     const query = new URLSearchParams({ groupId: id });
     await fetchOrThrow(`/api/commands/send?${query.toString()}`, {
@@ -42,7 +53,7 @@ const CommandGroupPage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item),
     });
-    navigate(-1);
+    handleBack();
   });
 
   return (
@@ -84,7 +95,7 @@ const CommandGroupPage = () => {
             type="button"
             color="primary"
             variant="outlined"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
           >
             {t('sharedCancel')}
           </Button>

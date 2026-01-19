@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import { useCatchCallback } from '../reactHelper';
@@ -30,6 +31,16 @@ const SharePage = () => {
 
   const [expiration, setExpiration] = useState(dayjs().add(1, 'week').locale('en').format('YYYY-MM-DD'));
   const [link, setLink] = useState();
+
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const handleBack = useCallback(() => {
+    if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate]);
 
   const handleShare = useCatchCallback(async () => {
     const expirationTime = dayjs(expiration).toISOString();
@@ -84,7 +95,7 @@ const SharePage = () => {
             type="button"
             color="primary"
             variant="outlined"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
           >
             {t('sharedCancel')}
           </Button>

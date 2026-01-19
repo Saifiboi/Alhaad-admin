@@ -446,7 +446,9 @@ const MainPage = () => {
                 minimized={win.minimized}
                 maximized={win.maximized}
               >
-                {win.component}
+                <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id) }}>
+                  {win.component}
+                </WindowModeContext.Provider>
               </DesktopWindow>
             ))}
           </>
