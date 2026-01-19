@@ -113,9 +113,4 @@ export const desktopApps = [
         icon: <DescriptionIcon />,
         path: '/reports/combined',
     },
-    {
-        id: 'account',
-        title: 'Account',
-        icon: <PersonIcon />,
-    },
 ];

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions } from '../store';
+import { devicesActions, replayActions, errorsActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -234,6 +234,7 @@ const MainPage = () => {
         });
       } else {
         setDevicesOpen(true);
+        dispatch(errorsActions.push(t('errorDeviceSelected')));
       }
       return;
     }
