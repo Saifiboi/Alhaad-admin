@@ -32,7 +32,7 @@ export default (server, darkMode) => ({
   },
   // Modern glassmorphism colors
   glass: {
-    background: darkMode ? 'rgba(15, 23, 42, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+    background: darkMode ? 'rgba(15, 23, 42, 0.6)' : 'rgba(255, 255, 255, 0.6)',
     border: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(226, 232, 240, 0.8)',
   },
   // Accent colors for interactive elements

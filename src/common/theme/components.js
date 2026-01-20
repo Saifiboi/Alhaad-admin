@@ -1,3 +1,5 @@
+import { alpha } from '@mui/material/styles';
+
 export default {
   MuiCssBaseline: {
     styleOverrides: (theme) => ({
@@ -256,17 +258,17 @@ export default {
         '&.Mui-selected': {
           backgroundColor: theme.palette.mode === 'dark'
             ? 'rgba(30, 41, 59, 0.5)'
-            : theme.palette.primary.main,
+            : alpha(theme.palette.primary.main, 0.45),
           '&:hover': {
             backgroundColor: theme.palette.mode === 'dark'
               ? 'rgba(30, 41, 59, 0.6)'
-              : theme.palette.primary.main,
+              : alpha(theme.palette.primary.main, 0.25),
           },
           '& .MuiListItemIcon-root': {
-            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
+            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : theme.palette.primary.main,
           },
           '& .MuiListItemText-primary': {
-            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : '#ffffff',
+            color: theme.palette.mode === 'dark' ? theme.palette.primary.main : theme.palette.primary.main,
             fontWeight: 600,
           },
         },
