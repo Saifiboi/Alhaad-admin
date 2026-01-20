@@ -80,7 +80,7 @@ const DesktopWindow = ({
 
     return (
         <Rnd
-            size={maximized ? { width: '100%', height: '100%' } : { width: defaultWidth, height: defaultHeight }}
+            size={maximized ? { width: '100%', height: '91%' } : { width: defaultWidth, height: defaultHeight }}
             position={maximized ? { x: 0, y: 0 } : { x: x || 50, y: y || 50 }}
             default={{
                 x: x || 50,
