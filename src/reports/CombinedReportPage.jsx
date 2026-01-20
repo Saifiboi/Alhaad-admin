@@ -1,4 +1,3 @@
-```javascript
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -45,7 +44,7 @@ const CombinedReportPage = () => {
     groupIds.forEach((groupId) => query.append('groupId', groupId));
     setLoading(true);
     try {
-      const response = await fetchOrThrow(`/ api / reports / combined ? ${ query.toString() } `);
+      const response = await fetchOrThrow(`/api/reports/combined?${query.toString()}`);
       setItems(await response.json());
     } finally {
       setLoading(false);
@@ -102,4 +101,3 @@ const CombinedReportPage = () => {
 };
 
 export default CombinedReportPage;
-```

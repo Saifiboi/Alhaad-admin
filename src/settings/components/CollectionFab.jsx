@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme) => ({
     [theme.breakpoints.down('md')]: {
       bottom: `calc(${theme.dimensions.bottomBarHeight}px + ${theme.spacing(1.5)})`,
     },
-    zIndex: 1, // Ensure it sits above content but below potential overlays
+    zIndex: theme.zIndex.speedDial, // Ensure it sits above content but below potential overlays
   },
 }));
 

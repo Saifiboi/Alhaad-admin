@@ -22,7 +22,7 @@ export default makeStyles()((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     gap: theme.spacing(1.5),
-    zIndex: 1,
+    zIndex: theme.zIndex.speedDial,
     '& > *': {
       minWidth: '100px',
     },
