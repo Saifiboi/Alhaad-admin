@@ -272,7 +272,7 @@ const PreferencesPage = () => {
                     <div className={classes.grid}>
                       <FormControlLabel
                         control={<Switch checked={attributes.soundEvents} onChange={(e) => setAttributes({ ...attributes, soundEvents: e.target.checked })} />}
-                        label={t('deviceOnline')}
+                        label={t('reportEvents')}
                       />
                       <FormControlLabel
                         control={<Switch checked={attributes.soundAlarms} onChange={(e) => setAttributes({ ...attributes, soundAlarms: e.target.checked })} />}
@@ -327,7 +327,7 @@ const PreferencesPage = () => {
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="subtitle1">
-                    {t('settingsAppInfo')}
+                    {t('sharedInfoTitle')}
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails className={classes.grid}>
