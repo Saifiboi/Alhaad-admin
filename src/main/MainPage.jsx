@@ -251,7 +251,7 @@ const MainPage = () => {
       return;
     }
 
-    if (app.id === 'geofences' || app.id === 'replay') {
+    if (app.id === 'geofences' || app.id === 'replay' || app.id === 'reports') {
       navigate(app.path);
       return;
     }

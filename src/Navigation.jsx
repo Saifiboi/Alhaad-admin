@@ -176,24 +176,25 @@ const Navigation = () => {
               <Route path="user" element={<UserPage />} />
             </Route>
 
-            <Route path="reports">
-              <Route path="combined" element={<CombinedReportPage />} />
-              <Route path="chart" element={<ChartReportPage />} />
-              <Route path="events" element={<EventReportPage />} />
-              <Route path="route" element={<PositionsReportPage />} />
-              <Route path="stops" element={<StopReportPage />} />
-              <Route path="summary" element={<SummaryReportPage />} />
-              <Route path="trips" element={<TripReportPage />} />
-              <Route path="scheduled" element={<ScheduledPage />} />
-              <Route path="statistics" element={<StatisticsPage />} />
-              <Route path="audit" element={<AuditPage />} />
-              <Route path="logs" element={<LogsPage />} />
-            </Route>
+
           </>
         )}
         {desktop && (
           <Route path="position/:id" element={<PositionPage />} />
         )}
+        <Route path="reports">
+          <Route path="combined" element={<CombinedReportPage />} />
+          <Route path="chart" element={<ChartReportPage />} />
+          <Route path="events" element={<EventReportPage />} />
+          <Route path="route" element={<PositionsReportPage />} />
+          <Route path="stops" element={<StopReportPage />} />
+          <Route path="summary" element={<SummaryReportPage />} />
+          <Route path="trips" element={<TripReportPage />} />
+          <Route path="scheduled" element={<ScheduledPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
+          <Route path="audit" element={<AuditPage />} />
+          <Route path="logs" element={<LogsPage />} />
+        </Route>
         <Route path="*" element={<Typography variant="h4" sx={{ p: 4 }}>404 Not Found</Typography>} />
       </Route>
     </Routes>
