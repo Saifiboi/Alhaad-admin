@@ -9,8 +9,7 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
 import ReportFilter, { updateReportParams } from './components/ReportFilter';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import PositionValue from '../common/components/PositionValue';
 import ColumnSelect from './components/ColumnSelect';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
@@ -108,7 +107,7 @@ const PositionsReportPage = () => {
   });
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportPositions']}>
+    <ReportLayout>
       <div className={classes.container}>
         {selectedItem && (
           <div className={classes.containerMap}>
@@ -200,7 +199,7 @@ const PositionsReportPage = () => {
           </Table>
         </div>
       </div>
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

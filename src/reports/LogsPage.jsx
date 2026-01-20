@@ -8,8 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import { sessionActions } from '../store';
 
 const useStyles = makeStyles()((theme) => ({
@@ -38,7 +37,7 @@ const LogsPage = () => {
   };
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'sharedLogs']}>
+    <ReportLayout>
       <Table>
         <TableHead>
           <TableRow>
@@ -71,7 +70,7 @@ const LogsPage = () => {
           ))}
         </TableBody>
       </Table>
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

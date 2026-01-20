@@ -14,8 +14,7 @@ import {
 import ReportFilter from './components/ReportFilter';
 import { useAttributePreference } from '../common/util/preferences';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import ColumnSelect from './components/ColumnSelect';
 import usePersistedState from '../common/util/usePersistedState';
 import { useCatch } from '../reactHelper';
@@ -124,7 +123,7 @@ const StopReportPage = () => {
   };
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportStops']}>
+    <ReportLayout>
       <div className={classes.container}>
         {selectedItem && (
           <div className={classes.containerMap}>
@@ -184,7 +183,7 @@ const StopReportPage = () => {
           </Table>
         </div>
       </div>
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

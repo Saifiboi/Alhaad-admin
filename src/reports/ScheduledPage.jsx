@@ -7,8 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffectAsync } from '../reactHelper';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import TableShimmer from '../common/components/TableShimmer';
 import RemoveDialog from '../common/components/RemoveDialog';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -59,7 +58,7 @@ const ScheduledPage = () => {
   };
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['settingsTitle', 'reportScheduled']}>
+    <ReportLayout>
       <Table>
         <TableHead>
           <TableRow>
@@ -96,7 +95,7 @@ const ScheduledPage = () => {
           }
         }}
       />
-    </PageLayout>
+    </ReportLayout>
   );
 };
 
