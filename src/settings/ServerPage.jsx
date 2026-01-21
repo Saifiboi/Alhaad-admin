@@ -283,20 +283,23 @@ const ServerPage = () => {
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="subtitle1">
-                    {t('sharedExtra')}
+                    {t('sharedFile')}
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails className={classes.grid}>
-                  <MuiFileInput
-                    placeholder={t('settingsLogo')}
-                    onChange={handleFileChange}
-                    inputProps={{ accept: 'image/*' }}
-                  />
-                  <MuiFileInput
-                    placeholder={t('settingsLogoInverted')}
-                    onChange={handleFileChange}
-                    inputProps={{ accept: 'image/*' }}
-                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="label"
+                    sx={{ color: 'common.white' }}
+                  >
+                    {t('sharedSelectFile')}
+                    <input
+                      type="file"
+                      hidden
+                      onChange={(e) => handleFileChange(e.target.files[0])}
+                    />
+                  </Button>
                 </AccordionDetails>
               </Accordion>
               <EditAttributesAccordion
@@ -308,7 +311,7 @@ const ServerPage = () => {
                 <Button variant="outlined" color="primary" onClick={handleBack}>
                   {t('sharedCancel')}
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleSave}>
+                <Button variant="contained" color="primary" onClick={handleSave} sx={{ color: 'common.white' }}>
                   {t('sharedSave')}
                 </Button>
               </div>
