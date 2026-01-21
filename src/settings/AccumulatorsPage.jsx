@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Accordion,
   AccordionSummary,
@@ -45,13 +45,16 @@ const AccumulatorsPage = () => {
 
   const { isWindow, onClose } = useContext(WindowModeContext);
 
+  const location = useLocation();
   const handleBack = useCallback(() => {
-    if (isWindow && onClose) {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
       onClose();
     } else {
       navigate(-1);
     }
-  }, [isWindow, onClose, navigate]);
+  }, [isWindow, onClose, navigate, location.key]);
 
   const handleSave = useCatch(async () => {
     await fetchOrThrow(`/api/devices/${deviceId}/accumulators`, {

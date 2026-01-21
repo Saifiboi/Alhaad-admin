@@ -1,5 +1,5 @@
 import { useContext, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Container, Button, Accordion, AccordionDetails, AccordionSummary, Skeleton, Typography, TextField,
 } from '@mui/material';
@@ -32,13 +32,16 @@ const EditItemView = ({
     }
   }, [id, item, defaultItem]);
 
+  const location = useLocation();
   const handleBack = useCallback(() => {
-    if (isWindow && onClose) {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
       onClose();
     } else {
       navigate(-1);
     }
-  }, [isWindow, onClose, navigate]);
+  }, [isWindow, onClose, navigate, location.key]);
 
   const handleSave = useCatch(async () => {
     let url = `/api/${endpoint}`;

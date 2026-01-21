@@ -16,7 +16,7 @@ import {
   FormGroup,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { MuiFileInput } from 'mui-file-input';
 import { sessionActions } from '../store';
@@ -60,13 +60,16 @@ const ServerPage = () => {
 
   const { isWindow, onClose } = useContext(WindowModeContext);
 
+  const location = useLocation();
   const handleBack = useCallback(() => {
-    if (isWindow && onClose) {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
       onClose();
     } else {
       navigate(-1);
     }
-  }, [isWindow, onClose, navigate]);
+  }, [isWindow, onClose, navigate, location.key]);
 
   const handleSave = useCatch(async () => {
     const response = await fetchOrThrow('/api/server', {

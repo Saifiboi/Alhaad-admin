@@ -1,7 +1,7 @@
 import { useState, useContext, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Accordion, AccordionSummary, AccordionDetails, Typography, Container, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, FormGroup, InputAdornment, IconButton, OutlinedInput, Autocomplete, TextField, createFilterOptions, Button,
 } from '@mui/material';
@@ -73,13 +73,16 @@ const PreferencesPage = () => {
 
   const { isWindow, onClose } = useContext(WindowModeContext);
 
+  const location = useLocation();
   const handleBack = useCallback(() => {
-    if (isWindow && onClose) {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
       onClose();
     } else {
       navigate(-1);
     }
-  }, [isWindow, onClose, navigate]);
+  }, [isWindow, onClose, navigate, location.key]);
 
   const handleSave = useCatch(async () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {
