@@ -86,6 +86,13 @@ const DeviceRow = ({ devices, index, style }) => {
         onClick={() => dispatch(devicesActions.selectId(item.id))}
         disabled={!admin && item.disabled}
         selected={selectedDeviceId === item.id}
+        sx={{
+          '&.Mui-selected': {
+            '& .MuiListItemText-primary': {
+              color: (theme) => (theme.palette.mode === 'light' ? theme.palette.text.primary : theme.palette.primary.main),
+            },
+          },
+        }}
       >
         <ListItemAvatar>
           <Avatar>
