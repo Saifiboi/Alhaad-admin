@@ -209,7 +209,7 @@ const UserPage = () => {
               />
               <Button
                 className={classes.fullWidth}
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={() => {
                   const { lng, lat } = map.getCenter();
@@ -220,6 +220,7 @@ const UserPage = () => {
                     zoom: Number(map.getZoom().toFixed(1)),
                   });
                 }}
+                sx={{ color: 'common.white' }}
               >
                 {t('mapCurrentLocation')}
               </Button>
@@ -362,9 +363,10 @@ const UserPage = () => {
               />
               <Button
                 className={classes.fullWidth}
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={() => setRevokeDialogOpen(true)}
+                sx={{ color: 'common.white' }}
               >
                 {t('userRevokeToken')}
               </Button>
@@ -455,7 +457,7 @@ const UserPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeRevokeDialog}>{t('sharedCancel')}</Button>
-          <Button onClick={handleRevokeToken} disabled={!revokeToken} variant="contained">
+          <Button onClick={handleRevokeToken} disabled={!revokeToken} variant="contained" sx={{ color: 'common.white' }}>
             {t('userRevokeToken')}
           </Button>
         </DialogActions>

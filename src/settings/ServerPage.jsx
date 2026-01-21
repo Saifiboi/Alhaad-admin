@@ -230,7 +230,7 @@ const ServerPage = () => {
                   />
                   <Button
                     className={classes.fullWidth}
-                    variant="outlined"
+                    variant="contained"
                     color="primary"
                     onClick={() => {
                       const { lng, lat } = map.getCenter();
@@ -241,6 +241,7 @@ const ServerPage = () => {
                         zoom: Number(map.getZoom().toFixed(1)),
                       });
                     }}
+                    sx={{ color: 'common.white' }}
                   >
                     {t('mapCurrentLocation')}
                   </Button>

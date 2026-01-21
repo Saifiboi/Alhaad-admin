@@ -347,7 +347,7 @@ const PreferencesPage = () => {
                     InputProps={{ readOnly: true }}
                   />
                   {admin && (
-                    <Button variant="outlined" color="error" onClick={handleReboot}>
+                    <Button variant="contained" color="error" onClick={handleReboot} sx={{ color: 'common.white' }}>
                       {t('serverReboot')}
                     </Button>
                   )}
@@ -357,7 +357,7 @@ const PreferencesPage = () => {
                 <Button variant="outlined" color="primary" onClick={handleBack}>
                   {t('sharedCancel')}
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleSave}>
+                <Button variant="contained" color="primary" onClick={handleSave} sx={{ color: 'common.white' }}>
                   {t('sharedSave')}
                 </Button>
               </div>

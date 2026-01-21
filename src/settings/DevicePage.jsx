@@ -170,9 +170,10 @@ const DevicePage = () => {
                   disabled={!admin}
                 />
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={() => setShowQr(true)}
+                  sx={{ color: 'common.white' }}
                 >
                   {t('sharedQrCode')}
                 </Button>

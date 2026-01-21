@@ -198,10 +198,11 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
         })}
         <Button
           className={classes.fullWidth}
-          variant="outlined"
+          variant="contained"
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => setAddDialogShown(true)}
+          sx={{ color: 'common.white' }}
         >
           {t('sharedAdd')}
         </Button>

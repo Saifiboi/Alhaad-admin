@@ -102,10 +102,11 @@ const NotificationPage = () => {
               <div className={classes.row}>
                 <Button
                   fullWidth
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={testNotificators}
                   disabled={!item.notificators}
+                  sx={{ color: 'common.white' }}
                 >
                   {t('sharedTestNotificators')}
                 </Button>

@@ -157,10 +157,11 @@ const ComputedAttributePage = () => {
                 label={t('sharedDevice')}
               />
               <Button
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={testAttribute}
                 disabled={!deviceId}
+                sx={{ color: 'common.white' }}
               >
                 {t('sharedTestExpression')}
               </Button>

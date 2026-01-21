@@ -93,6 +93,7 @@ const EditItemView = ({
             variant="contained"
             onClick={handleSave}
             disabled={!item || !validate()}
+            sx={{ color: 'common.white' }}
           >
             {t('sharedSave')}
           </Button>
