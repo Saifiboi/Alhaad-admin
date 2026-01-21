@@ -36,7 +36,6 @@ const UserCard = ({
         border: '1px solid',
         borderColor: 'divider',
         width: '100%',
-        mb: 2, // Margin bottom to separate cards
         transition: 'all 0.2s',
         '&:hover': {
           boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
@@ -44,7 +43,7 @@ const UserCard = ({
         },
       }}
     >
-      <CardContent sx={{ p: '24px !important' }}>
+      <CardContent sx={{ p: '16px !important' }}>
         <Box display="flex" justifyContent="space-between" alignItems="flex-start">
           <Box>
             <Box display="flex" alignItems="center" gap={1} mb={0.5}>
@@ -93,7 +92,7 @@ const UserCard = ({
           </Box>
         </Box>
 
-        <Box mt={4} display="flex" justifyContent="space-between" alignItems="flex-end">
+        <Box mt={2} display="flex" justifyContent="space-between" alignItems="flex-end">
           <Box>
             <Typography variant="caption" display="block" color="text.secondary" fontWeight="bold" sx={{ fontSize: '0.65rem', letterSpacing: '0.05em', mb: 0.5 }}>
               EXPIRATION
@@ -206,7 +205,7 @@ const UsersPage = () => {
       </Box>
 
       {!loading ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
           {items.filter((u) => temporary || !u.temporary).filter(filterByKeyword(searchKeyword)).map((item) => (
             <UserCard
               key={item.id}
