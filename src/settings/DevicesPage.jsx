@@ -78,11 +78,11 @@ const DeviceCard = ({
               {item.uniqueId}
             </Typography>
             <Box display="flex" gap={1} mt={0.5} flexWrap="wrap">
-              {item.groupId && (
+              {/* {item.groupId && (
                 <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
                   {groups[item.groupId]?.name}
                 </Typography>
-              )}
+              )} */}
               {item.phone && (
                 <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
                   {item.phone}
