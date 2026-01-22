@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Badge } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -99,11 +100,12 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount, onDashboard }) => {
+const GlobalNavbar = ({ onAccount, onDashboard, onEvents }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
+    const eventsCount = useSelector((state) => state.events.items.length);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -196,6 +198,25 @@ const GlobalNavbar = ({ onAccount, onDashboard }) => {
                         </Box>
                     )}
                     <ThemeToggle />
+                    <IconButton
+                        color="inherit"
+                        onClick={onEvents}
+                        sx={{
+                            backgroundColor: theme => theme.palette.mode === 'dark'
+                                ? 'rgba(248, 115, 24, 0.1)'
+                                : 'rgba(248, 115, 24, 0.05)',
+                            '&:hover': {
+                                backgroundColor: theme => theme.palette.mode === 'dark'
+                                    ? 'rgba(248, 115, 24, 0.2)'
+                                    : 'rgba(248, 115, 24, 0.1)',
+                            },
+                            padding: '10px'
+                        }}
+                    >
+                        <Badge badgeContent={eventsCount} color="error">
+                            <NotificationsIcon sx={{ color: theme => theme.palette.primary.main, fontSize: '24px' }} />
+                        </Badge>
+                    </IconButton>
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>
                             {user?.email || 'User'}

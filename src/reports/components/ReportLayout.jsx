@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import {
-    Drawer, Toolbar, IconButton, useMediaQuery, useTheme,
+    Drawer, Toolbar, IconButton, useMediaQuery, useTheme, Divider, Typography,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from '../../common/components/LocalizationProvider';
+import { useNavigate } from 'react-router-dom';
 import GlobalNavbar from '../../common/components/GlobalNavbar';
 import MenuIcon from '@mui/icons-material/Menu';
+import BackIcon from '../../common/components/BackIcon';
 import ReportsMenu from '../components/ReportsMenu';
 
 const useStyles = makeStyles()((theme) => ({
@@ -55,6 +57,7 @@ const ReportLayout = ({ children }) => {
     const theme = useTheme();
     const desktop = useMediaQuery(theme.breakpoints.up('md'));
     const t = useTranslation();
+    const navigate = useNavigate();
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -68,6 +71,13 @@ const ReportLayout = ({ children }) => {
                         variant="permanent"
                         classes={{ paper: classes.drawerPaper }}
                     >
+                        <Toolbar>
+                            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
+                                <BackIcon />
+                            </IconButton>
+                            <Typography variant="h6" noWrap>{t('reportTitle')}</Typography>
+                        </Toolbar>
+                        <Divider />
                         <ReportsMenu />
                     </Drawer>
                 ) : (

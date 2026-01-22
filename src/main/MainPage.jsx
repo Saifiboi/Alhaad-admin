@@ -382,6 +382,7 @@ const MainPage = () => {
       <GlobalNavbar
         onAccount={() => handleLaunch({ id: 'account' })}
         onDashboard={handleDashboardClick}
+        onEvents={onEventsClick}
       />
       <div className={classes.root}>
         {desktop && (
