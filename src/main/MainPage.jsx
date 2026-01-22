@@ -145,6 +145,7 @@ const MainPage = () => {
 
   const [devicesOpen, setDevicesOpen] = useState(desktop);
   const [eventsOpen, setEventsOpen] = useState(false);
+  const [sidebarOverlaid, setSidebarOverlaid] = useState(false);
 
   const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
 
@@ -374,7 +375,23 @@ const MainPage = () => {
       return newWindows;
     });
     setActiveWindowId(null);
+    setSidebarOverlaid(false);
   }, []);
+
+  const handleSelectDevice = useCallback((deviceId) => {
+    dispatch(devicesActions.selectId(deviceId));
+    if (desktop) {
+      setWindows((prev) => {
+        const newWindows = {};
+        Object.keys(prev).forEach((id) => {
+          newWindows[id] = { ...prev[id], minimized: true };
+        });
+        return newWindows;
+      });
+      setActiveWindowId(null);
+      setSidebarOverlaid(false);
+    }
+  }, [desktop, dispatch]);
 
   // Window Mode Context Provider
   return (
@@ -383,6 +400,8 @@ const MainPage = () => {
         onAccount={() => handleLaunch({ id: 'account' })}
         onDashboard={handleDashboardClick}
         onEvents={onEventsClick}
+        showSidebarToggle={anyMaximized}
+        onSidebarToggle={() => setSidebarOverlaid(!sidebarOverlaid)}
       />
       <div className={classes.root}>
         {desktop && (
@@ -397,6 +416,13 @@ const MainPage = () => {
           style={{
             height: sidebarHeight || `calc(100vh - 64px - ${theme.spacing(anyMaximized ? 0 : 1.5)})`,
             marginBottom: anyMaximized ? 0 : theme.spacing(1.5),
+            zIndex: sidebarOverlaid ? 10000 : 3,
+            transition: 'height 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
+            ...(sidebarOverlaid && {
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: theme.shadows[10],
+              pointerEvents: 'auto',
+            })
           }}
         >
           <Paper className={classes.header}>
@@ -426,7 +452,7 @@ const MainPage = () => {
               </div>
             )}
             <Paper className={classes.contentList} style={devicesOpen ? {} : { visibility: 'hidden' }}>
-              <DeviceList devices={filteredDevices} />
+              <DeviceList devices={filteredDevices} onSelect={handleSelectDevice} />
             </Paper>
           </div>
         </div>

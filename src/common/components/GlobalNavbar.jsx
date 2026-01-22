@@ -7,6 +7,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GridViewIcon from '@mui/icons-material/GridView';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -100,7 +101,9 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount, onDashboard, onEvents }) => {
+const GlobalNavbar = ({
+    onAccount, onDashboard, onEvents, showSidebarToggle, onSidebarToggle,
+}) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -196,6 +199,25 @@ const GlobalNavbar = ({ onAccount, onDashboard, onEvents }) => {
                                 Dashboard
                             </Typography>
                         </Box>
+                    )}
+                    {showSidebarToggle && (
+                        <IconButton
+                            color="inherit"
+                            onClick={onSidebarToggle}
+                            sx={{
+                                mr: 1,
+                                backgroundColor: theme => theme.palette.mode === 'dark'
+                                    ? 'rgba(248, 115, 24, 0.1)'
+                                    : 'rgba(248, 115, 24, 0.05)',
+                                '&:hover': {
+                                    backgroundColor: theme => theme.palette.mode === 'dark'
+                                        ? 'rgba(248, 115, 24, 0.2)'
+                                        : 'rgba(248, 115, 24, 0.1)',
+                                },
+                            }}
+                        >
+                            <ViewSidebarIcon sx={{ color: theme => theme.palette.primary.main }} />
+                        </IconButton>
                     )}
                     <ThemeToggle />
                     <IconButton

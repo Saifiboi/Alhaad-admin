@@ -50,7 +50,12 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-const DeviceRow = ({ devices, index, style }) => {
+const DeviceRow = ({ devices, index, style, onSelect }) => {
+  const item = devices[index];
+
+  if (!item) {
+    return null;
+  }
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const t = useTranslation();
@@ -58,7 +63,6 @@ const DeviceRow = ({ devices, index, style }) => {
   const admin = useAdministrator();
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
 
-  const item = devices[index];
   const position = useSelector((state) => state.session.positions[item.id]);
 
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
@@ -83,7 +87,7 @@ const DeviceRow = ({ devices, index, style }) => {
     <div style={style}>
       <ListItemButton
         key={item.id}
-        onClick={() => dispatch(devicesActions.selectId(item.id))}
+        onClick={() => (onSelect ? onSelect(item.id) : dispatch(devicesActions.selectId(item.id)))}
         disabled={!admin && item.disabled}
         selected={selectedDeviceId === item.id}
         sx={{
