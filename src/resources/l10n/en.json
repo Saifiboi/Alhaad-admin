@@ -11,6 +11,7 @@
     "sharedAdd": "Add",
     "sharedEdit": "Edit",
     "sharedRemove": "Remove",
+    "sharedRemoveAll": "Delete All",
     "sharedRemoveConfirm": "Remove item?",
     "sharedNoData": "No data",
     "sharedSubject": "Subject",

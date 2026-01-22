@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography,
+  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Button, Tooltip,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import { formatNotificationTitle, formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import { eventsActions } from '../store';
@@ -12,13 +13,18 @@ import { eventsActions } from '../store';
 const useStyles = makeStyles()((theme) => ({
   drawer: {
     width: theme.dimensions.eventsDrawerWidth,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   toolbar: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   title: {
     flexGrow: 1,
+    fontWeight: 600,
   },
 }));
 
@@ -44,14 +50,27 @@ const EventsDrawer = ({ open, onClose }) => {
       anchor="right"
       open={open}
       onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: (theme) => theme.dimensions.eventsDrawerWidth,
+          marginTop: (theme) => ({ md: '64px', xs: 0 }),
+          height: (theme) => ({ md: 'calc(100% - 64px)', xs: '100%' }),
+        },
+      }}
     >
       <Toolbar className={classes.toolbar} disableGutters>
         <Typography variant="h6" className={classes.title}>
           {t('reportEvents')}
         </Typography>
-        <IconButton size="small" color="inherit" onClick={() => dispatch(eventsActions.deleteAll())}>
-          <DeleteIcon fontSize="small" />
-        </IconButton>
+        <Tooltip title={t('sharedRemoveAll')}>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => dispatch(eventsActions.deleteAll())}
+          >
+            <DeleteSweepIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Toolbar>
       <List className={classes.drawer} dense>
         {events.map((event) => (

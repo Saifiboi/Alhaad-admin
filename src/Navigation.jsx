@@ -126,12 +126,10 @@ const Navigation = () => {
         <Route path="replay" element={<ReplayPage />} />
         <Route path="geofences" element={<GeofencesPage />} />
         <Route path="settings/geofences" element={<GeofencesPage />} />
+        <Route path="event/:id" element={<EventPage />} />
 
         {!desktop && (
           <>
-            <Route path="position/:id" element={<PositionPage />} />
-            <Route path="network/:positionId" element={<NetworkPage />} />
-            <Route path="event/:id" element={<EventPage />} />
             <Route path="emulator" element={<EmulatorPage />} />
 
             <Route path="settings">
@@ -197,7 +195,7 @@ const Navigation = () => {
         </Route>
         <Route path="*" element={<Typography variant="h4" sx={{ p: 4 }}>404 Not Found</Typography>} />
       </Route>
-    </Routes>
+    </Routes >
   );
 };
 
