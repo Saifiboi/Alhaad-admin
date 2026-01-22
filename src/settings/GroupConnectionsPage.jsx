@@ -27,6 +27,7 @@ const GroupConnectionsPage = () => {
     <PageLayout
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'groupDialog', 'sharedConnections']}
+      showBack
     >
       <Container maxWidth="xs" className={classes.container}>
         <Accordion defaultExpanded>

@@ -119,7 +119,7 @@ const UserCard = ({
                 '&:hover': { bgcolor: '#e0e7ff' },
               }}
             >
-              Devices
+              {t('sharedConnections')}
             </Button>
             {manager && (
               <Button

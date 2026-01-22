@@ -24,6 +24,7 @@ const UserConnectionsPage = () => {
     <PageLayout
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'settingsUser', 'sharedConnections']}
+      showBack
     >
       <Container maxWidth="xs" className={classes.container}>
         <Accordion defaultExpanded>

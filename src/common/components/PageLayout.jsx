@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import {
   AppBar,
   Breadcrumbs,
@@ -14,11 +14,10 @@ import { makeStyles } from 'tss-react/mui';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
 import GlobalNavbar from './GlobalNavbar';
-import { useContext } from 'react';
 import WindowModeContext from './WindowModeContext';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
@@ -87,7 +86,9 @@ const PageTitle = ({ breadcrumbs }) => {
 
 
 
-const PageLayout = ({ menu, breadcrumbs, children, isWindow: isWindowProp = false }) => {
+const PageLayout = ({
+  menu, breadcrumbs, children, showBack = false, isWindow: isWindowProp = false,
+}) => {
   const [miniVariant, setMiniVariant] = useState(false);
   const { classes } = useStyles({ miniVariant });
   const theme = useTheme();
@@ -98,16 +99,34 @@ const PageLayout = ({ menu, breadcrumbs, children, isWindow: isWindowProp = fals
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
-
   const [searchParams] = useSearchParams();
 
   const [openDrawer, setOpenDrawer] = useState(!desktop && searchParams.has('menu'));
 
   const toggleDrawer = () => setMiniVariant(!miniVariant);
 
+  const location = useLocation();
+  const handleBack = useCallback(() => {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindowContext && isWindowContext.onClose) {
+      isWindowContext.onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [navigate, location.key, isWindowContext]);
+
   if (isWindow && desktop) {
     return (
       <div className={classes.content} style={{ height: '100%', overflow: 'hidden' }}>
+        {showBack && (
+          <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', minHeight: '56px !important' }}>
+            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={handleBack}>
+              <BackIcon />
+            </IconButton>
+            <PageTitle breadcrumbs={breadcrumbs} />
+          </Toolbar>
+        )}
         <div style={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
           {children}
         </div>
