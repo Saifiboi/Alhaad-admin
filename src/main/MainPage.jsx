@@ -153,7 +153,7 @@ const MainPage = () => {
   const [activeWindowId, setActiveWindowId] = useState(null);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
-  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized && !w.minimized), [windows]);
 
   // Detect Dock position and adjust sidebar height
   useEffect(() => {
@@ -365,10 +365,24 @@ const MainPage = () => {
     }));
   };
 
+  const handleDashboardClick = useCallback(() => {
+    setWindows((prev) => {
+      const newWindows = {};
+      Object.keys(prev).forEach((id) => {
+        newWindows[id] = { ...prev[id], minimized: true };
+      });
+      return newWindows;
+    });
+    setActiveWindowId(null);
+  }, []);
+
   // Window Mode Context Provider
   return (
     <WindowModeContext.Provider value={true}>
-      <GlobalNavbar onAccount={() => handleLaunch({ id: 'account' })} />
+      <GlobalNavbar
+        onAccount={() => handleLaunch({ id: 'account' })}
+        onDashboard={handleDashboardClick}
+      />
       <div className={classes.root}>
         {desktop && (
           <MainMap

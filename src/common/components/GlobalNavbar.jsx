@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import GridViewIcon from '@mui/icons-material/GridView';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -98,7 +99,7 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount }) => {
+const GlobalNavbar = ({ onAccount, onDashboard }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -182,6 +183,18 @@ const GlobalNavbar = ({ onAccount }) => {
                 </Box>
 
                 <Box className={classes.userSection}>
+                    {onDashboard && (
+                        <Box
+                            className={classes.userInfo}
+                            onClick={onDashboard}
+                            sx={{ mr: 1 }}
+                        >
+                            <GridViewIcon sx={{ color: theme => theme.palette.primary.main, mr: 1, fontSize: '20px' }} />
+                            <Typography className={classes.userEmail} sx={{ color: theme => theme.palette.primary.main }}>
+                                Dashboard
+                            </Typography>
+                        </Box>
+                    )}
                     <ThemeToggle />
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>
