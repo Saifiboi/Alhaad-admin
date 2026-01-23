@@ -220,7 +220,7 @@ const UsersPage = () => {
           ))}
         </Box>
       ) : (
-        <Box sx={{ transform: 'translateY(-5%)' }}>
+        <Box sx={{ transform: 'translateY(-7%)' }}>
           <TruckLoader fullHeight={false} />
         </Box>
       )}

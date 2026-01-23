@@ -23,13 +23,14 @@ const roadAnimation = keyframes`
 `;
 
 const LoaderContainer = styled(Box)(({ fullHeight }) => ({
-  height: fullHeight ? '100vh' : '100%',
+  height: fullHeight ? '100vh' : 'auto',
   minHeight: fullHeight ? '100vh' : '300px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: '100%',
   overflow: 'hidden',
+  padding: fullHeight ? 0 : '50px 0',
 }));
 
 const Loader = styled(Box)({
@@ -42,8 +43,8 @@ const Loader = styled(Box)({
 });
 
 const TruckWrapper = styled(Box)({
-  width: '200px',
-  height: '100px',
+  width: '120px',
+  height: '60px',
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
@@ -53,26 +54,26 @@ const TruckWrapper = styled(Box)({
 });
 
 const TruckBody = styled(Box)({
-  width: '130px',
+  width: '78px',
   height: 'fit-content',
-  marginBottom: '6px',
+  marginBottom: '4px',
   animation: `${motionAnimation} 1s linear infinite`,
   position: 'relative',
   zIndex: 2,
 });
 
 const TruckTires = styled(Box)({
-  width: '130px',
+  width: '78px',
   height: 'fit-content',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '0px 10px 0px 15px',
+  padding: '0px 6px 0px 9px',
   position: 'absolute',
   bottom: 0,
   zIndex: 2,
   '& svg': {
-    width: '24px',
+    width: '14px',
   },
 });
 
