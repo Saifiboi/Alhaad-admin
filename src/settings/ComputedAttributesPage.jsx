@@ -19,7 +19,7 @@ import { useAdministrator } from '../common/util/permissions';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
-import TableShimmer from '../common/components/TableShimmer';
+import CarLoader from '../common/components/CarLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -175,15 +175,7 @@ const ComputedAttributesPage = () => {
             ))}
           </Box>
         ) : (
-          <Stack spacing={1}>
-            {[...Array(5)].map((_, i) => (
-              <Card key={i} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-                <CardContent sx={{ p: 2 }}>
-                  <TableShimmer columns={1} />
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
+          <CarLoader fullHeight={false} />
         )}
       </Container>
       <CollectionFab editPath="/settings/attribute" disabled={!administrator} />

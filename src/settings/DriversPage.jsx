@@ -10,7 +10,7 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
-import TableShimmer from '../common/components/TableShimmer';
+import CarLoader from '../common/components/CarLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -106,7 +106,7 @@ const DriversPage = () => {
           ))}
         </Box>
       ) : (
-        <TableShimmer columns={3} endAction />
+        <CarLoader fullHeight={false} />
       )}
 
       <CollectionFab editPath="/settings/driver" />

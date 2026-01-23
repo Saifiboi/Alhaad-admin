@@ -22,7 +22,7 @@ import useReportStyles from './common/useReportStyles';
 import MapView from '../map/core/MapView';
 import MapRoutePath from '../map/MapRoutePath';
 import AddressValue from '../common/components/AddressValue';
-import TableShimmer from '../common/components/TableShimmer';
+import CarLoader from '../common/components/CarLoader';
 import MapMarkers from '../map/MapMarkers';
 import MapCamera from '../map/MapCamera';
 import MapGeofence from '../map/MapGeofence';

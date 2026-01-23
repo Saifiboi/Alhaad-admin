@@ -20,6 +20,7 @@ import {
   generateLoginToken, handleLoginTokenListeners, nativeEnvironment, nativePostMessage,
 } from '../common/components/NativeInterface';
 import LogoImage from './LogoImage';
+import CarLoader from '../common/components/CarLoader';
 import { useCatch } from '../reactHelper';
 import QrCodeDialog from '../common/components/QrCodeDialog';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -71,6 +72,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showServerTooltip, setShowServerTooltip] = useState(false);
   const [showQr, setShowQr] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const registrationEnabled = useSelector((state) => state.session.server.registration);
   const languageEnabled = useSelector((state) => {
@@ -89,6 +91,7 @@ const LoginPage = () => {
   const handlePasswordLogin = async (event) => {
     event.preventDefault();
     setFailed(false);
+    setLoading(true);
     try {
       const query = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
       const response = await fetch('/api/session', {
@@ -110,6 +113,8 @@ const LoginPage = () => {
     } catch {
       setFailed(true);
       setPassword('');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,6 +143,10 @@ const LoginPage = () => {
       setShowServerTooltip(true);
     }
   }, []);
+
+  if (loading) {
+    return <CarLoader />;
+  }
 
   return (
     <LoginLayout>

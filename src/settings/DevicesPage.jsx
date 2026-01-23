@@ -14,7 +14,7 @@ import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import CollectionActions from './components/CollectionActions';
-import TableShimmer from '../common/components/TableShimmer';
+import CarLoader from '../common/components/CarLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
@@ -258,7 +258,7 @@ const DevicesPage = () => {
           ))}
         </Box>
       ) : (
-        <TableShimmer columns={manager ? 9 : 8} endAction />
+        <CarLoader fullHeight={false} />
       )}
 
       <CollectionFab editPath="/settings/device" />
