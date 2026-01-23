@@ -76,10 +76,10 @@ const TruckTires = styled(Box)({
   },
 });
 
-const Road = styled(Box)({
+const Road = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '1.5px',
-  backgroundColor: '#282828',
+  backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#282828',
   position: 'relative',
   bottom: 0,
   alignSelf: 'flex-end',
@@ -89,24 +89,22 @@ const Road = styled(Box)({
     position: 'absolute',
     width: '20px',
     height: '100%',
-    backgroundColor: '#282828',
+    backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#282828',
     right: '-50%',
     borderRadius: '3px',
     animation: `${roadAnimation} 1.4s linear infinite`,
-    borderLeft: '10px solid white',
   },
   '&::after': {
     content: '""',
     position: 'absolute',
     width: '10px',
     height: '100%',
-    backgroundColor: '#282828',
+    backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#282828',
     right: '-65%',
     borderRadius: '3px',
     animation: `${roadAnimation} 1.4s linear infinite`,
-    borderLeft: '4px solid white',
   },
-});
+}));
 
 const TruckLoader = ({ fullHeight = true }) => (
   <LoaderContainer fullHeight={fullHeight}>
