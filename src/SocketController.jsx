@@ -183,14 +183,20 @@ const SocketController = () => {
 
   return (
     <>
-      {notifications.map((notification) => (
+      {notifications.map((notification, index) => (
         <Snackbar
           key={notification.id}
           open={notification.show}
           autoHideDuration={snackBarDurationLongMs}
           onClose={() => setNotifications(notifications.filter((e) => e.id !== notification.id))}
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          sx={{ mt: 8 }}
+          sx={{ 
+            mt: 8 + (index * 8),
+            '& .MuiSnackbarContent-root': {
+              maxWidth: '400px !important',
+              width: 'auto',
+            }
+          }}
         >
           <Alert
             severity="info"
@@ -213,6 +219,20 @@ const SocketController = () => {
               color: (theme) => theme.palette.mode === 'dark' ? '#fff' : '#000',
               fontWeight: 600,
               boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+              maxWidth: '400px !important',
+              width: 'fit-content',
+              minWidth: '300px',
+              minHeight: '48px',
+              maxHeight: '60px',
+              py: 0.5,
+              '& .MuiAlert-message': {
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                lineHeight: 1.4,
+              },
               '& .MuiAlert-icon': {
                 color: (theme) => theme.palette.primary.main,
               },

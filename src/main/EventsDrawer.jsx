@@ -78,10 +78,29 @@ const EventsDrawer = ({ open, onClose }) => {
             key={event.id}
             onClick={() => navigate(`/event/${event.id}`)}
             disabled={!event.id}
+            sx={{
+              maxHeight: '60px',
+              minHeight: '48px',
+              py: 1,
+            }}
           >
             <ListItemText
               primary={`${devices[event.deviceId]?.name} • ${formatType(event)}`}
               secondary={formatTime(event.eventTime, 'seconds')}
+              primaryTypographyProps={{
+                sx: {
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                },
+              }}
+              secondaryTypographyProps={{
+                sx: {
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                },
+              }}
             />
             <IconButton
               size="small"
