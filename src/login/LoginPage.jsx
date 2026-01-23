@@ -20,7 +20,7 @@ import {
   generateLoginToken, handleLoginTokenListeners, nativeEnvironment, nativePostMessage,
 } from '../common/components/NativeInterface';
 import LogoImage from './LogoImage';
-import CarLoader from '../common/components/CarLoader';
+import TruckLoader from '../common/components/TruckLoader';
 import { useCatch } from '../reactHelper';
 import QrCodeDialog from '../common/components/QrCodeDialog';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -145,7 +145,7 @@ const LoginPage = () => {
   }, []);
 
   if (loading) {
-    return <CarLoader />;
+    return <TruckLoader />;
   }
 
   return (

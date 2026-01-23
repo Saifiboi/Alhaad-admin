@@ -6,7 +6,7 @@ import { devicesActions } from '../store';
 import { useEffectAsync } from '../reactHelper';
 import DeviceRow from './DeviceRow';
 import fetchOrThrow from '../common/util/fetchOrThrow';
-import CarLoader from '../common/components/CarLoader';
+import TruckLoader from '../common/components/TruckLoader';
 
 const useStyles = makeStyles()((theme) => ({
   list: {
@@ -43,7 +43,7 @@ const DeviceList = ({ devices, onSelect }) => {
   }, []);
 
   if (loading) {
-    return <CarLoader fullHeight={false} />;
+    return <TruckLoader fullHeight={false} />;
   }
 
   return (

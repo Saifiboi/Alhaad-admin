@@ -12,7 +12,7 @@ import { prefixString } from '../common/util/stringUtils';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
-import CarLoader from '../common/components/CarLoader';
+import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { useRestriction } from '../common/util/permissions';
 import useSettingsStyles from './common/useSettingsStyles';
@@ -131,7 +131,7 @@ const CommandsPage = () => {
           ))}
         </Box>
       ) : (
-        <CarLoader fullHeight={false} />
+        <TruckLoader fullHeight={false} />
       )}
 
       <CollectionFab editPath="/settings/command" disabled={limitCommands} />

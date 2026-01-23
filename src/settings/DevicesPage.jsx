@@ -14,7 +14,7 @@ import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import CollectionActions from './components/CollectionActions';
-import CarLoader from '../common/components/CarLoader';
+import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
@@ -259,7 +259,7 @@ const DevicesPage = () => {
         </Box>
       ) : (
         <Box sx={{ transform: 'translateY(-5%)' }}>
-          <CarLoader fullHeight={false} />
+          <TruckLoader fullHeight={false} />
         </Box>
       )}
 
