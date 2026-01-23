@@ -258,7 +258,9 @@ const DevicesPage = () => {
           ))}
         </Box>
       ) : (
-        <CarLoader fullHeight={false} />
+        <Box sx={{ transform: 'translateY(-5%)' }}>
+          <CarLoader fullHeight={false} />
+        </Box>
       )}
 
       <CollectionFab editPath="/settings/device" />

@@ -7,7 +7,6 @@ const LoaderContainer = styled(Box)(({ fullHeight }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: 0,
   width: '100%',
 }));
 
