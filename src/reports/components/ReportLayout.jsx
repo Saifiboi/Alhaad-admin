@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Drawer, Toolbar, IconButton, useMediaQuery, useTheme, Divider, Typography,
+    Drawer, Toolbar, IconButton, useMediaQuery, useTheme, Divider, Typography, Box,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from '../../common/components/LocalizationProvider';
@@ -27,28 +27,19 @@ const useStyles = makeStyles()((theme) => ({
             flexDirection: 'column',
         },
     },
-    drawer: {
-        width: theme.dimensions.drawerWidthDesktop,
-        flexShrink: 0,
-        [theme.breakpoints.down('md')]: {
-            width: '100%',
-        },
-    },
-    drawerPaper: {
-        width: theme.dimensions.drawerWidthDesktop,
-        top: '64px',
-        height: 'calc(100% - 64px)',
-        [theme.breakpoints.down('md')]: {
-            width: theme.dimensions.drawerWidthTablet,
-            top: 0,
-            height: '100%',
-        },
-    },
     main: {
         flexGrow: 1,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
+    },
+    header: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 3),
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.paper,
+        minHeight: '48px',
     },
 }));
 
@@ -59,47 +50,17 @@ const ReportLayout = ({ children }) => {
     const t = useTranslation();
     const navigate = useNavigate();
 
-    const [menuOpen, setMenuOpen] = useState(false);
-
     return (
         <div className={classes.root}>
             <GlobalNavbar />
             <div className={classes.content}>
-                {desktop ? (
-                    <Drawer
-                        className={classes.drawer}
-                        variant="permanent"
-                        classes={{ paper: classes.drawerPaper }}
-                    >
-                        <Toolbar>
-                            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
-                                <BackIcon />
-                            </IconButton>
-                            <Typography variant="h6" noWrap>{t('reportTitle')}</Typography>
-                        </Toolbar>
-                        <Divider />
-                        <ReportsMenu />
-                    </Drawer>
-                ) : (
-                    <Drawer
-                        variant="temporary"
-                        open={menuOpen}
-                        onClose={() => setMenuOpen(false)}
-                        classes={{ paper: classes.drawerPaper }}
-                    >
-                        <ReportsMenu />
-                    </Drawer>
-                )}
-
                 <div className={classes.main}>
-                    {!desktop && (
-                        <Toolbar>
-                            <IconButton edge="start" color="inherit" onClick={() => setMenuOpen(true)}>
-                                <MenuIcon />
-                            </IconButton>
-                            {t('reportTitle')}
-                        </Toolbar>
-                    )}
+                    <Box className={classes.header}>
+                        <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
+                            <BackIcon />
+                        </IconButton>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{t('reportTitle')}</Typography>
+                    </Box>
                     {children}
                 </div>
             </div>
