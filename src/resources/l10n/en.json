@@ -7,6 +7,8 @@
     "sharedSet": "Set",
     "sharedAccept": "Accept",
     "sharedCancel": "Cancel",
+    "sharedNext": "Next",
+    "sharedBack": "Back",
     "sharedCopy": "Copy",
     "sharedAdd": "Add",
     "sharedEdit": "Edit",

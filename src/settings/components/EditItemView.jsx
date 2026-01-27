@@ -1,8 +1,10 @@
 import { useContext, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
-  Container, Button, Accordion, AccordionDetails, AccordionSummary, Skeleton, Typography, TextField,
+  Container, Button, Accordion, AccordionDetails, AccordionSummary, Skeleton, Typography, TextField, Box,
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 import { useCatch, useEffectAsync } from '../../reactHelper';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import PageLayout from '../../common/components/PageLayout';
@@ -82,12 +84,19 @@ const EditItemView = ({
             </Accordion>
           )}
         </div>
-        <div className={classes.buttons}>
+        <Box className={classes.buttons} sx={{ gap: 2, padding: 2 }}>
           <Button
-            color="primary"
+            color="error"
             variant="outlined"
             onClick={handleBack}
             disabled={!item}
+            startIcon={<CloseIcon />}
+            sx={{
+              borderRadius: '12px',
+              padding: '10px 24px',
+              textTransform: 'none',
+              fontWeight: 'bold',
+            }}
           >
             {t('sharedCancel')}
           </Button>
@@ -96,11 +105,22 @@ const EditItemView = ({
             variant="contained"
             onClick={handleSave}
             disabled={!item || !validate()}
-            sx={{ color: 'common.white' }}
+            startIcon={<SaveIcon />}
+            sx={{
+              borderRadius: '12px',
+              padding: '10px 24px',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)',
+              color: 'common.white',
+              '&:hover': {
+                boxShadow: '0 6px 20px rgba(249, 115, 22, 0.23)',
+              },
+            }}
           >
             {t('sharedSave')}
           </Button>
-        </div>
+        </Box>
       </Container>
     </PageLayout>
   );

@@ -66,20 +66,18 @@ const MapLiveRoutes = ({ deviceIds }) => {
 
       map.getSource(id)?.setData({
         type: 'FeatureCollection',
-        features: visibleIds
-          .filter((deviceId) => devices[deviceId])
-          .map((deviceId) => ({
-            type: 'Feature',
-            geometry: {
-              type: 'LineString',
-              coordinates: history[deviceId],
-            },
-            properties: {
-              color: devices[deviceId].attributes['web.reportColor'] || theme.palette.geometry.main,
-              width: mapLineWidth,
-              opacity: mapLineOpacity,
-            },
-          })),
+        features: visibleIds.map((deviceId) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: history[deviceId],
+          },
+          properties: {
+            color: devices[deviceId].attributes['web.reportColor'] || theme.palette.geometry.main,
+            width: mapLineWidth,
+            opacity: mapLineOpacity,
+          },
+        })),
       });
     }
   }, [theme, type, devices, selectedDeviceId, history, deviceIds]);
