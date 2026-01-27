@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions, errorsActions } from '../store';
+import { devicesActions, replayActions, errorsActions, windowsActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import useFilter from './useFilter';
 import MainToolbar from './MainToolbar';
@@ -145,9 +145,9 @@ const MainPage = () => {
   const [devicesOpen, setDevicesOpen] = useState(desktop);
   const [sidebarOverlaid, setSidebarOverlaid] = useState(false);
 
-  // Window Manager State
-  const [windows, setWindows] = useState({});
-  const [activeWindowId, setActiveWindowId] = useState(null);
+  // Window Manager State from Redux
+  const windows = useSelector((state) => state.windows.items);
+  const activeWindowId = useSelector((state) => state.windows.activeId);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
   const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized && !w.minimized), [windows]);
@@ -221,8 +221,6 @@ const MainPage = () => {
   useFilter(keyword, filter, filterSort, filterMap, positions, setFilteredDevices, setFilteredPositions);
 
   const handleLaunch = (app) => {
-    let targetId = app.id;
-
     if (app.id === 'send_command') {
       if (selectedDeviceId) {
         handleLaunch({
@@ -253,138 +251,58 @@ const MainPage = () => {
       return;
     }
 
-    // Check if main window is not open but a related one is
-    if (!windows[targetId] && app.relatedIds) {
-      const relatedId = app.relatedIds.find((rid) => windows[rid]);
-      if (relatedId) {
-        targetId = relatedId;
-      }
-    }
-
-    if (windows[targetId]) {
-      if (windows[targetId].minimized) {
-        // Restore
-        setWindows((prev) => {
-          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
-          return { ...prev, [targetId]: { ...prev[targetId], minimized: false, zIndex: maxZ + 1 } };
-        });
-        setActiveWindowId(targetId);
-      } else if (activeWindowId === targetId) {
-        // Minimize
-        setWindows((prev) => ({ ...prev, [targetId]: { ...prev[targetId], minimized: true } }));
-        setActiveWindowId(null);
-      } else {
-        // Focus
-        setWindows((prev) => {
-          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
-          return { ...prev, [targetId]: { ...prev[targetId], zIndex: maxZ + 1 } };
-        });
-        setActiveWindowId(targetId);
-      }
-    } else {
-      // Open New
-      setWindows((prev) => {
-        const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
-        const defaultWidth = 680;
-        const defaultHeight = 413;
-        const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
-        const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
-
-        return {
-          ...prev,
-          [app.id]: {
-            ...app,
-            x,
-            y,
-            width: defaultWidth,
-            height: defaultHeight,
-            zIndex: maxZ + 1,
-            component: (
-              <RouterIsolator>
-                <MemoryRouter initialEntries={[app.path]}>
-                  <DesktopRoutes />
-                </MemoryRouter>
-              </RouterIsolator>
-            ),
-          },
-        };
-      });
-      setActiveWindowId(app.id);
-    }
+    dispatch(windowsActions.launch({
+      ...app,
+      x: Math.max(0, (window.innerWidth - 680) / 2),
+      y: Math.max(80, (window.innerHeight - 413) / 2),
+      width: 680,
+      height: 413,
+    }));
   };
 
   const handleCloseWindow = (id) => {
-    // Clear replay state when closing replay window
     if (id === 'replay') {
       dispatch(replayActions.clear());
     }
-
-    setWindows((prev) => {
-      const newWindows = { ...prev };
-      delete newWindows[id];
-      return newWindows;
-    });
+    dispatch(windowsActions.close(id));
   };
 
   const handleMinimizeWindow = (id) => {
-    setWindows((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], minimized: !prev[id].minimized },
-    }));
+    dispatch(windowsActions.minimize(id));
   };
 
   const handleFocusWindow = (id) => {
-    setActiveWindowId(id);
-    setWindows((prev) => {
-      const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
-      return { ...prev, [id]: { ...prev[id], zIndex: maxZ + 1 } };
-    });
+    dispatch(windowsActions.focus(id));
   };
 
   const handleMaximizeWindow = (id) => {
-    setWindows((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], maximized: !prev[id].maximized },
-    }));
+    dispatch(windowsActions.maximize(id));
   };
 
   const handleDragStop = (id, x, y) => {
-    setWindows((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], x, y },
-    }));
+    dispatch(windowsActions.setPosition({ id, x, y }));
   };
 
   const handleResizeStop = (id, width, height, x, y) => {
-    setWindows((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], width, height, x, y },
-    }));
+    dispatch(windowsActions.setSize({ id, width, height, x, y }));
   };
 
   const handleDashboardClick = useCallback(() => {
-    setWindows((prev) => {
-      const newWindows = {};
-      Object.keys(prev).forEach((id) => {
-        newWindows[id] = { ...prev[id], minimized: true };
-      });
-      return newWindows;
+    const nextWindows = { ...windows };
+    Object.keys(nextWindows).forEach((id) => {
+      nextWindows[id] = { ...nextWindows[id], minimized: true };
     });
-    setActiveWindowId(null);
-    setSidebarOverlaid(false);
-  }, []);
+    dispatch(windowsActions.update(nextWindows));
+  }, [windows, dispatch]);
 
   const handleSelectDevice = useCallback((deviceId) => {
     dispatch(devicesActions.selectId(deviceId));
     if (desktop) {
-      setWindows((prev) => {
-        const newWindows = {};
-        Object.keys(prev).forEach((id) => {
-          newWindows[id] = { ...prev[id], minimized: true };
-        });
-        return newWindows;
+      const nextWindows = { ...windows };
+      Object.keys(nextWindows).forEach((id) => {
+        nextWindows[id] = { ...nextWindows[id], minimized: true };
       });
-      setActiveWindowId(null);
+      dispatch(windowsActions.update(nextWindows));
       setSidebarOverlaid(false);
     }
   }, [desktop, dispatch]);
@@ -462,35 +380,42 @@ const MainPage = () => {
                 activeIds={Object.keys(windows)}
               />
             )}
-            {Object.values(windows).map(win => (
-              <DesktopWindow
-                key={win.id}
-                id={win.id}
-                title={win.title}
-                icon={win.icon}
-                onClose={handleCloseWindow}
-                onMinimize={handleMinimizeWindow}
-                onMaximize={handleMaximizeWindow}
-                onFocus={handleFocusWindow}
-                onDragStop={handleDragStop}
-                onResizeStop={handleResizeStop}
-                zIndex={win.maximized ? 1500 : win.zIndex}
-                x={win.x}
-                y={win.y}
-                defaultWidth={win.width || 680}
-                defaultHeight={win.height || 440}
-                minimized={win.minimized}
-                maximized={win.maximized}
-              >
-                <WindowModeContext.Consumer>
-                  {(value) => (
-                    <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id), onNavigate: navigate, onLaunch: value.onLaunch }}>
-                      {win.component}
-                    </WindowModeContext.Provider>
-                  )}
-                </WindowModeContext.Consumer>
-              </DesktopWindow>
-            ))}
+            {Object.values(windows).map(win => {
+              const app = desktopApps.find(a => a.id === win.id || (a.relatedIds && a.relatedIds.includes(win.id)));
+              return (
+                <DesktopWindow
+                  key={win.id}
+                  id={win.id}
+                  title={win.title}
+                  icon={app ? app.icon : null}
+                  onClose={handleCloseWindow}
+                  onMinimize={handleMinimizeWindow}
+                  onMaximize={handleMaximizeWindow}
+                  onFocus={handleFocusWindow}
+                  onDragStop={handleDragStop}
+                  onResizeStop={handleResizeStop}
+                  zIndex={win.maximized ? 1500 : win.zIndex}
+                  x={win.x}
+                  y={win.y}
+                  defaultWidth={win.width || 680}
+                  defaultHeight={win.height || 440}
+                  minimized={win.minimized}
+                  maximized={win.maximized}
+                >
+                  <WindowModeContext.Consumer>
+                    {(value) => (
+                      <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id), onNavigate: navigate, onLaunch: value.onLaunch }}>
+                        <RouterIsolator>
+                          <MemoryRouter initialEntries={[win.path]}>
+                            <DesktopRoutes />
+                          </MemoryRouter>
+                        </RouterIsolator>
+                      </WindowModeContext.Provider>
+                    )}
+                  </WindowModeContext.Consumer>
+                </DesktopWindow>
+              );
+            })}
           </>
         )}
 

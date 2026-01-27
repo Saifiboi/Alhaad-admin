@@ -197,12 +197,11 @@ const ReportsDashboard = () => {
         return allReports.filter(r => r.title.toLowerCase().includes(search.toLowerCase()));
     }, [search, allReports]);
 
-    const handleAction = (path) => {
+    const handleAction = (report) => {
         if (onNavigate) {
-            onNavigate(path);
-            onClose();
+            onNavigate(report.path);
         } else {
-            navigate(path);
+            navigate(report.path);
         }
     };
 
@@ -265,7 +264,7 @@ const ReportsDashboard = () => {
                     <Grid container spacing={1.5} columns={5}>
                         {filteredReports.map((report) => (
                             <Grid item xs={1} key={report.id}>
-                                <div className={classes.appIconCard} onClick={() => handleAction(report.path)}>
+                                <div className={classes.appIconCard} onClick={() => handleAction(report)}>
                                     <div className={`${classes.appIconBox} iconBox`}>
                                         {report.icon}
                                     </div>

@@ -10,6 +10,7 @@ import { driversReducer as drivers } from './drivers';
 import { maintenancesReducer as maintenances } from './maintenances';
 import { calendarsReducer as calendars } from './calendars';
 import replay, { replayActions } from './replay';
+import { windowsReducer as windows } from './windows';
 import throttleMiddleware from './throttleMiddleware';
 
 const reducer = combineReducers({
@@ -23,6 +24,7 @@ const reducer = combineReducers({
   maintenances,
   calendars,
   replay,
+  windows,
 });
 
 export { errorsActions } from './errors';
@@ -35,6 +37,7 @@ export { driversActions } from './drivers';
 export { maintenancesActions } from './maintenances';
 export { calendarsActions } from './calendars';
 export { replayActions } from './replay';
+export { windowsActions } from './windows';
 
 export default configureStore({
   reducer,
