@@ -11,7 +11,6 @@ import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
 import { devicesActions, replayActions, errorsActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
-import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
 import MainToolbar from './MainToolbar';
 import MainMap from './MainMap';
@@ -144,10 +143,7 @@ const MainPage = () => {
   const [filterMap, setFilterMap] = usePersistedState('filterMap', false);
 
   const [devicesOpen, setDevicesOpen] = useState(desktop);
-  const [eventsOpen, setEventsOpen] = useState(false);
   const [sidebarOverlaid, setSidebarOverlaid] = useState(false);
-
-  const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
 
   // Window Manager State
   const [windows, setWindows] = useState({});
@@ -252,7 +248,7 @@ const MainPage = () => {
       return;
     }
 
-    if (app.id === 'geofences' || app.id === 'replay' || app.id === 'reports') {
+    if (app.id === 'geofences' || app.id === 'replay') {
       navigate(app.path);
       return;
     }
@@ -395,11 +391,10 @@ const MainPage = () => {
 
   // Window Mode Context Provider
   return (
-    <WindowModeContext.Provider value={true}>
+    <WindowModeContext.Provider value={{ isWindow: false, onNavigate: navigate, onLaunch: handleLaunch }}>
       <GlobalNavbar
         onAccount={() => handleLaunch({ id: 'account' })}
         onDashboard={handleDashboardClick}
-        onEvents={onEventsClick}
         showSidebarToggle={anyMaximized}
         onSidebarToggle={() => setSidebarOverlaid(!sidebarOverlaid)}
       />
@@ -408,7 +403,7 @@ const MainPage = () => {
           <MainMap
             filteredPositions={filteredPositions}
             selectedPosition={selectedPosition}
-            onEventsClick={onEventsClick}
+            onEventsClick={() => dispatch(sessionActions.updateNotificationsOpen(true))}
           />
         )}
         <div
@@ -447,7 +442,7 @@ const MainPage = () => {
                 <MainMap
                   filteredPositions={filteredPositions}
                   selectedPosition={selectedPosition}
-                  onEventsClick={onEventsClick}
+                  onEventsClick={() => dispatch(sessionActions.updateNotificationsOpen(true))}
                 />
               </div>
             )}
@@ -487,15 +482,18 @@ const MainPage = () => {
                 minimized={win.minimized}
                 maximized={win.maximized}
               >
-                <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id) }}>
-                  {win.component}
-                </WindowModeContext.Provider>
+                <WindowModeContext.Consumer>
+                  {(value) => (
+                    <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id), onNavigate: navigate, onLaunch: value.onLaunch }}>
+                      {win.component}
+                    </WindowModeContext.Provider>
+                  )}
+                </WindowModeContext.Consumer>
               </DesktopWindow>
             ))}
           </>
         )}
 
-        <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
         {selectedDeviceId && (
           <StatusCard
             deviceId={selectedDeviceId}

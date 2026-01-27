@@ -102,7 +102,7 @@ const useStyles = makeStyles()((theme) => ({
 }));
 
 const GlobalNavbar = ({
-    onAccount, onDashboard, onEvents, showSidebarToggle, onSidebarToggle,
+    onAccount, onDashboard, showSidebarToggle, onSidebarToggle,
 }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
@@ -222,7 +222,7 @@ const GlobalNavbar = ({
                     <ThemeToggle />
                     <IconButton
                         color="inherit"
-                        onClick={onEvents}
+                        onClick={() => dispatch(sessionActions.updateNotificationsOpen(true))}
                         sx={{
                             backgroundColor: theme => theme.palette.mode === 'dark'
                                 ? 'rgba(248, 115, 24, 0.1)'
@@ -281,9 +281,9 @@ const GlobalNavbar = ({
                             </ListItemText>
                         </MenuItem>
                     </Menu>
-                </Box>
-            </Toolbar>
-        </AppBar>
+                </Box >
+            </Toolbar >
+        </AppBar >
     );
 };
 

@@ -144,6 +144,8 @@ const LoginPage = () => {
     }
   }, []);
 
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'));
+
   if (loading) {
     return <TruckLoader />;
   }
@@ -183,7 +185,7 @@ const LoginPage = () => {
         )}
       </div>
       <div className={classes.container}>
-        {useMediaQuery(theme.breakpoints.down('lg')) && <LogoImage color={theme.palette.primary.main} />}
+        {isLgDown && <LogoImage color={theme.palette.primary.main} />}
         {!openIdForced && (
           <>
             <TextField

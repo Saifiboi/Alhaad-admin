@@ -10,6 +10,7 @@ const { reducer, actions } = createSlice({
     logs: [],
     positions: {},
     history: {},
+    notificationsOpen: false,
   },
   reducers: {
     updateServer(state, action) {
@@ -45,6 +46,9 @@ const { reducer, actions } = createSlice({
           state.history = {};
         }
       });
+    },
+    updateNotificationsOpen(state, action) {
+      state.notificationsOpen = action.payload;
     },
   },
 });

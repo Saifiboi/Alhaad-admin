@@ -1,6 +1,17 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import CombinedReportPage from '../reports/CombinedReportPage';
+import RouteReportPage from '../reports/PositionsReportPage';
+import EventReportPage from '../reports/EventReportPage';
+import TripReportPage from '../reports/TripReportPage';
+import StopReportPage from '../reports/StopReportPage';
+import SummaryReportPage from '../reports/SummaryReportPage';
+import ChartReportPage from '../reports/ChartReportPage';
+import StatisticsPage from '../reports/StatisticsPage';
+import AuditPage from '../reports/AuditPage';
+import LogsPage from '../reports/LogsPage';
+import ScheduledPage from '../reports/ScheduledPage';
+import ReportsDashboard from '../reports/ReportsDashboard';
 import DevicesPage from '../settings/DevicesPage';
 import DevicePage from '../settings/DevicePage';
 import DeviceConnectionsPage from '../settings/DeviceConnectionsPage';
@@ -89,6 +100,17 @@ const DesktopRoutes = () => {
             <Route path="/settings/geofences" element={<GeofencesPage />} />
 
             <Route path="/reports/combined" element={<CombinedReportPage />} />
+            <Route path="/reports/route" element={<RouteReportPage />} />
+            <Route path="/reports/event" element={<EventReportPage />} />
+            <Route path="/reports/trips" element={<TripReportPage />} />
+            <Route path="/reports/stops" element={<StopReportPage />} />
+            <Route path="/reports/summary" element={<SummaryReportPage />} />
+            <Route path="/reports/chart" element={<ChartReportPage />} />
+            <Route path="/reports/statistics" element={<StatisticsPage />} />
+            <Route path="/reports/audit" element={<AuditPage />} />
+            <Route path="/reports/logs" element={<LogsPage />} />
+            <Route path="/reports/scheduled" element={<ScheduledPage />} />
+            <Route path="/reports/dashboard" element={<ReportsDashboard />} />
             <Route path="/replay" element={<ReplayPage />} />
         </Routes>
     );

@@ -111,6 +111,6 @@ export const desktopApps = [
         id: 'reports',
         title: 'Reports',
         icon: <DescriptionIcon />,
-        path: '/reports/combined',
+        path: '/reports/dashboard',
     },
 ];
