@@ -31,10 +31,12 @@ const { actions, reducer } = createSlice({
         },
         launch(state, action) {
             const app = action.payload;
+            const maxZ = Math.max(10, ...Object.values(state.items).map((w) => w.zIndex || 0));
             if (!state.items[app.id]) {
-                state.items[app.id] = { ...app, minimized: false, maximized: false, zIndex: 100 };
+                state.items[app.id] = { ...app, minimized: false, maximized: false, zIndex: maxZ + 1 };
             } else {
                 state.items[app.id].minimized = false;
+                state.items[app.id].zIndex = maxZ + 1;
             }
             state.activeId = app.id;
             saveState(state);
