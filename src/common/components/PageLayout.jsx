@@ -95,7 +95,7 @@ const PageLayout = ({
   const navigate = useNavigate();
 
   const isWindowContext = useContext(WindowModeContext);
-  const isWindow = isWindowProp || isWindowContext;
+  const isWindow = isWindowProp || !!isWindowContext?.isWindow;
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -136,9 +136,9 @@ const PageLayout = ({
 
   return (
     <>
-      <GlobalNavbar />
+      <GlobalNavbar onDashboard={() => navigate('/')} />
       <div className={classes.root}>
-        {desktop ? (
+        {desktop && menu ? (
           <Drawer
             variant="permanent"
             className={classes.desktopDrawer}
@@ -161,14 +161,16 @@ const PageLayout = ({
             {menu}
           </Drawer>
         ) : (
-          <Drawer
-            variant="temporary"
-            open={openDrawer}
-            onClose={() => setOpenDrawer(false)}
-            classes={{ paper: classes.mobileDrawer }}
-          >
-            {menu}
-          </Drawer>
+          !desktop && (
+            <Drawer
+              variant="temporary"
+              open={openDrawer}
+              onClose={() => setOpenDrawer(false)}
+              classes={{ paper: classes.mobileDrawer }}
+            >
+              {menu}
+            </Drawer>
+          )
         )}
         {!desktop && (
           <AppBar className={classes.mobileToolbar} position="static" color="inherit">

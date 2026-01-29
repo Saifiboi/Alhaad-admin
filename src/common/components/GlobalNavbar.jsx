@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Badge } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -106,6 +106,7 @@ const GlobalNavbar = ({
 }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
     const eventsCount = useSelector((state) => state.events.items.length);
@@ -188,10 +189,10 @@ const GlobalNavbar = ({
                 </Box>
 
                 <Box className={classes.userSection}>
-                    {onDashboard && (
+                    {(onDashboard || location.pathname !== '/') && (
                         <Box
                             className={classes.userInfo}
-                            onClick={onDashboard}
+                            onClick={onDashboard || (() => navigate('/'))}
                             sx={{ mr: 1 }}
                         >
                             <GridViewIcon sx={{ color: theme => theme.palette.primary.main, mr: 1, fontSize: '20px' }} />

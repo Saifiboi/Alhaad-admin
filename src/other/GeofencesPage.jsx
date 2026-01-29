@@ -26,9 +26,7 @@ const useStyles = makeStyles()((theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    [theme.breakpoints.up('md')]: {
-      paddingTop: '64px',
-    },
+    paddingTop: '64px',
   },
   content: {
     flexGrow: 1,
@@ -102,7 +100,7 @@ const GeofencesPage = () => {
 
   return (
     <div className={classes.root}>
-      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} />}
+      <GlobalNavbar onDashboard={() => navigate('/')} />
       <div className={classes.content}>
         <Paper square className={classes.drawer}>
           <Toolbar>

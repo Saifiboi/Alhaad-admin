@@ -128,55 +128,48 @@ const Navigation = () => {
         <Route path="settings/geofences" element={<GeofencesPage />} />
         <Route path="event/:id" element={<EventPage />} />
 
-        {!desktop && (
-          <>
-            <Route path="emulator" element={<EmulatorPage />} />
-
-            <Route path="settings">
-              <Route path="accumulators/:deviceId" element={<AccumulatorsPage />} />
-              <Route path="announcement" element={<AnnouncementPage />} />
-              <Route path="calendars" element={<CalendarsPage />} />
-              <Route path="calendar/:id" element={<CalendarPage />} />
-              <Route path="calendar" element={<CalendarPage />} />
-              <Route path="commands" element={<CommandsPage />} />
-              <Route path="command/:id" element={<CommandPage />} />
-              <Route path="command" element={<CommandPage />} />
-              <Route path="attributes" element={<ComputedAttributesPage />} />
-              <Route path="attribute/:id" element={<ComputedAttributePage />} />
-              <Route path="attribute" element={<ComputedAttributePage />} />
-              <Route path="devices" element={<DevicesPage />} />
-              <Route path="device/:id/connections" element={<DeviceConnectionsPage />} />
-              <Route path="device/:id/command" element={<CommandDevicePage />} />
-              <Route path="device/:id/share" element={<SharePage />} />
-              <Route path="device/:id" element={<DevicePage />} />
-              <Route path="device" element={<DevicePage />} />
-              <Route path="drivers" element={<DriversPage />} />
-              <Route path="driver/:id" element={<DriverPage />} />
-              <Route path="driver" element={<DriverPage />} />
-              <Route path="geofence/:id" element={<GeofencePage />} />
-              <Route path="geofence" element={<GeofencePage />} />
-              <Route path="groups" element={<GroupsPage />} />
-              <Route path="group/:id/connections" element={<GroupConnectionsPage />} />
-              <Route path="group/:id/command" element={<CommandGroupPage />} />
-              <Route path="group/:id" element={<GroupPage />} />
-              <Route path="group" element={<GroupPage />} />
-              <Route path="maintenances" element={<MaintenancesPage />} />
-              <Route path="maintenance/:id" element={<MaintenancePage />} />
-              <Route path="maintenance" element={<MaintenancePage />} />
-              <Route path="notifications" element={<NotificationsPage />} />
-              <Route path="notification/:id" element={<NotificationPage />} />
-              <Route path="notification" element={<NotificationPage />} />
-              <Route path="preferences" element={<PreferencesPage />} />
-              <Route path="server" element={<ServerPage />} />
-              <Route path="users" element={<UsersPage />} />
-              <Route path="user/:id/connections" element={<UserConnectionsPage />} />
-              <Route path="user/:id" element={<UserPage />} />
-              <Route path="user" element={<UserPage />} />
-            </Route>
-
-
-          </>
-        )}
+        <Route path="emulator" element={<EmulatorPage />} />
+        <Route path="settings">
+          <Route path="accumulators/:deviceId" element={<AccumulatorsPage />} />
+          <Route path="announcement" element={<AnnouncementPage />} />
+          <Route path="calendars" element={<CalendarsPage />} />
+          <Route path="calendar/:id" element={<CalendarPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="commands" element={<CommandsPage />} />
+          <Route path="command/:id" element={<CommandPage />} />
+          <Route path="command" element={<CommandPage />} />
+          <Route path="attributes" element={<ComputedAttributesPage />} />
+          <Route path="attribute/:id" element={<ComputedAttributePage />} />
+          <Route path="attribute" element={<ComputedAttributePage />} />
+          <Route path="devices" element={<DevicesPage />} />
+          <Route path="device/:id/connections" element={<DeviceConnectionsPage />} />
+          <Route path="device/:id/command" element={<CommandDevicePage />} />
+          <Route path="device/:id/share" element={<SharePage />} />
+          <Route path="device/:id" element={<DevicePage />} />
+          <Route path="device" element={<DevicePage />} />
+          <Route path="drivers" element={<DriversPage />} />
+          <Route path="driver/:id" element={<DriverPage />} />
+          <Route path="driver" element={<DriverPage />} />
+          <Route path="geofence/:id" element={<GeofencePage />} />
+          <Route path="geofence" element={<GeofencePage />} />
+          <Route path="groups" element={<GroupsPage />} />
+          <Route path="group/:id/connections" element={<GroupConnectionsPage />} />
+          <Route path="group/:id/command" element={<CommandGroupPage />} />
+          <Route path="group/:id" element={<GroupPage />} />
+          <Route path="group" element={<GroupPage />} />
+          <Route path="maintenances" element={<MaintenancesPage />} />
+          <Route path="maintenance/:id" element={<MaintenancePage />} />
+          <Route path="maintenance" element={<MaintenancePage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="notification/:id" element={<NotificationPage />} />
+          <Route path="notification" element={<NotificationPage />} />
+          <Route path="preferences" element={<PreferencesPage />} />
+          <Route path="server" element={<ServerPage />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="user/:id/connections" element={<UserConnectionsPage />} />
+          <Route path="user/:id" element={<UserPage />} />
+          <Route path="user" element={<UserPage />} />
+        </Route>
         {desktop && (
           <Route path="position/:id" element={<PositionPage />} />
         )}

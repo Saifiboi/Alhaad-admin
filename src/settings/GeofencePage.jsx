@@ -41,7 +41,6 @@ const GeofencePage = () => {
       setItem={setItem}
       validate={validate}
       onItemSaved={onItemSaved}
-      menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'sharedGeofence']}
     >
       {item && (
