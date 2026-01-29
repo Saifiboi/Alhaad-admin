@@ -289,21 +289,13 @@ const MainPage = () => {
   };
 
   const handleDashboardClick = useCallback(() => {
-    const nextWindows = { ...windows };
-    Object.keys(nextWindows).forEach((id) => {
-      nextWindows[id] = { ...nextWindows[id], minimized: true };
-    });
-    dispatch(windowsActions.update(nextWindows));
-  }, [windows, dispatch]);
+    dispatch(windowsActions.minimizeAll());
+  }, [dispatch]);
 
   const handleSelectDevice = useCallback((deviceId) => {
     dispatch(devicesActions.selectId(deviceId));
     if (desktop) {
-      const nextWindows = { ...windows };
-      Object.keys(nextWindows).forEach((id) => {
-        nextWindows[id] = { ...nextWindows[id], minimized: true };
-      });
-      dispatch(windowsActions.update(nextWindows));
+      dispatch(windowsActions.minimizeAll());
       setSidebarOverlaid(false);
     }
   }, [desktop, dispatch]);

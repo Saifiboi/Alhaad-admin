@@ -25,6 +25,12 @@ const { actions, reducer } = createSlice({
             state.items = action.payload;
             saveState(state);
         },
+        minimizeAll(state) {
+            Object.keys(state.items).forEach((id) => {
+                state.items[id].minimized = true;
+            });
+            saveState(state);
+        },
         setActive(state, action) {
             state.activeId = action.payload;
             saveState(state);
