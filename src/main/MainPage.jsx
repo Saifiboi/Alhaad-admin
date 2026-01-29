@@ -251,8 +251,9 @@ const MainPage = () => {
       return;
     }
 
+    const { icon, ...win } = app;
     dispatch(windowsActions.launch({
-      ...app,
+      ...win,
       x: Math.max(0, (window.innerWidth - 680) / 2),
       y: Math.max(80, (window.innerHeight - 413) / 2),
       width: 680,

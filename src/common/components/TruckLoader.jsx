@@ -22,15 +22,15 @@ const roadAnimation = keyframes`
   }
 `;
 
-const LoaderContainer = styled(Box)(({ fullHeight }) => ({
-  height: fullHeight ? '100vh' : 'auto',
-  minHeight: fullHeight ? '100vh' : '300px',
+const LoaderContainer = styled(Box)(({ $fullHeight }) => ({
+  height: $fullHeight ? '100vh' : 'auto',
+  minHeight: $fullHeight ? '100vh' : '300px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: '100%',
   overflow: 'hidden',
-  padding: fullHeight ? 0 : '50px 0',
+  padding: $fullHeight ? 0 : '50px 0',
 }));
 
 const Loader = styled(Box)({
@@ -116,7 +116,7 @@ const TruckLoader = ({ fullHeight = true }) => {
   }, []);
 
   return (
-    <LoaderContainer fullHeight={fullHeight}>
+    <LoaderContainer $fullHeight={fullHeight}>
       <Loader>
         <TruckWrapper>
           <TruckBody>

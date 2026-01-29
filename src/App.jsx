@@ -60,8 +60,7 @@ const App = () => {
         navigate(newServer ? '/register' : '/login', { replace: true });
       }
     }
-    return null;
-  }, []);
+  }, [user]);
 
   if (user == null) {
     return (<TruckLoader />);

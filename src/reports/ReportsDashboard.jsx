@@ -248,7 +248,7 @@ const ReportsDashboard = () => {
                             </div>
                         </div>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid size={4}>
                         <div className={classes.statCard}>
                             <div className={classes.statIconBox}><PersonPinIcon sx={{ fontSize: 18 }} /></div>
                             <div>
