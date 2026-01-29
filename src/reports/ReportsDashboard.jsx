@@ -182,7 +182,7 @@ const ReportsDashboard = () => {
     const allReports = useMemo(() => [
         { id: 'combined', title: 'Combined', icon: <BarChartIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/combined' },
         { id: 'route', title: 'Positions', icon: <TimelineIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/route' },
-        { id: 'event', title: 'Events', icon: <EventIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/event' },
+        { id: 'event', title: 'Events', icon: <EventIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/events' },
         { id: 'trips', title: 'Trips', icon: <DescriptionIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/trips' },
         { id: 'stops', title: 'Stops', icon: <ListAltIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/stops' },
         { id: 'summary', title: 'Summary', icon: <AssignmentIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/summary' },
@@ -230,7 +230,7 @@ const ReportsDashboard = () => {
 
             <Box className={classes.contentScroll}>
                 <Grid container spacing={1.5} className={classes.statsGrid}>
-                    <Grid item xs={4}>
+                    <Grid size={4}>
                         <div className={classes.statCard}>
                             <div className={classes.statIconBox}><PeopleIcon sx={{ fontSize: 18 }} /></div>
                             <div>
@@ -239,7 +239,7 @@ const ReportsDashboard = () => {
                             </div>
                         </div>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid size={4}>
                         <div className={classes.statCard}>
                             <div className={classes.statIconBox}><DirectionsCarIcon sx={{ fontSize: 18 }} /></div>
                             <div>
@@ -263,7 +263,7 @@ const ReportsDashboard = () => {
                     <Typography className={classes.sectionTitle}>Available Reports</Typography>
                     <Grid container spacing={1.5} columns={5}>
                         {filteredReports.map((report) => (
-                            <Grid item xs={1} key={report.id}>
+                            <Grid size={1} key={report.id}>
                                 <div className={classes.appIconCard} onClick={() => handleAction(report)}>
                                     <div className={`${classes.appIconBox} iconBox`}>
                                         {report.icon}

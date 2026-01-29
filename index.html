@@ -15,22 +15,129 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <title>Al-haad Track</title>
   <style>
-    .loader {
-      position: fixed;
-      top: calc(50% - 25px);
-      left: calc(50% - 25px);
-      width: 50px;
-      aspect-ratio: 1;
-      box-sizing: content-box;
-      animation: ll 1s infinite linear;
-      border-radius: 50%;
-      border: 8px solid lightgray;
-      border-right-color: black;
+    :root {
+      --primary-color: #f97316;
+      --bg-color: #f3f4f6;
+      --text-color: #282828;
+      --gradient: radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.15) 0px, transparent 50%);
     }
 
-    @keyframes ll {
-      to {
-        transform: rotate(1turn)
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0f172a;
+        --text-color: #ffffff;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-color);
+      background-image: var(--gradient);
+      z-index: 9999;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .truck-wrapper {
+      width: 120px;
+      height: 60px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .truck-body {
+      width: 78px;
+      margin-bottom: 4px;
+      animation: motion 1s linear infinite;
+      animation-fill-mode: both;
+      position: relative;
+      z-index: 2;
+    }
+
+    .truck-tires {
+      width: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px 0 9px;
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    .truck-tires svg {
+      width: 14px;
+    }
+
+    .road {
+      width: 100%;
+      height: 1.5px;
+      background-color: var(--text-color);
+      position: relative;
+      bottom: 0;
+      align-self: flex-end;
+      border-radius: 3px;
+    }
+
+    .road::before,
+    .road::after {
+      content: "";
+      position: absolute;
+      height: 100%;
+      background-color: var(--text-color);
+      border-radius: 3px;
+      animation: road 1.4s linear infinite;
+    }
+
+    .road::before {
+      width: 20px;
+      right: -50%;
+    }
+
+    .road::after {
+      width: 10px;
+      right: -65%;
+    }
+
+    @keyframes motion {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(3px);
+      }
+    }
+
+    @keyframes road {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-350px);
       }
     }
   </style>
@@ -39,7 +146,35 @@
 <body>
   <noscript>Enable JavaScript to use <a href="https://www.traccar.org/">Traccar GPS Tracking System</a>.</noscript>
   <div id="root" class="root"></div>
-  <div class="loader"></div>
+  <div class="loader-container loader">
+    <div class="truck-wrapper">
+      <div class="truck-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 198 93" width="78">
+          <path stroke-width="3" stroke="#282828" fill="#F83D3D"
+            d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z" />
+          <path stroke-width="3" stroke="#282828" fill="#7D7C7C"
+            d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z" />
+          <path stroke-width="2" stroke="#282828" fill="#282828"
+            d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z" />
+          <rect stroke-width="2" stroke="#282828" fill="#FFFCAB" rx="1" height="7" width="5" y="63" x="187" />
+          <rect stroke-width="2" stroke="#282828" fill="#282828" rx="1" height="11" width="4" y="81" x="193" />
+          <rect stroke-width="3" stroke="#282828" fill="#DFDFDF" rx="2.5" height="90" width="121" y="1.5" x="6.5" />
+          <rect stroke-width="2" stroke="#282828" fill="#DFDFDF" rx="2" height="4" width="6" y="84" x="1" />
+        </svg>
+      </div>
+      <div class="truck-tires">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" width="14" height="14">
+          <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15" />
+          <circle fill="#DFDFDF" r="7" cy="15" cx="15" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" width="14" height="14">
+          <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15" />
+          <circle fill="#DFDFDF" r="7" cy="15" cx="15" />
+        </svg>
+      </div>
+      <div class="road"></div>
+    </div>
+  </div>
   <script type="module" src="/src/index.jsx" onerror="alert('Loading error.')"></script>
 </body>
 

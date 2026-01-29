@@ -9,7 +9,7 @@ import { useCatch, useEffectAsync } from './reactHelper';
 import { sessionActions } from './store';
 import UpdateController from './UpdateController';
 import TermsDialog from './common/components/TermsDialog';
-import Loader from './common/components/Loader';
+import TruckLoader from './common/components/TruckLoader';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import EventsDrawer from './main/EventsDrawer';
 
@@ -64,7 +64,7 @@ const App = () => {
   }, []);
 
   if (user == null) {
-    return (<Loader />);
+    return (<TruckLoader />);
   }
   if (termsUrl && !user.attributes.termsAccepted) {
     return (

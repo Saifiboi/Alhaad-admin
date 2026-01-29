@@ -101,7 +101,7 @@ const DesktopRoutes = () => {
 
             <Route path="/reports/combined" element={<CombinedReportPage />} />
             <Route path="/reports/route" element={<RouteReportPage />} />
-            <Route path="/reports/event" element={<EventReportPage />} />
+            <Route path="/reports/events" element={<EventReportPage />} />
             <Route path="/reports/trips" element={<TripReportPage />} />
             <Route path="/reports/stops" element={<StopReportPage />} />
             <Route path="/reports/summary" element={<SummaryReportPage />} />
