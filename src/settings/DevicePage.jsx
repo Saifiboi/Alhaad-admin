@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Accordion,
@@ -31,6 +31,7 @@ import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
 import QrCodeDialog from '../common/components/QrCodeDialog';
 import fetchOrThrow from '../common/util/fetchOrThrow';
+import countries from '../common/util/countries';
 
 const DevicePage = () => {
   const { classes } = useSettingsStyles();
@@ -47,6 +48,14 @@ const DevicePage = () => {
   const [item, setItem] = useState(uniqueId ? { uniqueId } : null);
   const [showQr, setShowQr] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+
+  useEffect(() => {
+    if (item && !item.expirationTime) {
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 1);
+      setItem({ ...item, expirationTime: date.toISOString() });
+    }
+  }, [item]);
 
   const handleFileInput = useCatch(async (newFile) => {
     setImageFile(newFile);
@@ -73,7 +82,6 @@ const DevicePage = () => {
     isMobile ? 'sharedPlatformInfo' : 'sharedDeviceSpecs',
     ...(!isMobile ? ['sharedVehicleSpecs'] : []),
     'sharedExtra',
-    'sharedAttributes',
   ];
 
   const handleNext = () => {
@@ -84,13 +92,16 @@ const DevicePage = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const validate = () => activeStep === steps.length - 1 && item && item.name && item.uniqueId;
+  const validate = () => activeStep === steps.length - 1 && item && item.name && item.uniqueId && item.expirationTime;
 
   return (
     <EditItemView
       endpoint="devices"
       item={item}
       setItem={setItem}
+      defaultItem={{
+        expirationTime: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+      }}
       validate={validate}
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'sharedDevice']}
@@ -136,6 +147,19 @@ const DevicePage = () => {
                     { id: 'dashcam', name: 'Dashcam' },
                     { id: 'canbus', name: 'Canbus' },
                   ]}
+                />
+
+                <TextField
+                  label={t('userExpirationTime')}
+                  type="date"
+                  required
+                  value={item.expirationTime ? item.expirationTime.split('T')[0] : ''}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setItem({ ...item, expirationTime: new Date(e.target.value).toISOString() });
+                    }
+                  }}
+                  disabled={!admin}
                 />
               </div>
             )}
@@ -308,10 +332,11 @@ const DevicePage = () => {
                   onChange={(event) => setItem({ ...item, attributes: { ...item.attributes, organizationId: event.target.value } })}
                   label={t('attributeOrganization')}
                 />
-                <TextField
-                  value={item.attributes?.countryOfRegistration || ''}
+                <SelectField
+                  value={item.attributes?.countryOfRegistration || 'Pakistan'}
                   onChange={(event) => setItem({ ...item, attributes: { ...item.attributes, countryOfRegistration: event.target.value } })}
                   label={t('attributeCountryRegistration')}
+                  data={countries}
                 />
               </div>
             )}
@@ -349,17 +374,7 @@ const DevicePage = () => {
                   endpoint="/api/calendars"
                   label={t('sharedCalendar')}
                 />
-                <TextField
-                  label={t('userExpirationTime')}
-                  type="date"
-                  value={item.expirationTime ? item.expirationTime.split('T')[0] : '2099-01-01'}
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      setItem({ ...item, expirationTime: new Date(e.target.value).toISOString() });
-                    }
-                  }}
-                  disabled={!admin}
-                />
+
                 <div className={classes.row}>
                   <FormControlLabel
                     control={<Switch checked={item.disabled} onChange={(event) => setItem({ ...item, disabled: event.target.checked })} />}
@@ -387,13 +402,7 @@ const DevicePage = () => {
               </div>
             )}
 
-            {activeStep === (isMobile ? 3 : 4) && (
-              <EditAttributesAccordion
-                attributes={item.attributes}
-                setAttributes={(attributes) => setItem({ ...item, attributes })}
-                definitions={{ ...commonDeviceAttributes, ...deviceAttributes }}
-              />
-            )}
+
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, gap: 2 }}>

@@ -1,0 +1,15 @@
+export default [
+    { id: 'Pakistan', name: 'Pakistan' },
+    { id: 'Afghanistan', name: 'Afghanistan' },
+    { id: 'China', name: 'China' },
+    { id: 'India', name: 'India' },
+    { id: 'Iran', name: 'Iran' },
+    { id: 'United States', name: 'United States' },
+    { id: 'United Kingdom', name: 'United Kingdom' },
+    { id: 'Canada', name: 'Canada' },
+    { id: 'Saudi Arabia', name: 'Saudi Arabia' },
+    { id: 'United Arab Emirates', name: 'United Arab Emirates' },
+    { id: 'Australia', name: 'Australia' },
+    { id: 'Germany', name: 'Germany' },
+    { id: 'France', name: 'France' },
+];

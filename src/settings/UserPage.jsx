@@ -128,7 +128,7 @@ const UserPage = () => {
   };
 
   const [activeStep, setActiveStep] = useState(0);
-  const steps = ['sharedRequired', 'sharedLocation', 'sharedPreferences', 'sharedPermissions', 'sharedAttributes'];
+  const steps = ['sharedRequired', 'sharedLocation', 'sharedPreferences', 'sharedPermissions'];
 
   const validate = () => item && item.name && item.email && (item.id || item.password) && (admin || !totpForce || item.totpKey);
 
@@ -145,7 +145,19 @@ const UserPage = () => {
       endpoint="users"
       item={item}
       setItem={setItem}
-      defaultItem={admin ? { deviceLimit: -1 } : {}}
+      defaultItem={{
+        latitude: 33.6844,
+        longitude: 73.0479,
+        zoom: 3,
+        deviceLimit: 1,
+        userLimit: 0,
+        readonly: true,
+        expirationTime: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+        attributes: {
+          speedUnit: 'kmh',
+          timezone: 'Asia/Karachi'
+        }
+      }}
       validate={() => activeStep === steps.length - 1 && validate()}
       onItemSaved={onItemSaved}
       menu={<SettingsMenu />}
@@ -447,15 +459,7 @@ const UserPage = () => {
               </div>
             )}
 
-            {activeStep === 4 && (
-              <EditAttributesAccordion
-                attribute={attribute}
-                attributes={item.attributes}
-                setAttributes={(attributes) => setItem({ ...item, attributes })}
-                definitions={{ ...commonUserAttributes, ...userAttributes }}
-                focusAttribute={attribute}
-              />
-            )}
+
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, gap: 2 }}>

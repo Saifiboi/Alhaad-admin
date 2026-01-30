@@ -18,6 +18,7 @@ import SettingsMenu from './components/SettingsMenu';
 import useSettingsStyles from './common/useSettingsStyles';
 import useDriverAttributes from '../common/attributes/useDriverAttributes';
 import SelectField from '../common/components/SelectField';
+import countries from '../common/util/countries';
 
 const DriverPage = () => {
   const { classes } = useSettingsStyles();
@@ -26,7 +27,7 @@ const DriverPage = () => {
 
   const [item, setItem] = useState();
   const [activeStep, setActiveStep] = useState(0);
-  const steps = ['sharedPersonal', 'sharedLicense', 'sharedCompliance', 'sharedAttributes'];
+  const steps = ['sharedPersonal', 'sharedLicense', 'sharedCompliance'];
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -58,23 +59,34 @@ const DriverPage = () => {
             {activeStep === 0 && (
               <div className={classes.grid}>
                 <TextField
-                  value={item.name || ''}
-                  onChange={(event) => setItem({ ...item, name: event.target.value })}
-                  label={t('sharedName')}
-                />
-                <TextField
                   value={item.uniqueId || ''}
                   onChange={(event) => setItem({ ...item, uniqueId: event.target.value })}
                   label={t('deviceIdentifier')}
                 />
                 <TextField
                   value={item.attributes?.firstName || ''}
-                  onChange={(event) => setItem({ ...item, attributes: { ...item.attributes, firstName: event.target.value } })}
+                  onChange={(event) => {
+                    const firstName = event.target.value;
+                    const lastName = item.attributes?.lastName || '';
+                    setItem({
+                      ...item,
+                      name: `${firstName} ${lastName}`.trim(),
+                      attributes: { ...item.attributes, firstName },
+                    });
+                  }}
                   label={t('attributeFirstName')}
                 />
                 <TextField
                   value={item.attributes?.lastName || ''}
-                  onChange={(event) => setItem({ ...item, attributes: { ...item.attributes, lastName: event.target.value } })}
+                  onChange={(event) => {
+                    const lastName = event.target.value;
+                    const firstName = item.attributes?.firstName || '';
+                    setItem({
+                      ...item,
+                      name: `${firstName} ${lastName}`.trim(),
+                      attributes: { ...item.attributes, lastName },
+                    });
+                  }}
                   label={t('attributeLastName')}
                 />
                 <TextField
@@ -116,10 +128,11 @@ const DriverPage = () => {
                   label={t('attributeLicenseExpiry')}
                   InputLabelProps={{ shrink: true }}
                 />
-                <TextField
-                  value={item.attributes?.licenseIssuingCountry || ''}
+                <SelectField
+                  value={item.attributes?.licenseIssuingCountry || 'Pakistan'}
                   onChange={(event) => setItem({ ...item, attributes: { ...item.attributes, licenseIssuingCountry: event.target.value } })}
                   label={t('attributeLicenseCountry')}
+                  data={countries}
                 />
               </div>
             )}
@@ -194,13 +207,7 @@ const DriverPage = () => {
               </div>
             )}
 
-            {activeStep === 3 && (
-              <EditAttributesAccordion
-                attributes={item.attributes}
-                setAttributes={(attributes) => setItem({ ...item, attributes })}
-                definitions={driverAttributes}
-              />
-            )}
+
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, gap: 2 }}>
