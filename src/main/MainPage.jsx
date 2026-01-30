@@ -387,7 +387,7 @@ const MainPage = () => {
                   onFocus={handleFocusWindow}
                   onDragStop={handleDragStop}
                   onResizeStop={handleResizeStop}
-                  zIndex={win.maximized ? 1500 : win.zIndex}
+                  zIndex={win.maximized ? 1200 : win.zIndex}
                   x={win.x}
                   y={win.y}
                   defaultWidth={win.width || 680}

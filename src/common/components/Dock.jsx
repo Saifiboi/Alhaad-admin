@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme) => ({
         bottom: theme.spacing(1),
         left: '50%',
         transform: 'translateX(-50%)',
-        zIndex: 1400, // Above windows, below Navbar
+        zIndex: 1250, // Above windows, below Navbar
         display: 'flex',
         justifyContent: 'center',
         padding: theme.spacing(0.25, 1),
