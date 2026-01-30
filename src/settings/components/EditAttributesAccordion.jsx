@@ -9,15 +9,11 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  Accordion,
-  AccordionSummary,
   Typography,
-  AccordionDetails,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddAttributeDialog from './AddAttributeDialog';
+
+
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAttributePreference } from '../../common/util/preferences';
 import {
@@ -36,7 +32,7 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
   const distanceUnit = useAttributePreference('distanceUnit');
   const volumeUnit = useAttributePreference('volumeUnit');
 
-  const [addDialogShown, setAddDialogShown] = useState(false);
+
 
   const updateAttribute = (key, value, type, subtype) => {
     const updatedAttributes = { ...attributes };
@@ -129,31 +125,11 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
     return [...otherList, ...booleanList];
   };
 
-  const handleAddResult = (definition) => {
-    setAddDialogShown(false);
-    if (definition) {
-      switch (definition.type) {
-        case 'number':
-          updateAttribute(definition.key, 0);
-          break;
-        case 'boolean':
-          updateAttribute(definition.key, false);
-          break;
-        default:
-          updateAttribute(definition.key, '');
-          break;
-      }
-    }
-  };
+
 
   return features.disableAttributes ? '' : (
-    <Accordion defaultExpanded={!!attribute}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="subtitle1">
-          {t('sharedAttributes')}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.grid}>
+    <>
+      <div className={classes.grid}>
         {convertToList(attributes).map(({
           key, value, type, subtype,
         }) => {
@@ -196,23 +172,9 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
             </FormControl>
           );
         })}
-        <Button
-          className={classes.fullWidth}
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => setAddDialogShown(true)}
-          sx={{ color: 'common.white' }}
-        >
-          {t('sharedAdd')}
-        </Button>
-        <AddAttributeDialog
-          open={addDialogShown}
-          onResult={handleAddResult}
-          definitions={definitions}
-        />
-      </AccordionDetails>
-    </Accordion>
+
+      </div>
+    </>
   );
 };
 
