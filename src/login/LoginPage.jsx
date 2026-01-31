@@ -78,6 +78,7 @@ const LoginPage = () => {
     const root = document.documentElement;
     root.style.setProperty('--theme-bg-default', theme.palette.background.default);
     root.style.setProperty('--theme-bg-paper', theme.palette.background.paper);
+    root.style.setProperty('--theme-bg-gradient', theme.palette.background.gradient);
     root.style.setProperty('--theme-surface-elevated', theme.palette.surface.elevated);
     root.style.setProperty('--theme-primary-main', theme.palette.primary.main);
     root.style.setProperty('--theme-primary-dark', theme.palette.primary.dark);

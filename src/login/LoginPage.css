@@ -204,20 +204,25 @@ body {
 .login-form-card {
   position: relative;
   margin-top: -3rem;
-  min-height: calc(100vh - 50vh + 3rem);
   border-radius: 2.5rem 2.5rem 0 0;
   padding: 1.5rem 1.5rem 2rem;
   transition: all 0.3s ease;
   z-index: 50;
+  /* Glassmorphism effect: translucency + blur */
+  background:
+    var(--theme-bg-gradient),
+    var(--theme-glass-bg, rgba(255, 255, 255, 0.6));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--theme-glass-border, rgba(255, 255, 255, 0.2));
+  border-bottom: none;
 }
 
 .dark .login-form-card {
-  background: var(--theme-bg-default, #1e293b);
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .login-form-card:not(.dark) {
-  background: var(--theme-bg-default, #f3f4f6);
   box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.08);
 }
 
