@@ -60,6 +60,7 @@ import { generateLoginToken } from './common/components/NativeInterface';
 import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import AuditPage from './reports/AuditPage';
+import ReportsDashboard from './reports/ReportsDashboard';
 
 import { useTheme, useMediaQuery, Typography } from '@mui/material';
 
@@ -173,6 +174,7 @@ const Navigation = () => {
           <Route path="position/:id" element={<PositionPage />} />
         )}
         <Route path="reports">
+          <Route path="dashboard" element={<ReportsDashboard />} />
           <Route path="combined" element={<CombinedReportPage />} />
           <Route path="chart" element={<ChartReportPage />} />
           <Route path="events" element={<EventReportPage />} />

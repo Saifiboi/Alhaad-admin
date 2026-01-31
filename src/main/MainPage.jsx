@@ -249,7 +249,7 @@ const MainPage = () => {
       return;
     }
 
-    if (app.id === 'geofences' || app.id === 'replay' || app.id === 'reports') {
+    if (app.id === 'geofences' || app.id === 'replay') {
       navigate(app.path);
       return;
     }
@@ -444,7 +444,14 @@ const MainPage = () => {
                 minimized={win.minimized}
                 maximized={win.maximized}
               >
-                <WindowModeContext.Provider value={{ isWindow: true, onClose: () => handleCloseWindow(win.id) }}>
+                <WindowModeContext.Provider value={{
+                  isWindow: true,
+                  onClose: () => handleCloseWindow(win.id),
+                  onNavigate: (path) => {
+                    handleCloseWindow(win.id);
+                    navigate(path);
+                  },
+                }}>
                   {win.component}
                 </WindowModeContext.Provider>
               </DesktopWindow>
