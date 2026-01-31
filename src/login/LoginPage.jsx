@@ -90,7 +90,7 @@ const LoginPage = () => {
   }, [theme]);
 
   return (
-    <div className="login-page-container">
+    <div className={`login-page-container ${theme.palette.mode === 'dark' ? 'dark' : ''}`}>
       {/* Top Hero Section */}
       <div className="login-hero">
         <div

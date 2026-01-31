@@ -78,20 +78,20 @@ body {
   transition: all 0.3s ease;
 }
 
-.dark .login-icon-wrapper {
-  background: rgba(249, 115, 22, 0.2);
-  border: 1px solid rgba(249, 115, 22, 0.4);
+.login-page-container.dark .login-icon-wrapper {
+  background: var(--theme-glass-bg, rgba(249, 115, 22, 0.2));
+  border: 1px solid var(--theme-glass-border, rgba(249, 115, 22, 0.4));
   box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
 }
 
-.login-icon-wrapper:not(.dark) {
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(255, 255, 255, 1);
+.login-page-container:not(.dark) .login-icon-wrapper {
+  background: #ffffff;
+  border: 1px solid #ffffff;
   box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.05), 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .login-icon {
-  color: #f97316;
+  color: var(--theme-primary-main, #f97316);
   font-size: 3.5rem;
 }
 
