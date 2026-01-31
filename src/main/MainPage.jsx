@@ -1,12 +1,12 @@
 import {
-  useState, useCallback, useEffect, createContext, useMemo,
+  useState, useCallback, useEffect, useMemo,
 } from 'react';
 import { Paper } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
 import { devicesActions, replayActions, errorsActions } from '../store';
@@ -106,7 +106,6 @@ const MainPage = () => {
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const location = useLocation();
   const navigate = useNavigate();
   const t = useTranslation();
 
@@ -184,7 +183,6 @@ const MainPage = () => {
 
       if (isDockAtBottom && isOverlappingHorizontally) {
         // Calculate height to end above dock
-        const dockHeight = dockRect.height;
         const availableHeight = dockRect.top - topOffset - gapAboveDock - sidebarMargin;
         setSidebarHeight(`${availableHeight}px`);
       } else {

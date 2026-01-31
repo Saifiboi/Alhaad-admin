@@ -13,7 +13,7 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-const LogoImage = ({ color }) => {
+const LogoImage = () => {
   const theme = useTheme();
   const { classes } = useStyles();
 

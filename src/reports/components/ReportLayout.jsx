@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
 import {
-    Drawer, Toolbar, IconButton, useMediaQuery, useTheme, Divider, Typography, Box,
+    IconButton, Typography, Box,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
 import GlobalNavbar from '../../common/components/GlobalNavbar';
-import MenuIcon from '@mui/icons-material/Menu';
 import BackIcon from '../../common/components/BackIcon';
-import ReportsMenu from '../components/ReportsMenu';
 
 const useStyles = makeStyles()((theme) => ({
     root: {
@@ -45,8 +42,6 @@ const useStyles = makeStyles()((theme) => ({
 
 const ReportLayout = ({ children }) => {
     const { classes } = useStyles();
-    const theme = useTheme();
-    const desktop = useMediaQuery(theme.breakpoints.up('md'));
     const t = useTranslation();
     const navigate = useNavigate();
 

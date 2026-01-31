@@ -1,4 +1,3 @@
-import React from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PeopleIcon from '@mui/icons-material/People';
@@ -13,7 +12,6 @@ import StorageIcon from '@mui/icons-material/Storage';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import LayersIcon from '@mui/icons-material/Layers';
-import PersonIcon from '@mui/icons-material/Person';
 
 export const desktopApps = [
     {

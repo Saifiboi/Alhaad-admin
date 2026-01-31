@@ -1,25 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Table, TableRow, TableCell, TableHead, TableBody, Switch, TableFooter, FormControlLabel,
-  Card, CardContent, Typography, Grid, IconButton, Box, Button, Chip
+  Switch, FormControlLabel,
+  Card, CardContent, Typography, IconButton, Box, Button, Chip
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
-import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useCatch, useEffectAsync } from '../reactHelper';
-import { formatBoolean, formatTime } from '../common/util/formatter';
+import { formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
-import CollectionActions from './components/CollectionActions';
 import TruckLoader from '../common/components/TruckLoader';
 import { useManager } from '../common/util/permissions';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
-import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import RemoveDialog from '../common/components/RemoveDialog';
 
@@ -149,7 +146,6 @@ const UserCard = ({
 };
 
 const UsersPage = () => {
-  const { classes } = useSettingsStyles();
   const navigate = useNavigate();
   const t = useTranslation();
 

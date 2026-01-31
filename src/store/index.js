@@ -9,7 +9,7 @@ import { groupsReducer as groups } from './groups';
 import { driversReducer as drivers } from './drivers';
 import { maintenancesReducer as maintenances } from './maintenances';
 import { calendarsReducer as calendars } from './calendars';
-import replay, { replayActions } from './replay';
+import replay from './replay';
 import { windowsReducer as windows } from './windows';
 import throttleMiddleware from './throttleMiddleware';
 

@@ -7,14 +7,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffectAsync } from '../reactHelper';
 import { prefixString } from '../common/util/stringUtils';
-import { formatBoolean } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
-import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import RemoveDialog from '../common/components/RemoveDialog';
 
@@ -93,7 +91,6 @@ const NotificationCard = ({
 };
 
 const NotificationsPage = () => {
-  const { classes } = useSettingsStyles();
   const t = useTranslation();
   const navigate = useNavigate();
 

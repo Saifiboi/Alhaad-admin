@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
   FormControlLabel,
   Switch,
   TextField,
@@ -14,19 +10,15 @@ import {
   StepLabel,
   Box,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { MuiFileInput } from 'mui-file-input';
 import EditItemView from './components/EditItemView';
-import EditAttributesAccordion from './components/EditAttributesAccordion';
 import SelectField from '../common/components/SelectField';
 import deviceCategories from '../common/util/deviceCategories';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import useDeviceAttributes from '../common/attributes/useDeviceAttributes';
 import { useAdministrator } from '../common/util/permissions';
 import SettingsMenu from './components/SettingsMenu';
-import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
 import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
 import QrCodeDialog from '../common/components/QrCodeDialog';
@@ -36,11 +28,7 @@ import countries from '../common/util/countries';
 const DevicePage = () => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
-
   const admin = useAdministrator();
-
-  const commonDeviceAttributes = useCommonDeviceAttributes(t);
-  const deviceAttributes = useDeviceAttributes(t);
 
   const [searchParams] = useSearchParams();
   const uniqueId = searchParams.get('uniqueId');

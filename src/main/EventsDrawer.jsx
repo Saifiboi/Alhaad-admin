@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Button, Tooltip,
+  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Tooltip,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -53,8 +53,8 @@ const EventsDrawer = ({ open, onClose }) => {
       PaperProps={{
         sx: {
           width: (theme) => theme.dimensions.eventsDrawerWidth,
-          marginTop: (theme) => ({ md: '64px', xs: 0 }),
-          height: (theme) => ({ md: 'calc(100% - 64px)', xs: '100%' }),
+          marginTop: { md: '64px', xs: 0 },
+          height: { md: 'calc(100% - 64px)', xs: '100%' },
         },
       }}
     >

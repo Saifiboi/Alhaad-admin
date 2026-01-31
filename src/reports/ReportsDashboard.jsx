@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import {
+    useState, useEffect, useContext, useMemo,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    Container, Grid, Card, CardContent, Typography, Box, Avatar, IconButton, InputBase, Tooltip, useTheme,
+    Grid, Typography, Box, Avatar, IconButton, InputBase, Tooltip, useTheme,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import { useTranslation } from '../common/components/LocalizationProvider';
 import { sessionActions } from '../store';
 import { nativePostMessage } from '../common/components/NativeInterface';
 
 import SearchIcon from '@mui/icons-material/Search';
 import DescriptionIcon from '@mui/icons-material/Description';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import EventIcon from '@mui/icons-material/Event';
@@ -20,7 +20,6 @@ import PeopleIcon from '@mui/icons-material/People';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import StorageIcon from '@mui/icons-material/Storage';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import SecurityIcon from '@mui/icons-material/Security';
@@ -153,7 +152,6 @@ const ReportsDashboard = () => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const theme = useTheme();
-    const t = useTranslation();
     const dispatch = useDispatch();
     const windowContext = useContext(WindowModeContext);
 
@@ -174,7 +172,9 @@ const ReportsDashboard = () => {
                     const users = await response.json();
                     setUsersCount(users.length);
                 }
-            } catch (e) { }
+            } catch {
+                // ignore
+            }
         };
         fetchUsers();
     }, []);

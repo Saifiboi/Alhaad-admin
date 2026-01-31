@@ -1,10 +1,8 @@
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-    Paper, Tooltip, IconButton, Zoom, Box, Typography, Menu, MenuItem,
+    Tooltip, IconButton, Box, Typography, Menu, MenuItem,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import { useTheme } from '@mui/material/styles';
 
 const useStyles = makeStyles()((theme) => ({
     dockContainer: {

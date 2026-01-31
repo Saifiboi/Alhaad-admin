@@ -8,7 +8,6 @@ import Tooltip from '@mui/material/Tooltip';
 import { makeStyles } from 'tss-react/mui';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { useNavigate } from 'react-router-dom';
-import { useMediaQuery, useTheme } from '@mui/material';
 import MapView from '../map/core/MapView';
 import MapCurrentLocation from '../map/MapCurrentLocation';
 import MapGeofenceEdit from '../map/draw/MapGeofenceEdit';
@@ -62,8 +61,6 @@ const GeofencesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const t = useTranslation();
-  const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const { classes } = useStyles();
 
   const [selectedGeofenceId, setSelectedGeofenceId] = useState();

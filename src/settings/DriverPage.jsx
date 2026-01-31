@@ -12,18 +12,14 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EditItemView from './components/EditItemView';
-import EditAttributesAccordion from './components/EditAttributesAccordion';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import SettingsMenu from './components/SettingsMenu';
 import useSettingsStyles from './common/useSettingsStyles';
-import useDriverAttributes from '../common/attributes/useDriverAttributes';
-import SelectField from '../common/components/SelectField';
 import countries from '../common/util/countries';
 
 const DriverPage = () => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
-  const driverAttributes = useDriverAttributes(t);
 
   const [item, setItem] = useState();
   const [activeStep, setActiveStep] = useState(0);

@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { Select, MenuItem, Box, FormControl, IconButton, Tooltip } from '@mui/material';
+import {
+  Select, MenuItem, Box, FormControl, IconButton, Tooltip
+} from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { sessionActions } from '../store';
-import { useLocalization, useTranslation } from '../common/components/LocalizationProvider';
+import { useLocalization } from '../common/components/LocalizationProvider';
 import usePersistedState from '../common/util/usePersistedState';
 import {
   generateLoginToken, nativePostMessage,
@@ -18,7 +20,7 @@ const LoginPage = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const t = useTranslation();
+
 
   const { languages, language, setLocalLanguage } = useLocalization();
   const languageList = Object.entries(languages).map((values) => ({ code: values[0], country: values[1].country, name: values[1].name }));

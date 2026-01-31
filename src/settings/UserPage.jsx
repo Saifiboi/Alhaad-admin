@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Typography,
   FormControl,
   InputLabel,
@@ -25,22 +22,18 @@ import {
   StepLabel,
   Box,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CachedIcon from '@mui/icons-material/Cached';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import SaveIcon from '@mui/icons-material/Save';
 import { useDispatch, useSelector } from 'react-redux';
 import EditItemView from './components/EditItemView';
-import EditAttributesAccordion from './components/EditAttributesAccordion';
+
 import { useTranslation } from '../common/components/LocalizationProvider';
-import useUserAttributes from '../common/attributes/useUserAttributes';
 import { sessionActions } from '../store';
 import SelectField from '../common/components/SelectField';
 import SettingsMenu from './components/SettingsMenu';
-import useCommonUserAttributes from '../common/attributes/useCommonUserAttributes';
 import { useAdministrator, useRestriction, useManager } from '../common/util/permissions';
 import { useCatch } from '../reactHelper';
 import useMapStyles from '../map/core/useMapStyles';
@@ -65,8 +58,6 @@ const UserPage = () => {
   const totpForce = useSelector((state) => state.session.server.attributes.totpForce);
 
   const mapStyles = useMapStyles();
-  const commonUserAttributes = useCommonUserAttributes(t);
-  const userAttributes = useUserAttributes(t);
 
   const { id } = useParams();
   const [item, setItem] = useState(id === currentUser.id.toString() ? currentUser : null);

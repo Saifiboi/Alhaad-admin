@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import {
-  Typography, IconButton, Toolbar, Paper, Divider, List, ListItem, ListItemText, useMediaQuery, useTheme,
+  Typography, IconButton, Toolbar, Paper, Divider, List, ListItem, useMediaQuery, useTheme,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';

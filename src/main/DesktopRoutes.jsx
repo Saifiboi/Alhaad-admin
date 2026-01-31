@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import CombinedReportPage from '../reports/CombinedReportPage';
 import RouteReportPage from '../reports/PositionsReportPage';

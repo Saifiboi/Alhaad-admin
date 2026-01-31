@@ -13,12 +13,10 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
-import CollectionActions from './components/CollectionActions';
 import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
-import useSettingsStyles from './common/useSettingsStyles';
 import DeviceUsersValue from './components/DeviceUsersValue';
 import usePersistedState from '../common/util/usePersistedState';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -29,7 +27,6 @@ import RemoveDialog from '../common/components/RemoveDialog';
 const DeviceCard = ({
   item,
   positions,
-  groups,
   manager,
   deviceReadonly,
   t,
@@ -162,7 +159,6 @@ const DeviceCard = ({
 };
 
 const DevicesPage = () => {
-  const { classes } = useSettingsStyles();
   const theme = useTheme();
   const navigate = useNavigate();
   const t = useTranslation();

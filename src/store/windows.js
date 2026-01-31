@@ -4,7 +4,7 @@ const loadState = () => {
     try {
         const serialized = localStorage.getItem('desktopWindows');
         return serialized ? JSON.parse(serialized) : { items: {}, activeId: null };
-    } catch (e) {
+    } catch {
         return { items: {}, activeId: null };
     }
 };
@@ -12,7 +12,9 @@ const loadState = () => {
 const saveState = (state) => {
     try {
         localStorage.setItem('desktopWindows', JSON.stringify(state));
-    } catch (e) { }
+    } catch {
+        // ignore
+    }
 };
 
 const initialState = loadState();

@@ -1,8 +1,8 @@
 
-import React from 'react';
+
 import { Rnd } from 'react-rnd';
 import {
-    Paper, IconButton, Typography, Box, useTheme,
+    Paper, IconButton, Typography, Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -76,7 +76,6 @@ const DesktopWindow = ({
     onResizeStop,
 }) => {
     const { classes } = useStyles();
-    const theme = useTheme();
 
     return (
         <Rnd

@@ -15,7 +15,6 @@ import CollectionFab from './components/CollectionFab';
 import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { useRestriction } from '../common/util/permissions';
-import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import RemoveDialog from '../common/components/RemoveDialog';
 
@@ -85,7 +84,6 @@ const CommandCard = ({
 };
 
 const CommandsPage = () => {
-  const { classes } = useSettingsStyles();
   const t = useTranslation();
   const navigate = useNavigate();
 

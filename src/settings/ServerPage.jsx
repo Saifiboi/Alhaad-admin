@@ -1,9 +1,6 @@
 import { useState, useContext, useCallback } from 'react';
 import TextField from '@mui/material/TextField';
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Typography,
   Button,
   FormControl,
@@ -19,14 +16,12 @@ import {
   StepLabel,
   Box,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { MuiFileInput } from 'mui-file-input';
 import { sessionActions } from '../store';
 import EditAttributesAccordion from './components/EditAttributesAccordion';
 import { useTranslation } from '../common/components/LocalizationProvider';

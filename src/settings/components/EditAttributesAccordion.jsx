@@ -1,7 +1,4 @@
-import { useState } from 'react';
-
 import {
-  Button,
   Switch,
   OutlinedInput,
   FormControl,
@@ -9,7 +6,6 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -22,7 +18,7 @@ import {
 import useFeatures from '../../common/util/useFeatures';
 import useSettingsStyles from '../common/useSettingsStyles';
 
-const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definitions, focusAttribute }) => {
+const EditAttributesAccordion = ({ attributes, setAttributes, definitions, focusAttribute }) => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
 
