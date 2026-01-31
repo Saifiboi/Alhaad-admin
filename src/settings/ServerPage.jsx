@@ -23,16 +23,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { sessionActions } from '../store';
-import EditAttributesAccordion from './components/EditAttributesAccordion';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import SelectField from '../common/components/SelectField';
 import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
-import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
-import useCommonUserAttributes from '../common/attributes/useCommonUserAttributes';
 import { useCatch } from '../reactHelper';
-import useServerAttributes from '../common/attributes/useServerAttributes';
 import useMapStyles from '../map/core/useMapStyles';
 import { map } from '../map/core/MapView';
 import useSettingsStyles from './common/useSettingsStyles';
@@ -45,9 +41,6 @@ const ServerPage = () => {
   const t = useTranslation();
 
   const mapStyles = useMapStyles();
-  const commonUserAttributes = useCommonUserAttributes(t);
-  const commonDeviceAttributes = useCommonDeviceAttributes(t);
-  const serverAttributes = useServerAttributes(t);
 
   const original = useSelector((state) => state.session.server);
   const [item, setItem] = useState({ ...original });
@@ -85,7 +78,7 @@ const ServerPage = () => {
   });
 
   const [activeStep, setActiveStep] = useState(0);
-  const steps = ['sharedPreferences', 'sharedLocation', 'sharedPermissions', 'sharedFile', 'sharedAttributes'];
+  const steps = ['sharedPreferences', 'sharedLocation', 'sharedPermissions', 'sharedFile'];
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -311,92 +304,82 @@ const ServerPage = () => {
                     </Button>
                   </div>
                 )}
-
-                {activeStep === 4 && (
-                  <EditAttributesAccordion
-                    attributes={item.attributes}
-                    setAttributes={(attributes) => setItem({ ...item, attributes })}
-                    definitions={{ ...commonUserAttributes, ...commonDeviceAttributes, ...serverAttributes }}
-                  />
-                )}
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, gap: 2 }}>
-                {activeStep === 0 ? (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleBack}
-                    startIcon={<CloseIcon />}
-                    sx={{
-                      borderRadius: '12px',
-                      padding: '10px 24px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {t('sharedCancel')}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={handleBackStep}
-                    startIcon={<ArrowBackIcon />}
-                    sx={{
-                      borderRadius: '12px',
-                      padding: '10px 24px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {t('sharedBack')}
-                  </Button>
-                )}
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  disabled={activeStep === 0}
+                  onClick={handleBackStep}
+                  startIcon={<ArrowBackIcon />}
+                  sx={{
+                    borderRadius: '12px',
+                    padding: '10px 24px',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {t('sharedBack')}
+                </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                {activeStep < steps.length - 1 ? (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    endIcon={<ArrowForwardIcon />}
-                    sx={{
-                      borderRadius: '12px',
-                      padding: '10px 24px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                      boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)',
-                      color: 'common.white',
-                      '&:hover': {
-                        boxShadow: '0 6px 20px rgba(249, 115, 22, 0.23)',
-                      },
-                    }}
-                  >
-                    {t('sharedNext')}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleSave}
-                    startIcon={<SaveIcon />}
-                    sx={{
-                      borderRadius: '12px',
-                      padding: '10px 24px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                      boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)',
-                      color: 'common.white',
-                      '&:hover': {
-                        boxShadow: '0 6px 20px rgba(249, 115, 22, 0.23)',
-                      },
-                    }}
-                  >
-                    {t('sharedSave')}
-                  </Button>
-                )}
+                <Button
+                  variant="contained"
+                  disabled={activeStep === steps.length - 1}
+                  onClick={handleNext}
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    borderRadius: '12px',
+                    padding: '10px 24px',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)',
+                    color: 'common.white',
+                    '&:hover': {
+                      boxShadow: '0 6px 20px rgba(249, 115, 22, 0.23)',
+                    },
+                  }}
+                >
+                  {t('sharedNext')}
+                </Button>
               </Box>
             </>
           )}
         </div>
+        <Box className={classes.buttons} sx={{ gap: 2, padding: 2 }}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleBack}
+            startIcon={<CloseIcon />}
+            sx={{
+              borderRadius: '12px',
+              padding: '10px 24px',
+              textTransform: 'none',
+              fontWeight: 'bold',
+            }}
+          >
+            {t('sharedCancel')}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            startIcon={<SaveIcon />}
+            sx={{
+              borderRadius: '12px',
+              padding: '10px 24px',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)',
+              color: 'common.white',
+              '&:hover': {
+                boxShadow: '0 6px 20px rgba(249, 115, 22, 0.23)',
+              },
+            }}
+          >
+            {t('sharedSave')}
+          </Button>
+        </Box>
       </Container>
     </PageLayout>
   );
