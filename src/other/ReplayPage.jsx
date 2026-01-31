@@ -34,7 +34,9 @@ import GlobalNavbar from '../common/components/GlobalNavbar';
 const useStyles = makeStyles()((theme) => ({
   root: {
     height: '100%',
-    paddingTop: '64px',
+    [theme.breakpoints.up('md')]: {
+      paddingTop: '64px',
+    },
   },
   sidebar: {
     display: 'flex',
@@ -177,7 +179,7 @@ const ReplayPage = () => {
 
   return (
     <div className={classes.root}>
-      <GlobalNavbar onDashboard={() => navigate('/')} />
+      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} />}
       <MapView>
         <MapGeofence />
         <MapRoutePath positions={positions} />

@@ -9,9 +9,8 @@ import { useCatch, useEffectAsync } from './reactHelper';
 import { sessionActions } from './store';
 import UpdateController from './UpdateController';
 import TermsDialog from './common/components/TermsDialog';
-import TruckLoader from './common/components/TruckLoader';
+import Loader from './common/components/Loader';
 import fetchOrThrow from './common/util/fetchOrThrow';
-import EventsDrawer from './main/EventsDrawer';
 
 const useStyles = makeStyles()(() => ({
   page: {
@@ -39,7 +38,6 @@ const App = () => {
   const newServer = useSelector((state) => state.session.server.newServer);
   const termsUrl = useSelector((state) => state.session.server.attributes.termsUrl);
   const user = useSelector((state) => state.session.user);
-  const notificationsOpen = useSelector((state) => state.session.notificationsOpen);
 
   const acceptTerms = useCatch(async () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {
@@ -60,10 +58,11 @@ const App = () => {
         navigate(newServer ? '/register' : '/login', { replace: true });
       }
     }
-  }, [user]);
+    return null;
+  }, []);
 
   if (user == null) {
-    return (<TruckLoader />);
+    return (<Loader />);
   }
   if (termsUrl && !user.attributes.termsAccepted) {
     return (
@@ -82,10 +81,6 @@ const App = () => {
       <div className={classes.page}>
         <Outlet />
       </div>
-      <EventsDrawer
-        open={notificationsOpen}
-        onClose={() => dispatch(sessionActions.updateNotificationsOpen(false))}
-      />
       {!desktop && (
         <div className={classes.menu}>
           <BottomMenu />

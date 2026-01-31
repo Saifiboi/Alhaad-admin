@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Badge } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
-import GridViewIcon from '@mui/icons-material/GridView';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -101,15 +98,11 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({
-    onAccount, onDashboard, showSidebarToggle, onSidebarToggle,
-}) => {
+const GlobalNavbar = ({ onAccount }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
-    const location = useLocation();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
-    const eventsCount = useSelector((state) => state.events.items.length);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -189,57 +182,7 @@ const GlobalNavbar = ({
                 </Box>
 
                 <Box className={classes.userSection}>
-                    {(onDashboard || location.pathname !== '/') && (
-                        <Box
-                            className={classes.userInfo}
-                            onClick={onDashboard || (() => navigate('/'))}
-                            sx={{ mr: 1 }}
-                        >
-                            <GridViewIcon sx={{ color: theme => theme.palette.primary.main, mr: 1, fontSize: '20px' }} />
-                            <Typography className={classes.userEmail} sx={{ color: theme => theme.palette.primary.main }}>
-                                Dashboard
-                            </Typography>
-                        </Box>
-                    )}
-                    {showSidebarToggle && (
-                        <IconButton
-                            color="inherit"
-                            onClick={onSidebarToggle}
-                            sx={{
-                                mr: 1,
-                                backgroundColor: theme => theme.palette.mode === 'dark'
-                                    ? 'rgba(248, 115, 24, 0.1)'
-                                    : 'rgba(248, 115, 24, 0.05)',
-                                '&:hover': {
-                                    backgroundColor: theme => theme.palette.mode === 'dark'
-                                        ? 'rgba(248, 115, 24, 0.2)'
-                                        : 'rgba(248, 115, 24, 0.1)',
-                                },
-                            }}
-                        >
-                            <ViewSidebarIcon sx={{ color: theme => theme.palette.primary.main }} />
-                        </IconButton>
-                    )}
                     <ThemeToggle />
-                    <IconButton
-                        color="inherit"
-                        onClick={() => dispatch(sessionActions.updateNotificationsOpen(true))}
-                        sx={{
-                            backgroundColor: theme => theme.palette.mode === 'dark'
-                                ? 'rgba(248, 115, 24, 0.1)'
-                                : 'rgba(248, 115, 24, 0.05)',
-                            '&:hover': {
-                                backgroundColor: theme => theme.palette.mode === 'dark'
-                                    ? 'rgba(248, 115, 24, 0.2)'
-                                    : 'rgba(248, 115, 24, 0.1)',
-                            },
-                            padding: '10px'
-                        }}
-                    >
-                        <Badge badgeContent={eventsCount} color="error">
-                            <NotificationsIcon sx={{ color: theme => theme.palette.primary.main, fontSize: '24px' }} />
-                        </Badge>
-                    </IconButton>
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>
                             {user?.email || 'User'}
@@ -282,9 +225,9 @@ const GlobalNavbar = ({
                             </ListItemText>
                         </MenuItem>
                     </Menu>
-                </Box >
-            </Toolbar >
-        </AppBar >
+                </Box>
+            </Toolbar>
+        </AppBar>
     );
 };
 
