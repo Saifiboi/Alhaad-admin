@@ -15,7 +15,6 @@ import NotificationPage from './settings/NotificationPage';
 import GroupsPage from './settings/GroupsPage';
 import GroupPage from './settings/GroupPage';
 import PositionPage from './other/PositionPage';
-import NetworkPage from './other/NetworkPage';
 import EventReportPage from './reports/EventReportPage';
 import ReplayPage from './other/ReplayPage';
 import TripReportPage from './reports/TripReportPage';
@@ -56,15 +55,19 @@ import LogsPage from './reports/LogsPage';
 import SharePage from './settings/SharePage';
 import AnnouncementPage from './settings/AnnouncementPage';
 import EmulatorPage from './other/EmulatorPage';
-import Loader from './common/components/Loader';
+import TruckLoader from './common/components/TruckLoader';
 import { generateLoginToken } from './common/components/NativeInterface';
 import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import AuditPage from './reports/AuditPage';
 
+import { useTheme, useMediaQuery, Typography } from '@mui/material';
+
 const Navigation = () => {
   const dispatch = useDispatch();
   const { setLocalLanguage } = useLocalization();
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -108,7 +111,7 @@ const Navigation = () => {
   }, [hasQueryParams, searchParams, setSearchParams]);
 
   if (hasQueryParams) {
-    return (<Loader />);
+    return (<TruckLoader />);
   }
   return (
     <Routes>
@@ -116,16 +119,15 @@ const Navigation = () => {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/change-server" element={<ChangeServerPage />} />
-      <Route path="/" element={<App />}>
+      <Route path="/*" element={<App />}>
         <Route index element={<MainPage />} />
 
-        <Route path="position/:id" element={<PositionPage />} />
-        <Route path="network/:positionId" element={<NetworkPage />} />
-        <Route path="event/:id" element={<EventPage />} />
         <Route path="replay" element={<ReplayPage />} />
         <Route path="geofences" element={<GeofencesPage />} />
-        <Route path="emulator" element={<EmulatorPage />} />
+        <Route path="settings/geofences" element={<GeofencesPage />} />
+        <Route path="event/:id" element={<EventPage />} />
 
+        <Route path="emulator" element={<EmulatorPage />} />
         <Route path="settings">
           <Route path="accumulators/:deviceId" element={<AccumulatorsPage />} />
           <Route path="announcement" element={<AnnouncementPage />} />
@@ -167,7 +169,9 @@ const Navigation = () => {
           <Route path="user/:id" element={<UserPage />} />
           <Route path="user" element={<UserPage />} />
         </Route>
-
+        {desktop && (
+          <Route path="position/:id" element={<PositionPage />} />
+        )}
         <Route path="reports">
           <Route path="combined" element={<CombinedReportPage />} />
           <Route path="chart" element={<ChartReportPage />} />
@@ -181,8 +185,9 @@ const Navigation = () => {
           <Route path="audit" element={<AuditPage />} />
           <Route path="logs" element={<LogsPage />} />
         </Route>
+        <Route path="*" element={<Typography variant="h4" sx={{ p: 4 }}>404 Not Found</Typography>} />
       </Route>
-    </Routes>
+    </Routes >
   );
 };
 

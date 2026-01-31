@@ -11,8 +11,7 @@ import {
 import ReportFilter, { updateReportParams } from './components/ReportFilter';
 import { useAttributePreference } from '../common/util/preferences';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import usePersistedState from '../common/util/usePersistedState';
 import ColumnSelect from './components/ColumnSelect';
 import { useCatch } from '../reactHelper';
@@ -123,7 +122,7 @@ const SummaryReportPage = () => {
   };
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportSummary']}>
+    <ReportLayout>
       <div className={classes.header}>
         <ReportFilter onShow={onShow} onExport={onExport} onSchedule={onSchedule} deviceType="multiple" loading={loading}>
           <div className={classes.filterItem}>
@@ -162,7 +161,7 @@ const SummaryReportPage = () => {
           )) : (<TableShimmer columns={columns.length + 1} />)}
         </TableBody>
       </Table>
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

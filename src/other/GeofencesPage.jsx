@@ -18,12 +18,14 @@ import { errorsActions } from '../store';
 import MapScale from '../map/MapScale';
 import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
+import GlobalNavbar from '../common/components/GlobalNavbar';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    paddingTop: '64px',
   },
   content: {
     flexGrow: 1,
@@ -56,10 +58,10 @@ const useStyles = makeStyles()((theme) => ({
 }));
 
 const GeofencesPage = () => {
-  const { classes } = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const t = useTranslation();
+  const { classes } = useStyles();
 
   const [selectedGeofenceId, setSelectedGeofenceId] = useState();
 
@@ -95,6 +97,7 @@ const GeofencesPage = () => {
 
   return (
     <div className={classes.root}>
+      <GlobalNavbar onDashboard={() => navigate('/')} />
       <div className={classes.content}>
         <Paper square className={classes.drawer}>
           <Toolbar>
@@ -104,7 +107,7 @@ const GeofencesPage = () => {
             <Typography variant="h6" className={classes.title}>{t('sharedGeofences')}</Typography>
             <label htmlFor="upload-gpx">
               <input accept=".gpx" id="upload-gpx" type="file" className={classes.fileInput} onChange={handleFile} />
-              <IconButton edge="end" component="span" onClick={() => {}}>
+              <IconButton edge="end" component="span" onClick={() => { }}>
                 <Tooltip title={t('sharedUpload')}>
                   <UploadFileIcon />
                 </Tooltip>

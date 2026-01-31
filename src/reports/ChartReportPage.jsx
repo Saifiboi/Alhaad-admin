@@ -9,8 +9,7 @@ import {
 import ReportFilter from './components/ReportFilter';
 import { formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
 import { useCatch } from '../reactHelper';
 import { useAttributePreference } from '../common/util/preferences';
@@ -111,7 +110,7 @@ const ChartReportPage = () => {
   ];
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportChart']}>
+    <ReportLayout>
       <ReportFilter onShow={onShow} deviceType="single">
         <div className={classes.filterItem}>
           <FormControl fullWidth>
@@ -170,7 +169,7 @@ const ChartReportPage = () => {
               />
               <CartesianGrid stroke={theme.palette.divider} strokeDasharray="3 3" />
               <Tooltip
-                wrapperStyle={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
+                contentStyle={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
                 formatter={(value, key) => [value, positionAttributes[key]?.name || key]}
                 labelFormatter={(value) => formatTime(value, 'seconds')}
               />
@@ -194,7 +193,7 @@ const ChartReportPage = () => {
           </ResponsiveContainer>
         </div>
       )}
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

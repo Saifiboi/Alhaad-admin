@@ -29,6 +29,7 @@ const officialServers = [
   'https://server.traccar.org',
   'http://localhost:8082',
   'http://localhost:3000',
+  'https://track-dev.alhaadtrack.com',
 ].filter((value, index, self) => self.indexOf(value) === index);
 
 const useStyles = makeStyles()((theme) => ({

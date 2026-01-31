@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useContext, useCallback } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Accordion,
   AccordionSummary,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import BaseCommandView from './components/BaseCommandView';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
@@ -27,6 +28,19 @@ const CommandDevicePage = () => {
   const [savedId, setSavedId] = useState(0);
   const [item, setItem] = useState({});
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const location = useLocation();
+  const handleBack = useCallback(() => {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate, location.key]);
+
   const handleSend = useCatch(async () => {
     let command;
     if (savedId) {
@@ -43,37 +57,41 @@ const CommandDevicePage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(command),
     });
-    navigate(-1);
+    handleBack();
   });
 
   const validate = () => savedId || (item && item.type);
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceCommand']}>
-      <Container maxWidth="xs" className={classes.container}>
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">
-              {t('sharedRequired')}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.details}>
-            <BaseCommandView
-              deviceId={id}
-              item={item}
-              setItem={setItem}
-              includeSaved
-              savedId={savedId}
-              setSavedId={setSavedId}
-            />
-          </AccordionDetails>
-        </Accordion>
+      <Container maxWidth="lg" className={classes.container}>
+        <div className={classes.content}>
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">
+                {t('sharedRequired')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.grid}>
+              <div className={classes.fullWidth}>
+                <BaseCommandView
+                  deviceId={id}
+                  item={item}
+                  setItem={setItem}
+                  includeSaved
+                  savedId={savedId}
+                  setSavedId={setSavedId}
+                />
+              </div>
+            </AccordionDetails>
+          </Accordion>
+        </div>
         <div className={classes.buttons}>
           <Button
             type="button"
             color="primary"
             variant="outlined"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
           >
             {t('sharedCancel')}
           </Button>

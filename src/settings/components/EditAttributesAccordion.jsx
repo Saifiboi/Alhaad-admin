@@ -1,24 +1,15 @@
-import { useState } from 'react';
-
 import {
-  Button,
-  Checkbox,
+  Switch,
   OutlinedInput,
   FormControl,
   FormControlLabel,
-  Grid,
   IconButton,
   InputAdornment,
   InputLabel,
-  Accordion,
-  AccordionSummary,
-  Typography,
-  AccordionDetails,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddAttributeDialog from './AddAttributeDialog';
+
+
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAttributePreference } from '../../common/util/preferences';
 import {
@@ -27,7 +18,7 @@ import {
 import useFeatures from '../../common/util/useFeatures';
 import useSettingsStyles from '../common/useSettingsStyles';
 
-const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definitions, focusAttribute }) => {
+const EditAttributesAccordion = ({ attributes, setAttributes, definitions, focusAttribute }) => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
 
@@ -37,7 +28,7 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
   const distanceUnit = useAttributePreference('distanceUnit');
   const volumeUnit = useAttributePreference('volumeUnit');
 
-  const [addDialogShown, setAddDialogShown] = useState(false);
+
 
   const updateAttribute = (key, value, type, subtype) => {
     const updatedAttributes = { ...attributes };
@@ -130,54 +121,35 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
     return [...otherList, ...booleanList];
   };
 
-  const handleAddResult = (definition) => {
-    setAddDialogShown(false);
-    if (definition) {
-      switch (definition.type) {
-        case 'number':
-          updateAttribute(definition.key, 0);
-          break;
-        case 'boolean':
-          updateAttribute(definition.key, false);
-          break;
-        default:
-          updateAttribute(definition.key, '');
-          break;
-      }
-    }
-  };
+
 
   return features.disableAttributes ? '' : (
-    <Accordion defaultExpanded={!!attribute}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="subtitle1">
-          {t('sharedAttributes')}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.details}>
+    <>
+      <div className={classes.grid}>
         {convertToList(attributes).map(({
           key, value, type, subtype,
         }) => {
           if (type === 'boolean') {
             return (
-              <Grid container direction="row" justifyContent="space-between" key={key}>
+              <div key={key} className={classes.row} style={{ alignItems: 'center' }}>
                 <FormControlLabel
                   control={(
-                    <Checkbox
+                    <Switch
                       checked={value}
                       onChange={(e) => updateAttribute(key, e.target.checked)}
                     />
                   )}
                   label={getAttributeName(key, subtype)}
+                  sx={{ flexGrow: 1 }}
                 />
                 <IconButton size="small" className={classes.removeButton} onClick={() => deleteAttribute(key)}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
-              </Grid>
+              </div>
             );
           }
           return (
-            <FormControl key={key}>
+            <FormControl key={key} fullWidth>
               <InputLabel>{getAttributeName(key, subtype)}</InputLabel>
               <OutlinedInput
                 label={getAttributeName(key, subtype)}
@@ -196,21 +168,9 @@ const EditAttributesAccordion = ({ attribute, attributes, setAttributes, definit
             </FormControl>
           );
         })}
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => setAddDialogShown(true)}
-          startIcon={<AddIcon />}
-        >
-          {t('sharedAdd')}
-        </Button>
-        <AddAttributeDialog
-          open={addDialogShown}
-          onResult={handleAddResult}
-          definitions={definitions}
-        />
-      </AccordionDetails>
-    </Accordion>
+
+      </div>
+    </>
   );
 };
 

@@ -46,15 +46,16 @@ const GroupPage = () => {
       breadcrumbs={['settingsTitle', 'groupDialog']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
+                className={classes.fullWidth}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
@@ -67,8 +68,9 @@ const GroupPage = () => {
                 {t('sharedExtra')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <SelectField
+                className={classes.fullWidth}
                 value={item.groupId}
                 onChange={(event) => setItem({ ...item, groupId: Number(event.target.value) })}
                 endpoint="/api/groups"
@@ -81,7 +83,7 @@ const GroupPage = () => {
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={{ ...commonDeviceAttributes, ...groupAttributes }}
           />
-        </>
+        </div>
       )}
     </EditItemView>
   );

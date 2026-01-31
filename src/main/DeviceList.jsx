@@ -6,6 +6,7 @@ import { devicesActions } from '../store';
 import { useEffectAsync } from '../reactHelper';
 import DeviceRow from './DeviceRow';
 import fetchOrThrow from '../common/util/fetchOrThrow';
+import TruckLoader from '../common/components/TruckLoader';
 
 const useStyles = makeStyles()((theme) => ({
   list: {
@@ -18,11 +19,12 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-const DeviceList = ({ devices }) => {
+const DeviceList = ({ devices, onSelect }) => {
   const { classes } = useStyles();
   const dispatch = useDispatch();
 
   const [, setTime] = useState(Date.now());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(Date.now()), 60000);
@@ -32,9 +34,17 @@ const DeviceList = ({ devices }) => {
   }, []);
 
   useEffectAsync(async () => {
-    const response = await fetchOrThrow('/api/devices');
-    dispatch(devicesActions.refresh(await response.json()));
+    try {
+      const response = await fetchOrThrow('/api/devices');
+      dispatch(devicesActions.refresh(await response.json()));
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  if (loading) {
+    return <TruckLoader fullHeight={false} />;
+  }
 
   return (
     <List
@@ -42,7 +52,7 @@ const DeviceList = ({ devices }) => {
       rowComponent={DeviceRow}
       rowCount={devices.length}
       rowHeight={72}
-      rowProps={{ devices }}
+      rowProps={{ devices, onSelect }}
       overscanCount={5}
     />
   );

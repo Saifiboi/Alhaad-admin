@@ -5,8 +5,7 @@ import {
 } from '@mui/material';
 import ReportFilter from './components/ReportFilter';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import { useCatch } from '../reactHelper';
 import MapView from '../map/core/MapView';
 import useReportStyles from './common/useReportStyles';
@@ -21,7 +20,7 @@ import MapScale from '../map/MapScale';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const CombinedReportPage = () => {
-  const { classes } = useReportStyles();
+  const { classes: reportClasses } = useReportStyles();
   const t = useTranslation();
 
   const devices = useSelector((state) => state.devices.items);
@@ -53,10 +52,10 @@ const CombinedReportPage = () => {
   });
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportCombined']}>
-      <div className={classes.container}>
+    <ReportLayout>
+      <div className={reportClasses.container}>
         {Boolean(items.length) && (
-          <div className={classes.containerMap}>
+          <div className={reportClasses.containerMap}>
             <MapView>
               <MapGeofence />
               {items.map((item) => (
@@ -73,8 +72,8 @@ const CombinedReportPage = () => {
             <MapCamera coordinates={itemsCoordinates} />
           </div>
         )}
-        <div className={classes.containerMain}>
-          <div className={classes.header}>
+        <div className={reportClasses.containerMain}>
+          <div className={reportClasses.header}>
             <ReportFilter onShow={onShow} deviceType="multiple" loading={loading} />
           </div>
           <Table>
@@ -97,7 +96,7 @@ const CombinedReportPage = () => {
           </Table>
         </div>
       </div>
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

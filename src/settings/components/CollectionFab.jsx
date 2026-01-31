@@ -7,11 +7,12 @@ import { useRestriction } from '../../common/util/permissions';
 const useStyles = makeStyles()((theme) => ({
   fab: {
     position: 'fixed',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    bottom: theme.spacing(1.5),
+    right: theme.spacing(1.5),
     [theme.breakpoints.down('md')]: {
-      bottom: `calc(${theme.dimensions.bottomBarHeight}px + ${theme.spacing(2)})`,
+      bottom: `calc(${theme.dimensions.bottomBarHeight}px + ${theme.spacing(1.5)})`,
     },
+    zIndex: theme.zIndex.speedDial, // Ensure it sits above content but below potential overlays
   },
 }));
 
@@ -24,8 +25,8 @@ const CollectionFab = ({ editPath, disabled }) => {
   if (!readonly && !disabled) {
     return (
       <div className={classes.fab}>
-        <Fab size="medium" color="primary" onClick={() => navigate(editPath)}>
-          <AddIcon />
+        <Fab size="small" color="primary" onClick={() => navigate(editPath)}>
+          <AddIcon fontSize="small" />
         </Fab>
       </div>
     );

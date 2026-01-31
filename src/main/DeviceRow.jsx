@@ -48,12 +48,14 @@ const useStyles = makeStyles()((theme) => ({
   neutral: {
     color: theme.palette.neutral.main,
   },
-  selected: {
-    backgroundColor: theme.palette.action.selected,
-  },
 }));
 
-const DeviceRow = ({ devices, index, style }) => {
+const DeviceRow = ({ devices, index, style, onSelect }) => {
+  const item = devices[index];
+
+  if (!item) {
+    return null;
+  }
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const t = useTranslation();
@@ -61,7 +63,6 @@ const DeviceRow = ({ devices, index, style }) => {
   const admin = useAdministrator();
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
 
-  const item = devices[index];
   const position = useSelector((state) => state.session.positions[item.id]);
 
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
@@ -86,10 +87,16 @@ const DeviceRow = ({ devices, index, style }) => {
     <div style={style}>
       <ListItemButton
         key={item.id}
-        onClick={() => dispatch(devicesActions.selectId(item.id))}
+        onClick={() => (onSelect ? onSelect(item.id) : dispatch(devicesActions.selectId(item.id)))}
         disabled={!admin && item.disabled}
         selected={selectedDeviceId === item.id}
-        className={selectedDeviceId === item.id ? classes.selected : null}
+        sx={{
+          '&.Mui-selected': {
+            '& .MuiListItemText-primary': {
+              color: (theme) => (theme.palette.mode === 'light' ? theme.palette.text.primary : theme.palette.primary.main),
+            },
+          },
+        }}
       >
         <ListItemAvatar>
           <Avatar>
@@ -140,10 +147,10 @@ const DeviceRow = ({ devices, index, style }) => {
                       ? (<BatteryCharging60Icon fontSize="small" className={classes.warning} />)
                       : (<Battery60Icon fontSize="small" className={classes.warning} />)
                   )) || (
-                    position.attributes.charge
-                      ? (<BatteryCharging20Icon fontSize="small" className={classes.error} />)
-                      : (<Battery20Icon fontSize="small" className={classes.error} />)
-                  )}
+                      position.attributes.charge
+                        ? (<BatteryCharging20Icon fontSize="small" className={classes.error} />)
+                        : (<Battery20Icon fontSize="small" className={classes.error} />)
+                    )}
                 </IconButton>
               </Tooltip>
             )}

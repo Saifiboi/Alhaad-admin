@@ -45,6 +45,7 @@ const SettingsMenu = () => {
           title={t('sharedPreferences')}
           link="/settings/preferences"
           icon={<TuneIcon />}
+          iconColor="rgb(100, 149, 237)"
           selected={location.pathname === '/settings/preferences'}
         />
         {!readonly && (
@@ -53,24 +54,28 @@ const SettingsMenu = () => {
               title={t('sharedNotifications')}
               link="/settings/notifications"
               icon={<NotificationsIcon />}
+              iconColor="rgb(255, 152, 0)"
               selected={location.pathname.startsWith('/settings/notification')}
             />
             <MenuItem
               title={t('settingsUser')}
               link={`/settings/user/${userId}`}
               icon={<PersonIcon />}
+              iconColor="rgb(76, 175, 80)"
               selected={location.pathname === `/settings/user/${userId}`}
             />
             <MenuItem
               title={t('deviceTitle')}
               link="/settings/devices"
               icon={<DnsIcon />}
+              iconColor="rgb(33, 150, 243)"
               selected={location.pathname.startsWith('/settings/device')}
             />
             <MenuItem
               title={t('sharedGeofences')}
               link="/geofences"
               icon={<DrawIcon />}
+              iconColor="rgb(156, 39, 176)"
               selected={location.pathname.startsWith('/settings/geofence')}
             />
             {!features.disableGroups && (
@@ -78,6 +83,7 @@ const SettingsMenu = () => {
                 title={t('settingsGroups')}
                 link="/settings/groups"
                 icon={<FolderIcon />}
+                iconColor="rgb(110, 100, 227)"
                 selected={location.pathname.startsWith('/settings/group')}
               />
             )}
@@ -86,6 +92,7 @@ const SettingsMenu = () => {
                 title={t('sharedDrivers')}
                 link="/settings/drivers"
                 icon={<PersonIcon />}
+                iconColor="rgb(255, 87, 34)"
                 selected={location.pathname.startsWith('/settings/driver')}
               />
             )}
@@ -94,6 +101,7 @@ const SettingsMenu = () => {
                 title={t('sharedCalendars')}
                 link="/settings/calendars"
                 icon={<TodayIcon />}
+                iconColor="rgb(233, 30, 99)"
                 selected={location.pathname.startsWith('/settings/calendar')}
               />
             )}
@@ -102,6 +110,7 @@ const SettingsMenu = () => {
                 title={t('sharedComputedAttributes')}
                 link="/settings/attributes"
                 icon={<CalculateIcon />}
+                iconColor="rgb(0, 188, 212)"
                 selected={location.pathname.startsWith('/settings/attribute')}
               />
             )}
@@ -110,6 +119,7 @@ const SettingsMenu = () => {
                 title={t('sharedMaintenance')}
                 link="/settings/maintenances"
                 icon={<BuildIcon />}
+                iconColor="rgb(121, 85, 72)"
                 selected={location.pathname.startsWith('/settings/maintenance')}
               />
             )}
@@ -118,6 +128,7 @@ const SettingsMenu = () => {
                 title={t('sharedSavedCommands')}
                 link="/settings/commands"
                 icon={<SendIcon />}
+                iconColor="rgb(103, 58, 183)"
                 selected={location.pathname.startsWith('/settings/command')}
               />
             )}
@@ -128,6 +139,7 @@ const SettingsMenu = () => {
             title={t('userBilling')}
             link={billingLink}
             icon={<PaymentIcon />}
+            iconColor="rgb(76, 175, 80)"
           />
         )}
         {supportLink && (
@@ -135,6 +147,7 @@ const SettingsMenu = () => {
             title={t('settingsSupport')}
             link={supportLink}
             icon={<HelpIcon />}
+            iconColor="rgb(96, 125, 139)"
           />
         )}
       </List>
@@ -146,6 +159,7 @@ const SettingsMenu = () => {
               title={t('serverAnnouncement')}
               link="/settings/announcement"
               icon={<CampaignIcon />}
+              iconColor="rgb(255, 193, 7)"
               selected={location.pathname === '/settings/announcement'}
             />
             {admin && (
@@ -153,6 +167,7 @@ const SettingsMenu = () => {
                 title={t('settingsServer')}
                 link="/settings/server"
                 icon={<SettingsIcon />}
+                iconColor="rgb(158, 158, 158)"
                 selected={location.pathname === '/settings/server'}
               />
             )}
@@ -160,6 +175,7 @@ const SettingsMenu = () => {
               title={t('settingsUsers')}
               link="/settings/users"
               icon={<PeopleIcon />}
+              iconColor="rgb(63, 81, 181)"
               selected={location.pathname.startsWith('/settings/user') && location.pathname !== `/settings/user/${userId}`}
             />
           </List>

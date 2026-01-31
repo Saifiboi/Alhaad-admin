@@ -128,14 +128,14 @@ const MaintenancePage = () => {
       breadcrumbs={['settingsTitle', 'sharedMaintenance']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 value={item.name || ''}
                 onChange={(e) => setItem({ ...item, name: e.target.value })}
@@ -172,7 +172,7 @@ const MaintenancePage = () => {
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={{}}
           />
-        </>
+        </div>
       )}
     </EditItemView>
   );
