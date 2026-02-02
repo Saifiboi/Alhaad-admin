@@ -253,17 +253,8 @@ const LoginPage = () => {
               </div>
             )}
 
-            {/* Remember Me & Forgot Password */}
-            <div className="login-options">
-              <label className="login-remember">
-                <input
-                  className="login-checkbox"
-                  type="checkbox"
-                />
-                <span className="login-remember-text">
-                  Remember me
-                </span>
-              </label>
+            {/* Forgot Password */}
+            <div className="login-options" style={{ justifyContent: 'flex-end' }}>
               {emailEnabled && (
                 <a
                   className="login-forgot-link"

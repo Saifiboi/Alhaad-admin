@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 
 const loadState = () => {
     try {
@@ -11,7 +11,7 @@ const loadState = () => {
 
 const saveState = (state) => {
     try {
-        localStorage.setItem('desktopWindows', JSON.stringify(state));
+        localStorage.setItem('desktopWindows', JSON.stringify(current(state)));
     } catch {
         // ignore
     }
