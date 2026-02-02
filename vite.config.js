@@ -23,7 +23,7 @@ export default defineConfig(() => ({
     outDir: 'build',
   },
   nitro: {
-    preset: 'vercel'
+    preset: 'vercel',
   },
   plugins: [
     svgr(),
