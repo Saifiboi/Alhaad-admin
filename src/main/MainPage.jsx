@@ -21,7 +21,7 @@ import Dock from '../common/components/Dock';
 import DesktopWindow from '../common/components/DesktopWindow';
 import { desktopApps } from './DesktopApps.jsx';
 import WindowModeContext from '../common/components/WindowModeContext';
-import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext } from 'react-router-dom';
+import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext, UNSAFE_RouteContext } from 'react-router-dom';
 import DesktopRoutes from './DesktopRoutes';
 import { useAdministrator, useManager } from '../common/util/permissions';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -29,7 +29,9 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 const RouterIsolator = ({ children }) => (
   <UNSAFE_LocationContext.Provider value={null}>
     <UNSAFE_NavigationContext.Provider value={null}>
-      {children}
+      <UNSAFE_RouteContext.Provider value={{ outlet: null, matches: [], isDataRoute: false }}>
+        {children}
+      </UNSAFE_RouteContext.Provider>
     </UNSAFE_NavigationContext.Provider>
   </UNSAFE_LocationContext.Provider>
 );
@@ -152,7 +154,7 @@ const MainPage = () => {
   const activeWindowId = useSelector((state) => state.windows.activeId);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
-  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized && !w.minimized), [windows]);
 
   // Detect Dock position and adjust sidebar height
   useEffect(() => {
@@ -337,10 +339,31 @@ const MainPage = () => {
     return null;
   };
 
+  // Dashboard/Home Handler
+  const handleDashboard = useCallback(() => {
+    dispatch(windowsActions.minimizeAll());
+    setDevicesOpen(true);
+  }, [dispatch, setDevicesOpen]);
+
+  // Show Devices Handler
+  const handleShowDevices = useCallback(() => {
+    setDevicesOpen((prev) => !prev);
+  }, [setDevicesOpen]);
+
+  const handleDeviceSelect = useCallback((deviceId) => {
+    dispatch(devicesActions.selectId(deviceId));
+    dispatch(windowsActions.minimizeAll());
+  }, [dispatch]);
+
   // Window Mode Context Provider
   return (
     <WindowModeContext.Provider value={true}>
-      <GlobalNavbar onAccount={() => handleLaunch({ id: 'account' })} />
+      <GlobalNavbar
+        onAccount={() => handleLaunch({ id: 'account' })}
+        onDashboard={handleDashboard}
+        onShowDevices={handleShowDevices}
+        showNavigation={anyMaximized}
+      />
       <div className={classes.root}>
         {desktop && (
           <MainMap
@@ -354,6 +377,8 @@ const MainPage = () => {
           style={{
             height: sidebarHeight || `calc(100vh - 64px - ${theme.spacing(anyMaximized ? 0 : 1.5)})`,
             marginBottom: anyMaximized ? 0 : theme.spacing(1.5),
+            zIndex: anyMaximized ? 1600 : 3,
+            display: (anyMaximized && !devicesOpen) ? 'none' : 'flex',
           }}
         >
           <Paper className={classes.header}>
@@ -383,7 +408,7 @@ const MainPage = () => {
               </div>
             )}
             <Paper className={classes.contentList} style={devicesOpen ? {} : { visibility: 'hidden' }}>
-              <DeviceList devices={filteredDevices} />
+              <DeviceList devices={filteredDevices} onSelect={handleDeviceSelect} />
             </Paper>
           </div>
         </div>

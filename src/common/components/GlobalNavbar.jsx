@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import {
- AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText 
+    AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -100,7 +102,7 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount }) => {
+const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, showNavigation }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -184,6 +186,26 @@ const GlobalNavbar = ({ onAccount }) => {
                 </Box>
 
                 <Box className={classes.userSection}>
+                    {showNavigation && (
+                        <>
+                            <Tooltip title="Dashboard">
+                                <IconButton
+                                    onClick={onDashboard}
+                                    sx={{ color: 'text.primary' }}
+                                >
+                                    <DashboardIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="View Devices">
+                                <IconButton
+                                    onClick={onShowDevices}
+                                    sx={{ color: 'text.primary' }}
+                                >
+                                    <ViewListIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    )}
                     <ThemeToggle />
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>

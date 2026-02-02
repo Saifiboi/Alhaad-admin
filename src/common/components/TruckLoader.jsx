@@ -22,7 +22,9 @@ const roadAnimation = keyframes`
   }
 `;
 
-const LoaderContainer = styled(Box)(({ $fullHeight }) => ({
+const LoaderContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== '$fullHeight',
+})(({ $fullHeight }) => ({
   height: $fullHeight ? '100vh' : 'auto',
   minHeight: $fullHeight ? '100vh' : '300px',
   display: 'flex',
