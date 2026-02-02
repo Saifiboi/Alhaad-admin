@@ -9,7 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions, errorsActions, windowsActions } from '../store';
+import {
+  devicesActions, replayActions, errorsActions, windowsActions,
+} from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -21,7 +23,9 @@ import Dock from '../common/components/Dock';
 import DesktopWindow from '../common/components/DesktopWindow';
 import { desktopApps } from './DesktopApps.jsx';
 import WindowModeContext from '../common/components/WindowModeContext';
-import { MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext, UNSAFE_RouteContext } from 'react-router-dom';
+import {
+  MemoryRouter, UNSAFE_LocationContext, UNSAFE_NavigationContext, UNSAFE_RouteContext,
+} from 'react-router-dom';
 import DesktopRoutes from './DesktopRoutes';
 import { useAdministrator, useManager } from '../common/util/permissions';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -281,7 +285,9 @@ const MainPage = () => {
       const systemApp = desktopApps.find(a => a.id === app.id);
 
       // Sanitize app object to remove non-serializable data (like icons/components)
-      const { icon, component, ...serializableApp } = app;
+      const serializableApp = { ...app };
+      delete serializableApp.icon;
+      delete serializableApp.component;
 
       // Use defaults if not provided in launch args
       const defaultApp = systemApp || {}; // Fallback if launching non-system app
