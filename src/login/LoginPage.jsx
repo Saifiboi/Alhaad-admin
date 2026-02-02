@@ -224,7 +224,7 @@ const LoginPage = () => {
                   </span>
                   <input
                     className="login-input login-input-password"
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => {
