@@ -1,0 +1,16 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/socket",
+            "destination": "https://track-dev.alhaadtrack.com/api/socket"
+        },
+        {
+            "source": "/api/(.*)",
+            "destination": "https://track-dev.alhaadtrack.com/api/$1"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
