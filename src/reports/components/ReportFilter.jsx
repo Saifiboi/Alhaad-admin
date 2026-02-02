@@ -33,6 +33,9 @@ const ReportFilter = ({
   const devices = useSelector((state) => state.devices.items);
   const groups = useSelector((state) => state.groups.items);
 
+  const sortedDevices = useMemo(() => Object.values(devices).sort((a, b) => a.name.localeCompare(b.name)), [devices]);
+  const sortedGroups = useMemo(() => Object.values(groups).sort((a, b) => a.name.localeCompare(b.name)), [groups]);
+
   const deviceIds = useMemo(() => searchParams.getAll('deviceId').map(Number), [searchParams]);
   const groupIds = useMemo(() => searchParams.getAll('groupId').map(Number), [searchParams]);
   const from = searchParams.get('from');
@@ -154,7 +157,7 @@ const ReportFilter = ({
         <div className={classes.filterItem}>
           <SelectField
             label={t(deviceType === 'multiple' ? 'deviceTitle' : 'reportDevice')}
-            data={Object.values(devices).sort((a, b) => a.name.localeCompare(b.name))}
+            data={sortedDevices}
             value={deviceType === 'multiple' ? deviceIds : deviceIds.find(() => true)}
             onChange={(e) => {
               const values = deviceType === 'multiple' ? e.target.value : [e.target.value].filter((id) => id);
@@ -169,7 +172,7 @@ const ReportFilter = ({
         <div className={classes.filterItem}>
           <SelectField
             label={t('settingsGroups')}
-            data={Object.values(groups).sort((a, b) => a.name.localeCompare(b.name))}
+            data={sortedGroups}
             value={groupIds}
             onChange={(e) => {
               const values = e.target.value;

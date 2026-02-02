@@ -8,8 +8,15 @@ export default defineConfig(() => ({
   server: {
     port: 3000,
     proxy: {
-      '/api/socket': 'wss://track-dev.alhaadtrack.com',
-      '/api': 'https://track-dev.alhaadtrack.com',
+      '/api/socket': {
+        target: 'wss://track-dev.alhaadtrack.com',
+        ws: true,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: 'https://track-dev.alhaadtrack.com',
+        changeOrigin: true,
+      },
     },
   },
   build: {
