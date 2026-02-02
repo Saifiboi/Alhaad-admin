@@ -3,7 +3,10 @@ import {
 } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Snackbar } from '@mui/material';
+import { Snackbar, Alert, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useTranslation } from './common/components/LocalizationProvider';
+import { formatNotificationTitle } from './common/util/formatter';
 import { devicesActions, sessionActions } from './store';
 import { useCatchCallback, useEffectAsync } from './reactHelper';
 import { snackBarDurationLongMs } from './common/util/duration';
@@ -22,6 +25,8 @@ const SocketController = () => {
 
   const authenticated = useSelector((state) => Boolean(state.session.user));
   const includeLogs = useSelector((state) => state.session.includeLogs);
+  const devices = useSelector((state) => state.devices.items);
+  const t = useTranslation();
 
   const socketRef = useRef();
   const reconnectTimeoutRef = useRef();
@@ -45,15 +50,15 @@ const SocketController = () => {
       dispatch(eventsActions.add(events));
     }
     if (events.some((e) => soundEvents.includes(e.type)
-        || (e.type === 'alarm' && soundAlarms.includes(e.attributes.alarm)))) {
+      || (e.type === 'alarm' && soundAlarms.includes(e.attributes.alarm)))) {
       new Audio(alarm).play();
     }
     setNotifications(events.map((event) => ({
       id: event.id,
-      message: event.attributes.message,
+      message: `${devices[event.deviceId]?.name || t('sharedDevice')}: ${formatNotificationTitle(t, event)}`,
       show: true,
     })));
-  }, [features, dispatch, soundEvents, soundAlarms]);
+  }, [features, dispatch, soundEvents, soundAlarms, devices, t]);
 
   const connectSocket = () => {
     clearReconnectTimeout();
@@ -178,14 +183,64 @@ const SocketController = () => {
 
   return (
     <>
-      {notifications.map((notification) => (
+      {notifications.map((notification, index) => (
         <Snackbar
           key={notification.id}
           open={notification.show}
-          message={notification.message}
           autoHideDuration={snackBarDurationLongMs}
           onClose={() => setNotifications(notifications.filter((e) => e.id !== notification.id))}
-        />
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          sx={{ 
+            mt: 8 + (index * 8),
+            '& .MuiSnackbarContent-root': {
+              maxWidth: '400px !important',
+              width: 'auto',
+            }
+          }}
+        >
+          <Alert
+            severity="info"
+            variant="filled"
+            onClose={() => setNotifications(notifications.filter((e) => e.id !== notification.id))}
+            action={(
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={() => setNotifications(notifications.filter((e) => e.id !== notification.id))}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
+            sx={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1) !important',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: (theme) => theme.palette.mode === 'dark' ? '#fff' : '#000',
+              fontWeight: 600,
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+              maxWidth: '400px !important',
+              width: 'fit-content',
+              minWidth: '300px',
+              minHeight: '48px',
+              maxHeight: '60px',
+              py: 0.5,
+              '& .MuiAlert-message': {
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                lineHeight: 1.4,
+              },
+              '& .MuiAlert-icon': {
+                color: (theme) => theme.palette.primary.main,
+              },
+            }}
+          >
+            {notification.message}
+          </Alert>
+        </Snackbar>
       ))}
     </>
   );

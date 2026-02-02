@@ -8,8 +8,8 @@ export default defineConfig(() => ({
   server: {
     port: 3000,
     proxy: {
-      '/api/socket': 'ws://localhost:8082',
-      '/api': 'http://localhost:8082',
+      '/api/socket': 'wss://track-dev.alhaadtrack.com',
+      '/api': 'https://track-dev.alhaadtrack.com',
     },
   },
   build: {
@@ -26,9 +26,14 @@ export default defineConfig(() => ({
         globPatterns: ['**/*.{js,css,html,woff,woff2,mp3}'],
       },
       manifest: {
-        short_name: '${title}',
-        name: '${description}',
-        theme_color: '${colorPrimary}',
+        short_name: 'Traccar',
+        name: 'Fleet Tracking',
+        theme_color: '#f97316',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
+        scope: '/',
+        lang: 'en',
         icons: [
           {
             src: 'pwa-64x64.png',

@@ -16,6 +16,7 @@ const useStyles = makeStyles()(() => ({
   page: {
     flexGrow: 1,
     overflow: 'auto',
+    backgroundColor: 'transparent',
   },
   menu: {
     zIndex: 4,

@@ -13,6 +13,8 @@ import usePositionAttributes from '../common/attributes/usePositionAttributes';
 import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
+import GlobalNavbar from '../common/components/GlobalNavbar';
+
 const useStyles = makeStyles()((theme) => ({
   root: {
     height: '100%',
@@ -59,6 +61,7 @@ const PositionPage = () => {
 
   return (
     <div className={classes.root}>
+      <GlobalNavbar />
       <AppBar position="sticky" color="inherit">
         <Toolbar>
           <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate(-1)}>

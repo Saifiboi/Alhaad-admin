@@ -9,8 +9,7 @@ import {
 import ReportFilter from './components/ReportFilter';
 import { formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
-import PageLayout from '../common/components/PageLayout';
-import ReportsMenu from './components/ReportsMenu';
+import ReportLayout from './components/ReportLayout';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
 import { useCatch } from '../reactHelper';
 import { useAttributePreference } from '../common/util/preferences';
@@ -111,7 +110,7 @@ const ChartReportPage = () => {
   ];
 
   return (
-    <PageLayout menu={<ReportsMenu />} breadcrumbs={['reportTitle', 'reportChart']}>
+    <ReportLayout>
       <ReportFilter onShow={onShow} deviceType="single">
         <div className={classes.filterItem}>
           <FormControl fullWidth>
@@ -194,7 +193,7 @@ const ChartReportPage = () => {
           </ResponsiveContainer>
         </div>
       )}
-    </PageLayout>
+    </ReportLayout>
   );
 };
 

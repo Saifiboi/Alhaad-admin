@@ -27,6 +27,7 @@ const DeviceConnectionsPage = () => {
     <PageLayout
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'sharedDevice', 'sharedConnections']}
+      showBack
     >
       <Container maxWidth="xs" className={classes.container}>
         <Accordion defaultExpanded>

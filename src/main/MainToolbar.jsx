@@ -26,6 +26,9 @@ const useStyles = makeStyles()((theme) => ({
     gap: theme.spacing(2),
     width: theme.dimensions.drawerWidthTablet,
   },
+  input: {
+    fontSize: '0.7rem',
+  },
 }));
 
 const MainToolbar = ({
@@ -40,6 +43,7 @@ const MainToolbar = ({
   setFilterSort,
   filterMap,
   setFilterMap,
+  onAddDevice,
 }) => {
   const { classes } = useStyles();
   const theme = useTheme();
@@ -64,6 +68,7 @@ const MainToolbar = ({
         {devicesOpen ? <MapIcon /> : <DnsIcon />}
       </IconButton>
       <OutlinedInput
+        className={classes.input}
         ref={inputRef}
         placeholder={t('sharedSearchDevices')}
         value={keyword}
@@ -169,7 +174,7 @@ const MainToolbar = ({
           </FormGroup>
         </div>
       </Popover>
-      <IconButton edge="end" onClick={() => navigate('/settings/device')} disabled={deviceReadonly}>
+      <IconButton edge="end" onClick={() => onAddDevice ? onAddDevice() : navigate('/settings/device')} disabled={deviceReadonly}>
         <Tooltip open={!deviceReadonly && Object.keys(devices).length === 0} title={t('deviceRegisterFirst')} arrow>
           <AddIcon />
         </Tooltip>

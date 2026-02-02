@@ -27,21 +27,26 @@ const CommandPage = () => {
       breadcrumbs={['settingsTitle', 'sharedSavedCommand']}
     >
       {item && (
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">
-              {t('sharedRequired')}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails className={classes.details}>
-            <TextField
-              value={item.description || ''}
-              onChange={(event) => setItem({ ...item, description: event.target.value })}
-              label={t('sharedDescription')}
-            />
-            <BaseCommandView item={item} setItem={setItem} />
-          </AccordionDetails>
-        </Accordion>
+        <div className={classes.content}>
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">
+                {t('sharedRequired')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.grid}>
+              <TextField
+                className={classes.fullWidth}
+                value={item.description || ''}
+                onChange={(event) => setItem({ ...item, description: event.target.value })}
+                label={t('sharedDescription')}
+              />
+              <div className={classes.fullWidth}>
+                <BaseCommandView item={item} setItem={setItem} />
+              </div>
+            </AccordionDetails>
+          </Accordion>
+        </div>
       )}
     </EditItemView>
   );

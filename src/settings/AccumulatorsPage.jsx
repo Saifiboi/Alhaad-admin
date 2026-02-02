@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import {
+ useEffect, useState, useContext, useCallback 
+} from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Accordion,
   AccordionSummary,
@@ -12,6 +14,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from '../common/components/LocalizationProvider';
+import WindowModeContext from '../common/components/WindowModeContext';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import { useCatch } from '../reactHelper';
@@ -42,46 +45,61 @@ const AccumulatorsPage = () => {
     }
   }, [deviceId, position]);
 
+  const { isWindow, onClose } = useContext(WindowModeContext);
+
+  const location = useLocation();
+  const handleBack = useCallback(() => {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindow && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [isWindow, onClose, navigate, location.key]);
+
   const handleSave = useCatch(async () => {
     await fetchOrThrow(`/api/devices/${deviceId}/accumulators`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item),
     });
-    navigate(-1);
+    handleBack();
   });
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['sharedDeviceAccumulators']}>
       {item && (
-        <Container maxWidth="xs" className={classes.container}>
-          <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1">
-                {t('sharedRequired')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails className={classes.details}>
-              <TextField
-                type="number"
-                value={item.hours / 3600000}
-                onChange={(event) => setItem({ ...item, hours: Number(event.target.value) * 3600000 })}
-                label={t('positionHours')}
-              />
-              <TextField
-                type="number"
-                value={distanceFromMeters(item.totalDistance, distanceUnit)}
-                onChange={(event) => setItem({ ...item, totalDistance: distanceToMeters(Number(event.target.value), distanceUnit) })}
-                label={`${t('deviceTotalDistance')} (${distanceUnitString(distanceUnit, t)})`}
-              />
-            </AccordionDetails>
-          </Accordion>
+        <Container maxWidth="lg" className={classes.container}>
+          <div className={classes.content}>
+            <Accordion defaultExpanded>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle1">
+                  {t('sharedRequired')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails className={classes.grid}>
+                <TextField
+                  type="number"
+                  value={item.hours / 3600000}
+                  onChange={(event) => setItem({ ...item, hours: Number(event.target.value) * 3600000 })}
+                  label={t('positionHours')}
+                />
+                <TextField
+                  type="number"
+                  value={distanceFromMeters(item.totalDistance, distanceUnit)}
+                  onChange={(event) => setItem({ ...item, totalDistance: distanceToMeters(Number(event.target.value), distanceUnit) })}
+                  label={`${t('deviceTotalDistance')} (${distanceUnitString(distanceUnit, t)})`}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </div>
           <div className={classes.buttons}>
             <Button
               type="button"
               color="primary"
               variant="outlined"
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
             >
               {t('sharedCancel')}
             </Button>

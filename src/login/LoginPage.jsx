@@ -1,90 +1,52 @@
 import { useEffect, useState } from 'react';
-import {
-  useMediaQuery, Select, MenuItem, FormControl, Button, TextField, Link, Snackbar, IconButton, Tooltip, Box, InputAdornment,
-} from '@mui/material';
-import ReactCountryFlag from 'react-country-flag';
-import { makeStyles } from 'tss-react/mui';
-import CloseIcon from '@mui/icons-material/Close';
-import VpnLockIcon from '@mui/icons-material/VpnLock';
-import QrCode2Icon from '@mui/icons-material/QrCode2';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
+import {
+  Select, MenuItem, Box, FormControl, IconButton, Tooltip
+} from '@mui/material';
+import LanguageIcon from '@mui/icons-material/Language';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { sessionActions } from '../store';
-import { useLocalization, useTranslation } from '../common/components/LocalizationProvider';
-import LoginLayout from './LoginLayout';
+import { useLocalization } from '../common/components/LocalizationProvider';
 import usePersistedState from '../common/util/usePersistedState';
 import {
-  generateLoginToken, handleLoginTokenListeners, nativeEnvironment, nativePostMessage,
+  generateLoginToken, nativePostMessage,
 } from '../common/components/NativeInterface';
-import LogoImage from './LogoImage';
-import { useCatch } from '../reactHelper';
-import QrCodeDialog from '../common/components/QrCodeDialog';
-import fetchOrThrow from '../common/util/fetchOrThrow';
-
-const useStyles = makeStyles()((theme) => ({
-  options: {
-    position: 'fixed',
-    top: theme.spacing(2),
-    right: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(1),
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: theme.spacing(2),
-  },
-  extraContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: theme.spacing(4),
-    marginTop: theme.spacing(2),
-  },
-  registerButton: {
-    minWidth: 'unset',
-  },
-  link: {
-    cursor: 'pointer',
-  },
-}));
+import './LoginPage.css';
 
 const LoginPage = () => {
-  const { classes } = useStyles();
+  const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const t = useTranslation();
+
 
   const { languages, language, setLocalLanguage } = useLocalization();
   const languageList = Object.entries(languages).map((values) => ({ code: values[0], country: values[1].country, name: values[1].name }));
 
   const [failed, setFailed] = useState(false);
-
   const [email, setEmail] = usePersistedState('loginEmail', '');
   const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showServerTooltip, setShowServerTooltip] = useState(false);
-  const [showQr, setShowQr] = useState(false);
 
   const registrationEnabled = useSelector((state) => state.session.server.registration);
-  const languageEnabled = useSelector((state) => {
-    const attributes = state.session.server.attributes;
-    return !attributes.language && !attributes['ui.disableLoginLanguage'];
-  });
-  const changeEnabled = useSelector((state) => !state.session.server.attributes.disableChange);
   const emailEnabled = useSelector((state) => state.session.server.emailEnabled);
-  const openIdEnabled = useSelector((state) => state.session.server.openIdEnabled);
-  const openIdForced = useSelector((state) => state.session.server.openIdEnabled && state.session.server.openIdForce);
-  const [codeEnabled, setCodeEnabled] = useState(false);
+  const server = useSelector((state) => state.session.server);
+  const darkMode = server?.attributes?.darkMode;
 
-  const [announcementShown, setAnnouncementShown] = useState(false);
-  const announcement = useSelector((state) => state.session.server.announcement);
+  // Handle theme toggle for login page
+  const handleThemeToggle = () => {
+    const newDarkMode = !darkMode;
+    const updatedServer = {
+      ...server,
+      attributes: {
+        ...server.attributes,
+        darkMode: newDarkMode,
+      },
+    };
+    dispatch(sessionActions.updateServer(updatedServer));
+  };
 
   const handlePasswordLogin = async (event) => {
     event.preventDefault();
@@ -93,7 +55,7 @@ const LoginPage = () => {
       const query = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
       const response = await fetch('/api/session', {
         method: 'POST',
-        body: new URLSearchParams(code.length ? `${query}&code=${code}` : query),
+        body: new URLSearchParams(query),
       });
       if (response.ok) {
         const user = await response.json();
@@ -102,8 +64,6 @@ const LoginPage = () => {
         const target = window.sessionStorage.getItem('postLogin') || '/';
         window.sessionStorage.removeItem('postLogin');
         navigate(target, { replace: true });
-      } else if (response.status === 401 && response.headers.get('WWW-Authenticate') === 'TOTP') {
-        setCodeEnabled(true);
       } else {
         throw Error(await response.text());
       }
@@ -113,174 +73,242 @@ const LoginPage = () => {
     }
   };
 
-  const handleTokenLogin = useCatch(async (token) => {
-    const response = await fetchOrThrow(`/api/session?token=${encodeURIComponent(token)}`);
-    const user = await response.json();
-    dispatch(sessionActions.updateUser(user));
-    navigate('/');
-  });
-
-  const handleOpenIdLogin = () => {
-    document.location = '/api/session/openid/auth';
-  };
-
   useEffect(() => nativePostMessage('authentication'), []);
 
+  // Apply theme colors as CSS variables
   useEffect(() => {
-    const listener = (token) => handleTokenLogin(token);
-    handleLoginTokenListeners.add(listener);
-    return () => handleLoginTokenListeners.delete(listener);
-  }, []);
-
-  useEffect(() => {
-    if (window.localStorage.getItem('hostname') !== window.location.hostname) {
-      window.localStorage.setItem('hostname', window.location.hostname);
-      setShowServerTooltip(true);
-    }
-  }, []);
+    const root = document.documentElement;
+    root.style.setProperty('--theme-bg-default', theme.palette.background.default);
+    root.style.setProperty('--theme-bg-paper', theme.palette.background.paper);
+    root.style.setProperty('--theme-bg-gradient', theme.palette.background.gradient);
+    root.style.setProperty('--theme-surface-elevated', theme.palette.surface.elevated);
+    root.style.setProperty('--theme-primary-main', theme.palette.primary.main);
+    root.style.setProperty('--theme-primary-dark', theme.palette.primary.dark);
+    root.style.setProperty('--theme-text-primary', theme.palette.text.primary);
+    root.style.setProperty('--theme-text-secondary', theme.palette.text.secondary);
+    root.style.setProperty('--theme-divider', theme.palette.divider);
+    root.style.setProperty('--theme-error-main', theme.palette.error.main);
+    root.style.setProperty('--theme-glass-bg', theme.palette.glass.background);
+    root.style.setProperty('--theme-glass-border', theme.palette.glass.border);
+  }, [theme]);
 
   return (
-    <LoginLayout>
-      <div className={classes.options}>
-        {nativeEnvironment && changeEnabled && (
-          <IconButton color="primary" onClick={() => navigate('/change-server')}>
-            <Tooltip
-              title={`${t('settingsServer')}: ${window.location.hostname}`}
-              open={showServerTooltip}
-              arrow
+    <div className={`login-page-container ${theme.palette.mode === 'dark' ? 'dark' : ''}`}>
+      {/* Top Hero Section */}
+      <div className="login-hero">
+        <div
+          className="login-hero-bg"
+          style={{
+            backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqJHtswoVJfxXPHacZ-lNEbBm5pJlRFYsSs_d4Sq1taN_so5GdYvdogY4IV91ozkzngPpOFC4zQvNKG8C3O2mztN8gDuxLJ3BGPogQpe0p4EYMvT135lZ6G0VtGxEdBtPosf2BAihieoT92EkeOFMyr3inFMhRVsHx-x4K62mfjfgghy6n3IzQWT1KOyh9TiZ2uizRCwWwVeD1ULgLhac7ToFUDXjAbHfhvoeBwwY1wDE5nnhXNruJzfM1eyOvebcGj37ha_cETQE')",
+          }}
+        />
+        <div className="login-hero-tint" />
+        <div className="login-hero-overlay">
+          <div className="login-icon-wrapper">
+            <span className="material-symbols-outlined login-icon">navigation</span>
+          </div>
+          <h1 className="login-title">Alhaad Admin</h1>
+          <p className="login-subtitle">Fleet Management</p>
+        </div>
+
+        {/* Language Selector & Theme Toggle */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          {/* Theme Toggle */}
+          <Tooltip title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+            <IconButton
+              onClick={handleThemeToggle}
+              sx={{
+                color: theme.palette.primary.main,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'rotate(180deg)',
+                  backgroundColor: `${theme.palette.primary.main}1A`,
+                },
+              }}
             >
-              <VpnLockIcon />
-            </Tooltip>
-          </IconButton>
-        )}
-        {!nativeEnvironment && (
-          <IconButton color="primary" onClick={() => setShowQr(true)}>
-            <QrCode2Icon />
-          </IconButton>
-        )}
-        {languageEnabled && (
-          <FormControl>
-            <Select value={language} onChange={(e) => setLocalLanguage(e.target.value)}>
-              {languageList.map((it) => (
-                <MenuItem key={it.code} value={it.code}>
-                  <Box component="span" sx={{ mr: 1 }}>
-                    <ReactCountryFlag countryCode={it.country} svg />
-                  </Box>
-                  {it.name}
+              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Tooltip>
+
+          {/* Language Selector */}
+          <FormControl
+            size="small"
+            sx={{
+              minWidth: 120,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                backdropFilter: 'blur(16px)',
+                background: theme.palette.glass.background,
+                border: `1px solid ${theme.palette.glass.border}`,
+                '& fieldset': {
+                  border: 'none',
+                },
+              },
+            }}
+          >
+            <Select
+              value={language}
+              onChange={(e) => setLocalLanguage(e.target.value)}
+              startAdornment={<LanguageIcon sx={{ mr: 1, fontSize: '1.125rem', color: theme.palette.primary.main }} />}
+              sx={{
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: theme.palette.text.primary,
+              }}
+            >
+              {languageList.map((lang) => (
+                <MenuItem key={lang.code} value={lang.code}>
+                  {lang.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-        )}
+        </Box>
       </div>
-      <div className={classes.container}>
-        {useMediaQuery(theme.breakpoints.down('lg')) && <LogoImage color={theme.palette.primary.main} />}
-        {!openIdForced && (
-          <>
-            <TextField
-              required
-              error={failed}
-              label={t('userEmail')}
-              name="email"
-              value={email}
-              autoComplete="email"
-              autoFocus={!email}
-              onChange={(e) => setEmail(e.target.value)}
-              helperText={failed && 'Invalid username or password'}
-            />
-            <TextField
-              required
-              error={failed}
-              label={t('userPassword')}
-              name="password"
-              value={password}
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              autoFocus={!!email}
-              onChange={(e) => setPassword(e.target.value)}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                        size="small"
-                      >
-                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            {codeEnabled && (
-              <TextField
-                required
-                error={failed}
-                label={t('loginTotpCode')}
-                name="code"
-                value={code}
-                type="number"
-                onChange={(e) => setCode(e.target.value)}
-              />
+
+      {/* Login Form Card */}
+      <div className="login-form-card">
+        <div className="login-form-inner">
+          <div className="login-form-handle" />
+
+          <h2 className="login-form-title">Welcome Back</h2>
+          <p className="login-form-description">
+            Enter your credentials to access your dashboard.
+          </p>
+
+          <form onSubmit={handlePasswordLogin} className="login-form">
+            {/* Email Input */}
+            <div className="login-input-group">
+              <label className="login-input-label">
+                <p className="login-label-text">
+                  Email Address
+                </p>
+                <div className="login-input-wrapper">
+                  <span className="material-symbols-outlined login-input-icon">
+                    mail
+                  </span>
+                  <input
+                    className="login-input"
+                    placeholder="admin@alhaad.com"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (failed) setFailed(false);
+                    }}
+                    required
+                  />
+                </div>
+              </label>
+            </div>
+
+            {/* Password Input */}
+            <div className="login-input-group">
+              <label className="login-input-label">
+                <p className="login-label-text">
+                  Password
+                </p>
+                <div className="login-input-wrapper">
+                  <span className="material-symbols-outlined login-input-icon">
+                    lock
+                  </span>
+                  <input
+                    className="login-input login-input-password"
+                    placeholder="Enter your password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (failed) setFailed(false);
+                    }}
+                    required
+                  />
+                  <button
+                    className="login-password-toggle"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
+              </label>
+            </div>
+
+            {/* Error Message */}
+            {failed && (
+              <div className="login-error">
+                Invalid email or password
+              </div>
             )}
-            <Button
-              onClick={handlePasswordLogin}
+
+            {/* Remember Me & Forgot Password */}
+            <div className="login-options">
+              <label className="login-remember">
+                <input
+                  className="login-checkbox"
+                  type="checkbox"
+                />
+                <span className="login-remember-text">
+                  Remember me
+                </span>
+              </label>
+              {emailEnabled && (
+                <a
+                  className="login-forgot-link"
+                  onClick={() => navigate('/reset-password')}
+                >
+                  Forgot Password?
+                </a>
+              )}
+            </div>
+
+            {/* Login Button */}
+            <button
               type="submit"
-              variant="contained"
-              color="secondary"
-              disabled={!email || !password || (codeEnabled && !code)}
+              className="login-submit-btn"
+              disabled={!email || !password}
             >
-              {t('loginLogin')}
-            </Button>
-          </>
-        )}
-        {openIdEnabled && (
-          <Button
-            onClick={() => handleOpenIdLogin()}
-            variant="contained"
-            color="secondary"
-          >
-            {t('loginOpenId')}
-          </Button>
-        )}
-        {!openIdForced && (
-          <div className={classes.extraContainer}>
+              Login to Alhaad
+            </button>
+
+            {/* Register Link */}
             {registrationEnabled && (
-              <Link
-                onClick={() => navigate('/register')}
-                className={classes.link}
-                underline="none"
-                variant="caption"
-              >
-                {t('loginRegister')}
-              </Link>
+              <div className="login-register">
+                <p className="login-register-text">
+                  Don't have an account?
+                  <a
+                    className="login-register-link"
+                    onClick={() => navigate('/register')}
+                  >
+                    Register Fleet
+                  </a>
+                </p>
+              </div>
             )}
-            {emailEnabled && (
-              <Link
-                onClick={() => navigate('/reset-password')}
-                className={classes.link}
-                underline="none"
-                variant="caption"
-              >
-                {t('loginReset')}
-              </Link>
-            )}
-          </div>
-        )}
+
+            {/* Security Badge */}
+            <div className="login-security-badge">
+              <span className="material-symbols-outlined" style={{ fontSize: '0.75rem', color: theme.palette.primary.main }}>verified_user</span>
+              <span className="login-security-badge-text">
+                Enterprise Secure Access
+              </span>
+            </div>
+          </form>
+        </div>
       </div>
-      <QrCodeDialog open={showQr} onClose={() => setShowQr(false)} />
-      <Snackbar
-        open={!!announcement && !announcementShown}
-        message={announcement}
-        action={(
-          <IconButton size="small" color="inherit" onClick={() => setAnnouncementShown(true)}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        )}
-      />
-    </LoginLayout>
+    </div>
   );
 };
 

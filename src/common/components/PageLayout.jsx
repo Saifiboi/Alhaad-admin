@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import {
   AppBar,
   Breadcrumbs,
@@ -14,14 +14,18 @@ import { makeStyles } from 'tss-react/mui';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
+import GlobalNavbar from './GlobalNavbar';
+import WindowModeContext from './WindowModeContext';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
   root: {
     height: '100%',
     display: 'flex',
+    backgroundColor: 'transparent',
+    paddingTop: '64px', // Space for fixed navbar
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column',
     },
@@ -32,6 +36,8 @@ const useStyles = makeStyles()((theme, { miniVariant }) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'rgb(243, 244, 246)',
+    borderRight: 'none',
     '@media print': {
       display: 'none',
     },
@@ -78,11 +84,18 @@ const PageTitle = ({ breadcrumbs }) => {
   );
 };
 
-const PageLayout = ({ menu, breadcrumbs, children }) => {
+
+
+const PageLayout = ({
+  menu, breadcrumbs, children, showBack = false, isWindow: isWindowProp = false,
+}) => {
   const [miniVariant, setMiniVariant] = useState(false);
   const { classes } = useStyles({ miniVariant });
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const isWindowContext = useContext(WindowModeContext);
+  const isWindow = isWindowProp || !!isWindowContext?.isWindow;
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -92,52 +105,86 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
 
   const toggleDrawer = () => setMiniVariant(!miniVariant);
 
-  return (
-    <div className={classes.root}>
-      {desktop ? (
-        <Drawer
-          variant="permanent"
-          className={classes.desktopDrawer}
-          classes={{ paper: classes.desktopDrawer }}
-        >
-          <Toolbar>
-            {!miniVariant && (
-              <>
-                <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
-                  <BackIcon />
-                </IconButton>
-                <PageTitle breadcrumbs={breadcrumbs} />
-              </>
-            )}
-            <IconButton color="inherit" edge="start" sx={{ ml: miniVariant ? -2 : 'auto' }} onClick={toggleDrawer}>
-              {(miniVariant !== (theme.direction === 'rtl')) ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          {menu}
-        </Drawer>
-      ) : (
-        <Drawer
-          variant="temporary"
-          open={openDrawer}
-          onClose={() => setOpenDrawer(false)}
-          classes={{ paper: classes.mobileDrawer }}
-        >
-          {menu}
-        </Drawer>
-      )}
-      {!desktop && (
-        <AppBar className={classes.mobileToolbar} position="static" color="inherit">
-          <Toolbar>
-            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => setOpenDrawer(true)}>
-              <MenuIcon />
+  const location = useLocation();
+  const handleBack = useCallback(() => {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else if (isWindowContext && isWindowContext.onClose) {
+      isWindowContext.onClose();
+    } else {
+      navigate(-1);
+    }
+  }, [navigate, location.key, isWindowContext]);
+
+  if (isWindow && desktop) {
+    return (
+      <div className={classes.content} style={{ height: '100%', overflow: 'hidden' }}>
+        {showBack && (
+          <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', minHeight: '56px !important' }}>
+            <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={handleBack}>
+              <BackIcon />
             </IconButton>
             <PageTitle breadcrumbs={breadcrumbs} />
           </Toolbar>
-        </AppBar>
-      )}
-      <div className={classes.content}>{children}</div>
-    </div>
+        )}
+        <div style={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <GlobalNavbar onDashboard={() => navigate('/')} />
+      <div className={classes.root}>
+        {desktop && menu ? (
+          <Drawer
+            variant="permanent"
+            className={classes.desktopDrawer}
+            classes={{ paper: classes.desktopDrawer }}
+          >
+            <Toolbar>
+              {!miniVariant && (
+                <>
+                  <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
+                    <BackIcon />
+                  </IconButton>
+                  <PageTitle breadcrumbs={breadcrumbs} />
+                </>
+              )}
+              <IconButton color="inherit" edge="start" sx={{ ml: miniVariant ? -2 : 'auto' }} onClick={toggleDrawer}>
+                {(miniVariant !== (theme.direction === 'rtl')) ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>
+            </Toolbar>
+            <Divider />
+            {menu}
+          </Drawer>
+        ) : (
+          !desktop && (
+            <Drawer
+              variant="temporary"
+              open={openDrawer}
+              onClose={() => setOpenDrawer(false)}
+              classes={{ paper: classes.mobileDrawer }}
+            >
+              {menu}
+            </Drawer>
+          )
+        )}
+        {!desktop && (
+          <AppBar className={classes.mobileToolbar} position="static" color="inherit">
+            <Toolbar>
+              <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => setOpenDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+              <PageTitle breadcrumbs={breadcrumbs} />
+            </Toolbar>
+          </AppBar>
+        )}
+        <div className={classes.content}>{children}</div>
+      </div>
+    </>
   )
 };
 

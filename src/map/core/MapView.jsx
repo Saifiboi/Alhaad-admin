@@ -119,6 +119,33 @@ const MapView = ({ children }) => {
     switcher.updateStyles(styles, defaultMapStyle);
   }, [mapStyles, defaultMapStyle, activeMapStyles, switcher]);
 
+  // Auto-switch map style based on theme mode
+  useEffect(() => {
+    const currentStyle = map.getStyle();
+    if (!currentStyle) return;
+
+    const isDarkMode = theme.palette.mode === 'dark';
+    const currentStyleUrl = currentStyle.sprite || '';
+
+    // Check if current style is a LocationIQ style
+    const isLocationIqLight = currentStyleUrl.includes('locationiq.com/v3/streets');
+    const isLocationIqDark = currentStyleUrl.includes('locationiq.com/v3/dark');
+
+    // Only auto-switch if using LocationIQ styles
+    if (isLocationIqLight || isLocationIqDark) {
+      const targetStyleId = isDarkMode ? 'locationIqDark' : 'locationIqStreets';
+      const currentStyleId = isLocationIqDark ? 'locationIqDark' : 'locationIqStreets';
+
+      // Only switch if the target style is different from current
+      if (targetStyleId !== currentStyleId) {
+        const targetStyle = mapStyles.find((s) => s.id === targetStyleId);
+        if (targetStyle && targetStyle.available) {
+          switcher.onStyleSelect(targetStyleId);
+        }
+      }
+    }
+  }, [theme.palette.mode, mapStyles, switcher]);
+
   useEffect(() => {
     const listener = (ready) => setMapReady(ready);
     addReadyListener(listener);

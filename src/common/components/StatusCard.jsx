@@ -56,11 +56,11 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(1, 1, 0, 2),
+    padding: theme.spacing(0.5, 1, 0, 1.5),
   },
   content: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5),
     maxHeight: theme.dimensions.cardContentMaxHeight,
     overflow: 'auto',
   },
@@ -91,7 +91,7 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     left: '50%',
     [theme.breakpoints.up('md')]: {
       left: `calc(50% + ${desktopPadding} / 2)`,
-      bottom: theme.spacing(3),
+      bottom: theme.spacing(8),
     },
     [theme.breakpoints.down('md')]: {
       left: '50%',
@@ -107,16 +107,18 @@ const StatusRow = ({ name, content }) => {
   return (
     <TableRow>
       <TableCell className={classes.cell}>
-        <Typography variant="body2">{name}</Typography>
+        <Typography variant="caption">{name}</Typography>
       </TableCell>
       <TableCell className={classes.cell}>
-        <Typography variant="body2" color="textSecondary">{content}</Typography>
+        <Typography variant="caption" color="textSecondary">{content}</Typography>
       </TableCell>
     </TableRow>
   );
 };
 
-const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPadding = 0 }) => {
+const StatusCard = ({
+  deviceId, position, onClose, disableActions, desktopPadding = 0, onEdit, onCommand, onShare, onReplay, onGeofenceCreated,
+}) => {
   const { classes } = useStyles({ desktopPadding });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -165,8 +167,12 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ deviceId: position.deviceId, geofenceId: item.id }),
     });
-    navigate(`/settings/geofence/${item.id}`);
-  }, [navigate, position]);
+    if (onGeofenceCreated) {
+      onGeofenceCreated(item.id);
+    } else {
+      navigate(`/settings/geofence/${item.id}`);
+    }
+  }, [navigate, position, onGeofenceCreated, t]);
 
   return (
     <>
@@ -194,7 +200,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </CardMedia>
               ) : (
                 <div className={`${classes.header} draggable-header`}>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="caption" color="textSecondary" fontWeight="bold">
                     {device.name}
                   </Typography>
                   <IconButton
@@ -228,7 +234,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                     <TableFooter>
                       <TableRow>
                         <TableCell colSpan={2} className={classes.cell}>
-                          <Typography variant="body2">
+                          <Typography variant="caption">
                             <Link component={RouterLink} to={`/position/${position.id}`}>{t('sharedShowDetails')}</Link>
                           </Typography>
                         </TableCell>
@@ -240,44 +246,49 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
               <CardActions classes={{ root: classes.actions }} disableSpacing>
                 <Tooltip title={t('sharedExtra')}>
                   <IconButton
+                    size="small"
                     color="secondary"
                     onClick={(e) => setAnchorEl(e.currentTarget)}
                     disabled={!position}
                   >
-                    <PendingIcon />
+                    <PendingIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('reportReplay')}>
                   <IconButton
-                    onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
+                    size="small"
+                    onClick={() => (onReplay ? onReplay() : navigate(`/replay?deviceId=${deviceId}`))}
                     disabled={disableActions || !position}
                   >
-                    <RouteIcon />
+                    <RouteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('commandTitle')}>
                   <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}/command`)}
+                    size="small"
+                    onClick={() => (onCommand ? onCommand() : navigate(`/settings/device/${deviceId}/command`))}
                     disabled={disableActions}
                   >
-                    <SendIcon />
+                    <SendIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedEdit')}>
                   <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}`)}
+                    size="small"
+                    onClick={() => (onEdit ? onEdit() : navigate(`/settings/device/${deviceId}`))}
                     disabled={disableActions || deviceReadonly}
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedRemove')}>
                   <IconButton
+                    size="small"
                     color="error"
                     onClick={() => setRemoving(true)}
                     disabled={disableActions || deviceReadonly}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </CardActions>
@@ -293,7 +304,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
           <MenuItem component="a" target="_blank" href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${position.latitude}%2C${position.longitude}&heading=${position.course}`}>{t('linkStreetView')}</MenuItem>
           {navigationAppTitle && <MenuItem component="a" target="_blank" href={navigationAppLink.replace('{latitude}', position.latitude).replace('{longitude}', position.longitude)}>{navigationAppTitle}</MenuItem>}
           {!shareDisabled && !user.temporary && (
-            <MenuItem onClick={() => navigate(`/settings/device/${deviceId}/share`)}><Typography color="secondary">{t('deviceShare')}</Typography></MenuItem>
+            <MenuItem onClick={() => (onShare ? onShare() : navigate(`/settings/device/${deviceId}/share`))}><Typography color="secondary">{t('deviceShare')}</Typography></MenuItem>
           )}
         </Menu>
       )}

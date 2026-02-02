@@ -109,14 +109,14 @@ const CalendarPage = () => {
       breadcrumbs={['settingsTitle', 'sharedCalendar']}
     >
       {item && (
-        <>
+        <div className={classes.content}>
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">
                 {t('sharedRequired')}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails className={classes.details}>
+            <AccordionDetails className={classes.grid}>
               <TextField
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
@@ -185,6 +185,7 @@ const CalendarPage = () => {
                 </>
               ) : (
                 <MuiFileInput
+                  className={classes.fullWidth}
                   placeholder={t('sharedSelectFile')}
                   value={file}
                   onChange={handleFileChange}
@@ -197,7 +198,7 @@ const CalendarPage = () => {
             setAttributes={(attributes) => setItem({ ...item, attributes })}
             definitions={{}}
           />
-        </>
+        </div>
       )}
     </EditItemView>
   );
