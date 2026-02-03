@@ -286,8 +286,11 @@ const MainPage = () => {
       // Open New
       setWindows((prev) => {
         const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
-        const defaultWidth = 680;
-        const defaultHeight = 413;
+
+        // Responsive sizing: 60% width (min 320px), 70% height (min 400px)
+        const defaultWidth = Math.max(320, Math.min(1000, window.innerWidth * 0.55));
+        const defaultHeight = Math.max(400, window.innerHeight * 0.75);
+
         const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
         const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
 
