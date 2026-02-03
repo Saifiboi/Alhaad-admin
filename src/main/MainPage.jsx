@@ -152,7 +152,7 @@ const MainPage = () => {
   const [activeWindowId, setActiveWindowId] = useState(null);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
-  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
+  const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized && !w.minimized), [windows]);
 
   // Detect Dock position and adjust sidebar height
   useEffect(() => {
@@ -368,6 +368,7 @@ const MainPage = () => {
 
   // Dashboard/Home Handler
   const handleDashboard = useCallback(() => {
+    dispatch(devicesActions.selectId(null));
     setWindows((prev) => {
       const minimzedWindows = {};
       Object.keys(prev).forEach((id) => {
@@ -376,7 +377,7 @@ const MainPage = () => {
       return minimzedWindows;
     });
     setDevicesOpen(true);
-  }, [setDevicesOpen]);
+  }, [dispatch, setDevicesOpen]);
 
   // Show Devices Handler
   const handleShowDevices = useCallback(() => {
@@ -405,6 +406,8 @@ const MainPage = () => {
           style={{
             height: sidebarHeight || `calc(100vh - 64px - ${theme.spacing(anyMaximized ? 0 : 1.5)})`,
             marginBottom: anyMaximized ? 0 : theme.spacing(1.5),
+            zIndex: anyMaximized ? 1600 : 3,
+            display: (desktop && !devicesOpen) ? 'none' : 'flex',
           }}
         >
           <Paper className={classes.header}>
