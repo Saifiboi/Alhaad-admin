@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo, memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip,
+  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip, TextField, Pagination,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,21 +19,22 @@ import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
 import usePersistedState from '../common/util/usePersistedState';
 import fetchOrThrow from '../common/util/fetchOrThrow';
-import AddressValue from '../common/components/AddressValue';
 import exportExcel from '../common/util/exportExcel';
 import RemoveDialog from '../common/components/RemoveDialog';
+import { getCachedDevices, setCachedDevices } from '../common/util/deviceCache';
 
-const DeviceCard = ({
+const DeviceCard = memo(({
   item,
-  positions,
+  position,
   deviceReadonly,
   t,
   onConnections,
   onEdit,
   onRemove,
 }) => {
-  const position = positions[item.id];
   const theme = useTheme();
+
+  if (!item) return null;
 
   return (
     <Card
@@ -44,11 +45,12 @@ const DeviceCard = ({
         borderColor: theme.palette.divider,
         bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
+        minHeight: '80px',
         transition: 'all 0.2s',
         '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '60px' }}>
         {/* Left Section: Info */}
         <Box display="flex" flexDirection="column" sx={{ minWidth: 0, flexGrow: 1 }}>
           <Box display="flex" alignItems="center" gap={1} mb={0.25}>
@@ -83,17 +85,9 @@ const DeviceCard = ({
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5, minWidth: 0, flex: 1 }}>
-              <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.disabled', fontSize: '11px' }}>
-                {position ? (
-                  <AddressValue
-                    latitude={position.latitude}
-                    longitude={position.longitude}
-                    originalAddress={position.address}
-                  />
-                ) : (
-                  'No Address'
-                )}
-              </Box>
+              <Typography variant="caption" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.disabled', fontSize: '11px' }}>
+                {position?.address || 'No Address'}
+              </Typography>
             </Box>
           </Box>
         </Box>
@@ -133,7 +127,7 @@ const DeviceCard = ({
       </CardContent>
     </Card>
   );
-};
+});
 
 const DevicesPage = () => {
   const theme = useTheme();
@@ -151,17 +145,38 @@ const DevicesPage = () => {
   const [items, setItems] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showAll, setShowAll] = usePersistedState('showAllDevices', false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
 
   useEffectAsync(async () => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams({ all: showAll });
-      const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
-      setItems(await response.json());
-    } finally {
+    const cachedDevices = getCachedDevices(showAll);
+    
+    if (cachedDevices && cachedDevices.length > 0) {
+      setItems(cachedDevices);
       setLoading(false);
+      
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } catch (error) {
+        console.error('Error fetching devices:', error);
+      }
+    } else {
+      setLoading(true);
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } finally {
+        setLoading(false);
+      }
     }
   }, [timestamp, showAll]);
 
@@ -190,11 +205,32 @@ const DevicesPage = () => {
     }
   };
 
+  const filteredItems = useMemo(() => 
+    items.filter(filterByKeyword(searchKeyword)),
+    [items, searchKeyword]
+  );
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredItems.slice(startIndex, endIndex);
+  }, [filteredItems, currentPage, itemsPerPage]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const handleSearch = (value) => {
+    setSearchKeyword(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceTitle']}>
-      <Box display="flex" flexWrap="wrap" gap={2} justifyContent="space-between" alignItems="center" mb={3}>
-        <SearchHeader keyword={searchKeyword} setKeyword={setSearchKeyword} />
-
+      {/* Top Actions Bar */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Box display="flex" gap={2} alignItems="center">
           <Button onClick={handleExport} variant="text" size="small">{t('reportExport')}</Button>
           {manager && (
@@ -211,26 +247,81 @@ const DevicesPage = () => {
             />
           )}
         </Box>
+        
+        <Typography variant="body2" color="text.secondary">
+          {filteredItems.length} device{filteredItems.length !== 1 ? 's' : ''} total
+        </Typography>
       </Box>
 
-      {!loading ? (
+      {/* Search Bar */}
+      <Box mb={2}>
+        <TextField
+          variant="outlined"
+          placeholder={t('sharedSearch')}
+          value={searchKeyword}
+          onChange={(e) => handleSearch(e.target.value)}
+          size="small"
+          fullWidth
+          sx={{ maxWidth: '500px' }}
+        />
+      </Box>
+
+      {/* Pagination Info and Controls */}
+      {!loading && filteredItems.length > 0 && (
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="body2" color="text.secondary">
+            Page {currentPage} of {totalPages} • Showing {paginatedItems.length} devices
+          </Typography>
+          <Pagination 
+            count={totalPages} 
+            page={currentPage} 
+            onChange={handlePageChange}
+            color="primary"
+            size="small"
+            showFirstButton
+            showLastButton
+          />
+        </Box>
+      )}
+
+      {!loading && filteredItems.length > 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
-          {items.filter(filterByKeyword(searchKeyword)).map((item) => (
+          {paginatedItems.map((item) => item ? (
             <DeviceCard
               key={item.id}
               item={item}
-              positions={positions}
+              position={positions[item.id]}
               deviceReadonly={deviceReadonly}
               t={t}
               onConnections={(id) => navigate(`/settings/device/${id}/connections`)}
               onEdit={(id) => navigate(`/settings/device/${id}`)}
               onRemove={(id) => setRemovingId(id)}
             />
-          ))}
+          ) : null)}
+        </Box>
+      ) : !loading ? (
+        <Box sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {searchKeyword ? 'No devices match your search' : 'No devices found'}
+          </Typography>
         </Box>
       ) : (
         <Box sx={{ transform: 'translateY(-10%)' }}>
           <TruckLoader fullHeight={false} />
+        </Box>
+      )}
+
+      {/* Bottom Pagination */}
+      {!loading && filteredItems.length > 0 && totalPages > 1 && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <Pagination 
+            count={totalPages} 
+            page={currentPage} 
+            onChange={handlePageChange}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
         </Box>
       )}
 
