@@ -1,4 +1,3 @@
-import { memo, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 import {
@@ -51,7 +50,7 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-const DeviceRow = memo(({ devices, index, style, onSelect }) => {
+const DeviceRow = ({ devices, index, style, onSelect }) => {
   const item = devices[index];
 
   if (!item) {
@@ -69,7 +68,7 @@ const DeviceRow = memo(({ devices, index, style, onSelect }) => {
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
   const deviceSecondary = useAttributePreference('deviceSecondary', '');
 
-  const secondaryText = useMemo(() => {
+  const secondaryText = () => {
     let status;
     if (item.status === 'online' || !item.lastUpdate) {
       status = formatStatus(item.status, t);
@@ -82,9 +81,7 @@ const DeviceRow = memo(({ devices, index, style, onSelect }) => {
         <span className={classes[getStatusColor(item.status)]}>{status}</span>
       </>
     );
-  }, [item.status, item.lastUpdate, item[deviceSecondary], deviceSecondary, classes, t]);
-
-  const iconSrc = useMemo(() => mapIcons[mapIconKey(item.category)], [item.category]);
+  };
 
   return (
     <div style={style}>
@@ -103,12 +100,12 @@ const DeviceRow = memo(({ devices, index, style, onSelect }) => {
       >
         <ListItemAvatar>
           <Avatar>
-            <img className={classes.icon} src={iconSrc} alt="" />
+            <img className={classes.icon} src={mapIcons[mapIconKey(item.category)]} alt="" />
           </Avatar>
         </ListItemAvatar>
         <ListItemText
           primary={item[devicePrimary]}
-          secondary={secondaryText}
+          secondary={secondaryText()}
           slots={{
             primary: Typography,
             secondary: Typography,
@@ -162,6 +159,6 @@ const DeviceRow = memo(({ devices, index, style, onSelect }) => {
       </ListItemButton>
     </div>
   );
-});
+};
 
 export default DeviceRow;

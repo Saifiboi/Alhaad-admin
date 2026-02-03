@@ -11,7 +11,6 @@ import PageLayout from '../../common/components/PageLayout';
 import WindowModeContext from '../../common/components/WindowModeContext';
 import useSettingsStyles from '../common/useSettingsStyles';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
-import { updateCachedDevice } from '../../common/util/deviceCache';
 
 const EditItemView = ({
   children, endpoint, item, setItem, defaultItem, validate, onItemSaved, menu, breadcrumbs,
@@ -58,15 +57,8 @@ const EditItemView = ({
       body: JSON.stringify(item),
     });
 
-    const savedItem = await response.json();
-    
-    // Update cache if it's a device
-    if (endpoint === 'devices') {
-      updateCachedDevice(savedItem);
-    }
-
     if (onItemSaved) {
-      onItemSaved(savedItem);
+      onItemSaved(await response.json());
     }
     handleBack();
   });

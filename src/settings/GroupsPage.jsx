@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Card, CardContent, Typography, Box, IconButton, Button
+  Card, CardContent, Typography, Box, IconButton, Button, useTheme
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import PublishIcon from '@mui/icons-material/Publish';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffectAsync } from '../reactHelper';
-import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
@@ -19,82 +18,85 @@ import fetchOrThrow from '../common/util/fetchOrThrow';
 import RemoveDialog from '../common/components/RemoveDialog';
 
 const GroupCard = ({
-  item, t, limitCommands, onConnections, onCommand, onEdit, onRemove,
+  item, limitCommands, onConnections, onCommand, onEdit, onRemove,
 }) => {
+  const theme = useTheme();
+
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: '12px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
         transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
-        },
+        '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.name}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box display="flex" gap={1}>
-            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Box>
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" alignItems="center" sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.name}
+          </Typography>
         </Box>
 
-        <Box mt={2} display="flex" justifyContent="flex-end" alignItems="center" gap={1.5}>
-          {!limitCommands && (
+        {/* Right Section: Actions */}
+        <Box display="flex" alignItems="center" gap={1.5}>
+          <Box display="flex" gap={0.5}>
+            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+              <EditIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+              <DeleteIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Box>
+          <Box display="flex" gap={1}>
+            {!limitCommands && (
+              <Button
+                variant="contained"
+                disableElevation
+                startIcon={<PublishIcon sx={{ fontSize: 16 }} />}
+                onClick={() => onCommand(item.id)}
+                sx={{
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
+                  color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
+                  textTransform: 'none',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  px: 1.5,
+                  py: 0.5,
+                  '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
+                }}
+              >
+                Command
+              </Button>
+            )}
             <Button
               variant="contained"
               disableElevation
-              startIcon={<PublishIcon />}
-              onClick={() => onCommand(item.id)}
+              startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
+              onClick={() => onConnections(item.id)}
               sx={{
-                bgcolor: '#eef2ff', // Indigo-50
-                color: '#6366f1', // Indigo-500
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f8fafc',
+                color: 'text.primary',
                 textTransform: 'none',
-                fontWeight: 600,
+                fontSize: '11px',
+                fontWeight: '600',
                 borderRadius: '8px',
-                px: 2,
-                py: 0.8,
-                '&:hover': { bgcolor: '#e0e7ff' },
+                px: 1.5,
+                py: 0.5,
+                border: '1px solid',
+                borderColor: 'divider',
+                '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 1)' : '#f1f5f9' },
               }}
             >
-              {t('deviceCommand')}
+              Connections
             </Button>
-          )}
-          <Button
-            variant="contained"
-            disableElevation
-            startIcon={<LinkIcon />}
-            onClick={() => onConnections(item.id)}
-            sx={{
-              bgcolor: '#eef2ff', // Indigo-50
-              color: '#6366f1', // Indigo-500
-              textTransform: 'none',
-              fontWeight: 600,
-              borderRadius: '8px',
-              px: 2,
-              py: 0.8,
-              '&:hover': { bgcolor: '#e0e7ff' },
-            }}
-          >
-            {t('sharedConnections')}
-          </Button>
+          </Box>
         </Box>
       </CardContent>
     </Card>
@@ -103,7 +105,6 @@ const GroupCard = ({
 
 const GroupsPage = () => {
   const navigate = useNavigate();
-  const t = useTranslation();
 
   const limitCommands = useRestriction('limitCommands');
 
@@ -140,7 +141,6 @@ const GroupsPage = () => {
             <GroupCard
               key={item.id}
               item={item}
-              t={t}
               limitCommands={limitCommands}
               onConnections={(id) => navigate(`/settings/group/${id}/connections`)}
               onCommand={(id) => navigate(`/settings/group/${id}/command`)}
