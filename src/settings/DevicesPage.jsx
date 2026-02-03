@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip
+  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip, Grid,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,7 +17,6 @@ import TruckLoader from '../common/components/TruckLoader';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
-import DeviceUsersValue from './components/DeviceUsersValue';
 import usePersistedState from '../common/util/usePersistedState';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import AddressValue from '../common/components/AddressValue';
@@ -27,7 +26,6 @@ import RemoveDialog from '../common/components/RemoveDialog';
 const DeviceCard = ({
   item,
   positions,
-  manager,
   deviceReadonly,
   t,
   onConnections,
@@ -35,123 +33,120 @@ const DeviceCard = ({
   onRemove,
 }) => {
   const position = positions[item.id];
+  const theme = useTheme();
 
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: '16px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.mode === 'dark' ? 'rgba(51, 65, 85, 0.5)' : 'rgba(226, 232, 240, 1)',
+        bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#ffffff',
         width: '100%',
         transition: 'all 0.2s',
         '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
         },
       }}
     >
       <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.name}
-              </Typography>
-              <Chip
-                size="small"
-                label={formatStatus(item.status, t)}
-                sx={{
-                  height: 20,
-                  fontSize: '0.625rem',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  bgcolor: item.status === 'online' ? '#dcfce7' : item.status === 'offline' ? '#fee2e2' : '#f1f5f9',
-                  color: item.status === 'online' ? '#166534' : item.status === 'offline' ? '#991b1b' : '#64748b',
-                }}
-              />
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              {item.uniqueId}
+        {/* Header Section */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="subtitle1" fontWeight="700" sx={{ fontSize: '1rem', color: 'text.primary' }}>
+              {item.name}
             </Typography>
-            <Box display="flex" gap={1} mt={0.5} flexWrap="wrap">
-              {/* {item.groupId && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {groups[item.groupId]?.name}
-                </Typography>
-              )} */}
-              {item.phone && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {item.phone}
-                </Typography>
-              )}
-              {item.model && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {item.model}
-                </Typography>
-              )}
+            <Chip
+              size="small"
+              label={formatStatus(item.status, t)}
+              sx={{
+                height: 20,
+                fontSize: '10px',
+                fontWeight: '600',
+                borderRadius: '999px',
+                bgcolor: item.status === 'online' ? (theme.palette.mode === 'dark' ? 'rgba(22, 101, 52, 0.2)' : '#dcfce7') : (theme.palette.mode === 'dark' ? 'rgba(30, 41, 59, 1)' : '#f1f5f9'),
+                color: item.status === 'online' ? (theme.palette.mode === 'dark' ? '#4ade80' : '#166534') : 'text.secondary',
+                border: '1px solid',
+                borderColor: item.status === 'online' ? (theme.palette.mode === 'dark' ? 'rgba(22, 101, 52, 0.5)' : '#bbf7d0') : 'divider',
+              }}
+            />
+          </Box>
+          {!deviceReadonly && (
+            <Box display="flex" gap={1}>
+              <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', p: 0.5 }}>
+                <EditIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+              <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'error.light', p: 0.5 }}>
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
             </Box>
-          </Box>
-
-          <Box display="flex" gap={1}>
-            {!deviceReadonly && (
-              <>
-                <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
-          </Box>
+          )}
         </Box>
 
-        <Box mt={2} display="flex" justifyContent="space-between" alignItems="flex-end" flexWrap="wrap" gap={2}>
+        {/* Info Grid Section */}
+        <Grid container spacing={2} sx={{ mb: 2, pb: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+          <Grid size={6}>
+            <Typography variant="caption" sx={{ display: 'block', color: 'text.disabled', fontWeight: '800', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5 }}>
+              ID / Serial
+            </Typography>
+            <Typography variant="body2" sx={{ fontSize: '12px', color: 'text.secondary', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {item.uniqueId}
+            </Typography>
+          </Grid>
+          <Grid size={6} sx={{ textAlign: 'right' }}>
+            <Typography variant="caption" sx={{ display: 'block', color: 'text.disabled', fontWeight: '800', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5 }}>
+              Last Seen
+            </Typography>
+            <Typography variant="body2" sx={{ fontSize: '12px', color: 'text.secondary' }}>
+              {item.status === 'online' ? 'Live Now' : formatTime(item.lastUpdate, 'minutes')}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        {/* Footer Section: Address and Connections */}
+        <Box display="flex" justifyContent="space-between" alignItems="flex-end" gap={2}>
           <Box flex={1} minWidth={0}>
-            {position && (
-              <>
-                <Typography variant="caption" display="block" color="text.secondary" fontWeight="bold" sx={{ fontSize: '0.65rem', letterSpacing: '0.05em', mb: 0.5 }}>
-                  {t('positionAddress')}
-                </Typography>
-                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                  <AddressValue
-                    latitude={position.latitude}
-                    longitude={position.longitude}
-                    originalAddress={position.address}
-                  />
-                </Box>
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                  {formatTime(item.lastUpdate, 'minutes')}
-                </Typography>
-              </>
-            )}
+            <Typography variant="caption" sx={{ display: 'block', color: 'text.disabled', fontWeight: '800', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5 }}>
+              Address
+            </Typography>
+            <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.secondary', fontSize: '12px' }}>
+              {position ? (
+                <AddressValue
+                  latitude={position.latitude}
+                  longitude={position.longitude}
+                  originalAddress={position.address}
+                />
+              ) : (
+                <Typography variant="caption" color="primary" sx={{ fontWeight: '500', cursor: 'pointer' }}>Show Address</Typography>
+              )}
+            </Box>
           </Box>
 
-          <Box display="flex" gap={1.5} alignItems="center">
-            {manager && (
-              <DeviceUsersValue deviceId={item.id} />
-            )}
-
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<LinkIcon />}
-              onClick={() => onConnections(item.id)}
-              sx={{
-                bgcolor: '#eef2ff', // Indigo-50
-                color: '#6366f1', // Indigo-500
-                textTransform: 'none',
-                fontWeight: 600,
-                borderRadius: '8px',
-                px: 2,
-                py: 0.8,
-                '&:hover': { bgcolor: '#e0e7ff' },
-              }}
-            >
-              {t('sharedConnections')}
-            </Button>
-          </Box>
+          <Button
+            variant="contained"
+            disableElevation
+            startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
+            onClick={() => onConnections(item.id)}
+            sx={{
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(49, 46, 129, 0.3)' : '#eef2ff',
+              color: theme.palette.mode === 'dark' ? '#818cf8' : '#4f46e5',
+              textTransform: 'none',
+              fontSize: '12px',
+              fontWeight: '600',
+              borderRadius: '12px',
+              px: 1.5,
+              py: 0.75,
+              border: '1px solid',
+              borderColor: theme.palette.mode === 'dark' ? 'rgba(49, 46, 129, 0.5)' : '#e0e7ff',
+              '&:hover': {
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(49, 46, 129, 0.5)' : '#e0e7ff',
+              },
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Connections
+          </Button>
         </Box>
       </CardContent>
     </Card>
@@ -244,7 +239,6 @@ const DevicesPage = () => {
               item={item}
               positions={positions}
               groups={groups}
-              manager={manager}
               deviceReadonly={deviceReadonly}
               t={t}
               onConnections={(id) => navigate(`/settings/device/${id}/connections`)}

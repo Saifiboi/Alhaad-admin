@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Switch, FormControlLabel,
-  Card, CardContent, Typography, IconButton, Box, Button, Chip
+  Card, CardContent, Typography, IconButton, Box, Button, Chip, useTheme
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
@@ -21,118 +21,109 @@ import fetchOrThrow from '../common/util/fetchOrThrow';
 import RemoveDialog from '../common/components/RemoveDialog';
 
 const UserCard = ({
-  item, t, manager, onLogin, onConnections, onEdit, onRemove,
+  item, manager, onLogin, onConnections, onEdit, onRemove,
 }) => {
+  const theme = useTheme();
   const isExpired = item.expirationTime && new Date(item.expirationTime) < new Date();
 
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3, // ~24px
+        borderRadius: '12px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
         transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
-        },
+        '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.name}
-              </Typography>
-              <Chip
-                label={item.administrator ? 'ADMIN' : 'USER'}
-                size="small"
-                sx={{
-                  height: 20,
-                  fontSize: '0.625rem',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  bgcolor: item.administrator ? '#ffedd5' : '#f1f5f9', // Orange-50 or Slate-100
-                  color: item.administrator ? '#c2410c' : '#64748b', // Orange-700 or Slate-500
-                }}
-              />
-              {item.disabled && (
-                <Chip
-                  label="DISABLED"
-                  size="small"
-                  sx={{
-                    height: 20,
-                    fontSize: '0.625rem',
-                    fontWeight: 'bold',
-                    borderRadius: '6px',
-                    bgcolor: '#fef2f2',
-                    color: '#ef4444',
-                  }}
-                />
-              )}
-            </Box>
-            <Typography variant="body2" color="text.secondary">
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" flexDirection="column" sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Box display="flex" alignItems="center" gap={1} mb={0.25}>
+            <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {item.name}
+            </Typography>
+            <Chip
+              label={item.administrator ? 'ADMIN' : 'USER'}
+              size="small"
+              sx={{
+                height: 18,
+                fontSize: '9px',
+                fontWeight: '800',
+                borderRadius: '4px',
+                bgcolor: item.administrator ? (theme.palette.mode === 'dark' ? 'rgba(124, 45, 18, 0.3)' : '#ffedd5') : (theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f1f5f9'),
+                color: item.administrator ? (theme.palette.mode === 'dark' ? '#fb923c' : '#c2410c') : 'text.secondary',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            />
+          </Box>
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {item.email}
             </Typography>
-          </Box>
-
-          <Box display="flex" gap={1}>
-            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '9px', fontWeight: '700', textTransform: 'uppercase' }}>
+                Exp:
+              </Typography>
+              <Typography variant="caption" sx={{ color: isExpired ? 'error.main' : 'text.secondary', fontSize: '11px' }}>
+                {item.expirationTime ? formatTime(item.expirationTime, 'date') : '—'}
+              </Typography>
+            </Box>
           </Box>
         </Box>
 
-        <Box mt={2} display="flex" justifyContent="space-between" alignItems="flex-end">
-          <Box>
-            <Typography variant="caption" display="block" color="text.secondary" fontWeight="bold" sx={{ fontSize: '0.65rem', letterSpacing: '0.05em', mb: 0.5 }}>
-              EXPIRATION
-            </Typography>
-            <Typography variant="body2" fontWeight="medium" color={isExpired ? 'error.main' : 'text.primary'}>
-              {item.expirationTime ? formatTime(item.expirationTime, 'date') : '—'}
-            </Typography>
+        {/* Right Section: Actions */}
+        <Box display="flex" alignItems="center" gap={1.5}>
+          <Box display="flex" gap={0.5}>
+            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+              <EditIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+              <DeleteIcon sx={{ fontSize: 20 }} />
+            </IconButton>
           </Box>
-
-          <Box display="flex" gap={1.5}>
+          <Box display="flex" gap={1}>
             <Button
               variant="contained"
               disableElevation
-              startIcon={<LinkIcon />}
+              startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
               onClick={() => onConnections(item.id)}
               sx={{
-                bgcolor: '#eef2ff', // Indigo-50
-                color: '#6366f1', // Indigo-500
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
+                color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
                 textTransform: 'none',
-                fontWeight: 600,
+                fontSize: '11px',
+                fontWeight: '600',
                 borderRadius: '8px',
-                px: 2,
-                py: 0.8,
-                '&:hover': { bgcolor: '#e0e7ff' },
+                px: 1.5,
+                py: 0.5,
+                '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
               }}
             >
-              {t('sharedConnections')}
+              Connections
             </Button>
             {manager && (
               <Button
                 variant="contained"
                 disableElevation
-                startIcon={<LoginIcon />}
+                startIcon={<LoginIcon sx={{ fontSize: 16 }} />}
                 onClick={() => onLogin(item.id)}
                 sx={{
-                  bgcolor: '#f8fafc', // Slate-50
-                  color: '#475569', // Slate-600
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f8fafc',
+                  color: 'text.primary',
                   textTransform: 'none',
-                  fontWeight: 600,
+                  fontSize: '11px',
+                  fontWeight: '600',
                   borderRadius: '8px',
-                  px: 2,
-                  py: 0.8,
-                  '&:hover': { bgcolor: '#f1f5f9' },
+                  px: 1.5,
+                  py: 0.5,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 1)' : '#f1f5f9' },
                 }}
               >
                 Login
@@ -206,7 +197,6 @@ const UsersPage = () => {
             <UserCard
               key={item.id}
               item={item}
-              t={t}
               manager={manager}
               onLogin={handleLogin}
               onConnections={(id) => navigate(`/settings/user/${id}/connections`)}
