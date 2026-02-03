@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
-import { devicesActions, replayActions, errorsActions, windowsActions } from '../store';
+import { devicesActions, replayActions, errorsActions } from '../store';
 import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
@@ -148,8 +148,8 @@ const MainPage = () => {
   const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
 
   // Window Manager State
-  const windows = useSelector((state) => state.windows.items);
-  const activeWindowId = useSelector((state) => state.windows.activeId);
+  const [windows, setWindows] = useState({});
+  const [activeWindowId, setActiveWindowId] = useState(null);
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
   const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized), [windows]);
@@ -265,37 +265,55 @@ const MainPage = () => {
     if (windows[targetId]) {
       if (windows[targetId].minimized) {
         // Restore
-        dispatch(windowsActions.minimize(targetId));
-        dispatch(windowsActions.focus(targetId));
+        setWindows((prev) => {
+          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
+          return { ...prev, [targetId]: { ...prev[targetId], minimized: false, zIndex: maxZ + 1 } };
+        });
+        setActiveWindowId(targetId);
       } else if (activeWindowId === targetId) {
         // Minimize
-        dispatch(windowsActions.minimize(targetId));
+        setWindows((prev) => ({ ...prev, [targetId]: { ...prev[targetId], minimized: true } }));
+        setActiveWindowId(null);
       } else {
         // Focus
-        dispatch(windowsActions.focus(targetId));
+        setWindows((prev) => {
+          const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
+          return { ...prev, [targetId]: { ...prev[targetId], zIndex: maxZ + 1 } };
+        });
+        setActiveWindowId(targetId);
       }
     } else {
       // Open New
-      const systemApp = desktopApps.find(a => a.id === app.id);
+      setWindows((prev) => {
+        const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
 
-      // Sanitize app object to remove non-serializable data (like icons/components)
-      const { icon, component, ...serializableApp } = app;
+        // Responsive sizing: 60% width (min 320px), 70% height (min 400px)
+        const defaultWidth = Math.max(320, Math.min(1000, window.innerWidth * 0.55));
+        const defaultHeight = Math.max(400, window.innerHeight * 0.75);
 
-      // Use defaults if not provided in launch args
-      const defaultApp = systemApp || {}; // Fallback if launching non-system app
+        const x = Math.max(0, (window.innerWidth - defaultWidth) / 2);
+        const y = Math.max(80, (window.innerHeight - defaultHeight) / 2);
 
-      const width = app.width || defaultApp.width || 680;
-      const height = app.height || defaultApp.height || 413;
-      const x = Math.max(0, (window.innerWidth - width) / 2);
-      const y = Math.max(80, (window.innerHeight - height) / 2);
-
-      dispatch(windowsActions.launch({
-        ...serializableApp,
-        width,
-        height,
-        x,
-        y,
-      }));
+        return {
+          ...prev,
+          [app.id]: {
+            ...app,
+            x,
+            y,
+            width: defaultWidth,
+            height: defaultHeight,
+            zIndex: maxZ + 1,
+            component: (
+              <RouterIsolator>
+                <MemoryRouter initialEntries={[app.path]}>
+                  <DesktopRoutes />
+                </MemoryRouter>
+              </RouterIsolator>
+            ),
+          },
+        };
+      });
+      setActiveWindowId(app.id);
     }
   };
 
@@ -304,37 +322,48 @@ const MainPage = () => {
     if (id === 'replay') {
       dispatch(replayActions.clear());
     }
-    dispatch(windowsActions.close(id));
+
+    setWindows((prev) => {
+      const newWindows = { ...prev };
+      delete newWindows[id];
+      return newWindows;
+    });
   };
 
   const handleMinimizeWindow = (id) => {
-    dispatch(windowsActions.minimize(id));
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], minimized: !prev[id].minimized },
+    }));
   };
 
   const handleFocusWindow = (id) => {
-    dispatch(windowsActions.focus(id));
+    setActiveWindowId(id);
+    setWindows((prev) => {
+      const maxZ = Math.max(10, ...Object.values(prev).map((w) => w.zIndex || 0));
+      return { ...prev, [id]: { ...prev[id], zIndex: maxZ + 1 } };
+    });
   };
 
   const handleMaximizeWindow = (id) => {
-    dispatch(windowsActions.maximize(id));
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], maximized: !prev[id].maximized },
+    }));
   };
 
   const handleDragStop = (id, x, y) => {
-    dispatch(windowsActions.setPosition({ id, x, y }));
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], x, y },
+    }));
   };
 
   const handleResizeStop = (id, width, height, x, y) => {
-    dispatch(windowsActions.setSize({ id, width, height, x, y }));
-  };
-
-  // Helper to get icon for a window
-  const getWindowIcon = (win) => {
-    if (win.icon && typeof win.icon !== 'object') return win.icon; // If it's a string path?
-    // Try to find in desktopApps
-    const app = desktopApps.find(a => a.id === win.id);
-    if (app && app.icon) return app.icon;
-    // Default fallback?
-    return null;
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], width, height, x, y },
+    }));
   };
 
   // Window Mode Context Provider
@@ -403,7 +432,7 @@ const MainPage = () => {
                 key={win.id}
                 id={win.id}
                 title={win.title}
-                icon={getWindowIcon(win)}
+                icon={win.icon}
                 onClose={handleCloseWindow}
                 onMinimize={handleMinimizeWindow}
                 onMaximize={handleMaximizeWindow}
@@ -426,11 +455,7 @@ const MainPage = () => {
                     navigate(path);
                   },
                 }}>
-                  <RouterIsolator>
-                    <MemoryRouter initialEntries={[win.path]}>
-                      <DesktopRoutes />
-                    </MemoryRouter>
-                  </RouterIsolator>
+                  {win.component}
                 </WindowModeContext.Provider>
               </DesktopWindow>
             ))}

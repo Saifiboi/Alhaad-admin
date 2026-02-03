@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
   Typography,
-  Container,
   Box,
   Card,
   CardContent,
   IconButton,
-  Stack,
   Chip,
+  useTheme,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -28,86 +27,71 @@ import RemoveDialog from '../common/components/RemoveDialog';
 
 const MaintenanceCard = ({ item, onEdit, onRemove, convertAttribute }) => {
   const t = useTranslation();
+  const theme = useTheme();
+
   return (
-    <Card elevation={0} sx={{
-      mb: 1,
-      border: '1px solid',
-      borderColor: 'divider',
-      borderRadius: 2,
-      '&:hover': {
-        boxShadow: (theme) => theme.shadows[2],
-        borderColor: 'primary.main',
-      },
-      transition: 'all 0.2s ease',
-    }}>
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Stack spacing={0.5} sx={{ flexGrow: 1, minWidth: 0 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }} noWrap>
+    <Card
+      elevation={0}
+      sx={{
+        borderRadius: '12px',
+        border: '1px solid',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+        width: '100%',
+        transition: 'all 0.2s',
+        '&:active': { transform: 'scale(0.98)' },
+      }}
+    >
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" flexDirection="column" sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Box display="flex" alignItems="center" gap={1} mb={0.25}>
+            <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {item.name}
             </Typography>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ flexWrap: 'wrap', rowGap: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, textTransform: 'uppercase' }}>
-                  {t('sharedType')}:
-                </Typography>
-                <Chip
-                  label={item.type}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    borderColor: 'divider',
-                  }}
-                />
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, textTransform: 'uppercase' }}>
-                  {t('maintenanceStart')}:
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-                  {convertAttribute(item.type, true, item.start)}
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, textTransform: 'uppercase' }}>
-                  {t('maintenancePeriod')}:
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-                  {convertAttribute(item.type, false, item.period)}
-                </Typography>
-              </Box>
-            </Stack>
-          </Stack>
-
-          <Stack direction="row" spacing={1} sx={{ ml: 2 }}>
-            <IconButton
+            <Chip
               size="small"
-              onClick={() => onEdit(item.id)}
-              color="primary"
+              label={item.type}
               sx={{
-                backgroundColor: 'primary.lighter',
-                '&:hover': { backgroundColor: 'primary.light', color: 'common.white' },
+                height: 18,
+                fontSize: '9px',
+                fontWeight: '800',
+                borderRadius: '4px',
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f1f5f9',
+                color: 'text.secondary',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
               }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => onRemove(item.id)}
-              color="error"
-              sx={{
-                backgroundColor: 'error.lighter',
-                '&:hover': { backgroundColor: 'error.light', color: 'common.white' },
-              }}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Stack>
+            />
+          </Box>
+          <Box display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '9px', fontWeight: '700', textTransform: 'uppercase' }}>
+                {t('maintenanceStart')}:
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '11px' }}>
+                {convertAttribute(item.type, true, item.start)}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '9px', fontWeight: '700', textTransform: 'uppercase' }}>
+                {t('maintenancePeriod')}:
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '11px' }}>
+                {convertAttribute(item.type, false, item.period)}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Right Section: Actions */}
+        <Box display="flex" gap={0.5}>
+          <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+            <EditIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+          <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+            <DeleteIcon sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
       </CardContent>
     </Card>
@@ -173,23 +157,21 @@ const MaintenacesPage = () => {
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'sharedMaintenance']}>
       <SearchHeader keyword={searchKeyword} setKeyword={setSearchKeyword} />
-      <Container maxWidth="lg" sx={{ py: 2 }}>
-        {!loading ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            {items.filter(filterByKeyword(searchKeyword)).map((item) => (
-              <MaintenanceCard
-                key={item.id}
-                item={item}
-                onEdit={(id) => navigate(`/settings/maintenance/${id}`)}
-                onRemove={(id) => setRemovingId(id)}
-                convertAttribute={convertAttribute}
-              />
-            ))}
-          </Box>
-        ) : (
-          <TruckLoader fullHeight={false} />
-        )}
-      </Container>
+      {!loading ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', mt: 2 }}>
+          {items.filter(filterByKeyword(searchKeyword)).map((item) => (
+            <MaintenanceCard
+              key={item.id}
+              item={item}
+              onEdit={(id) => navigate(`/settings/maintenance/${id}`)}
+              onRemove={(id) => setRemovingId(id)}
+              convertAttribute={convertAttribute}
+            />
+          ))}
+        </Box>
+      ) : (
+        <TruckLoader fullHeight={false} />
+      )}
       <CollectionFab editPath="/settings/maintenance" />
       <RemoveDialog
         open={!!removingId}

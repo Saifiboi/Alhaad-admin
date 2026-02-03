@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Card, CardContent, Typography, Box, IconButton
+  Card, CardContent, Typography, Box, IconButton, useTheme
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,42 +17,42 @@ import RemoveDialog from '../common/components/RemoveDialog';
 const DriverCard = ({
   item, onEdit, onRemove,
 }) => {
+  const theme = useTheme();
+
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: '12px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
         transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
-        },
+        '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.name}
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary">
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" alignItems="center" sx={{ minWidth: 0, flexGrow: 1, gap: 2 }}>
+          <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.name}
+          </Typography>
+          <Box sx={{ borderLeft: '1px solid', borderColor: 'divider', pl: 2 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
               {item.uniqueId}
             </Typography>
           </Box>
+        </Box>
 
-          <Box display="flex" gap={1}>
-            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Box>
+        {/* Right Section: Actions */}
+        <Box display="flex" gap={1}>
+          <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+            <EditIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+          <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+            <DeleteIcon sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
       </CardContent>
     </Card>

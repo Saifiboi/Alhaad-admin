@@ -16,6 +16,7 @@ import useFeatures from './common/util/useFeatures';
 import { useAttributePreference } from './common/util/preferences';
 import { handleNativeNotificationListeners, nativePostMessage } from './common/components/NativeInterface';
 import fetchOrThrow from './common/util/fetchOrThrow';
+import { setCachedDevices, updateCachedDevices } from './common/util/deviceCache';
 
 const logoutCode = 4000;
 
@@ -79,7 +80,9 @@ const SocketController = () => {
         try {
           const devicesResponse = await fetch('/api/devices');
           if (devicesResponse.ok) {
-            dispatch(devicesActions.update(await devicesResponse.json()));
+            const devicesData = await devicesResponse.json();
+            dispatch(devicesActions.update(devicesData));
+            setCachedDevices(devicesData); // Update cache
           }
           const positionsResponse = await fetch('/api/positions');
           if (positionsResponse.ok) {
@@ -103,6 +106,7 @@ const SocketController = () => {
       const data = JSON.parse(event.data);
       if (data.devices) {
         dispatch(devicesActions.update(data.devices));
+        updateCachedDevices(data.devices); // Update cache with new device data
       }
       if (data.positions) {
         dispatch(sessionActions.updatePositions(data.positions));
@@ -123,7 +127,9 @@ const SocketController = () => {
   useEffectAsync(async () => {
     if (authenticated) {
       const response = await fetchOrThrow('/api/devices');
-      dispatch(devicesActions.refresh(await response.json()));
+      const devicesData = await response.json();
+      dispatch(devicesActions.refresh(devicesData));
+      setCachedDevices(devicesData); // Save to cache on initial load
       nativePostMessage('authenticated');
       connectSocket();
       return () => {

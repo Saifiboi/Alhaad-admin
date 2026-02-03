@@ -1,8 +1,20 @@
-import { useState } from 'react';
+import {
+  useState, useMemo, memo,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip
+  Button,
+  FormControlLabel,
+  Switch,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+  Chip,
+  TextField,
+  Pagination,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,149 +26,129 @@ import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import TruckLoader from '../common/components/TruckLoader';
-import SearchHeader, { filterByKeyword } from './components/SearchHeader';
+import { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
-import DeviceUsersValue from './components/DeviceUsersValue';
 import usePersistedState from '../common/util/usePersistedState';
 import fetchOrThrow from '../common/util/fetchOrThrow';
-import AddressValue from '../common/components/AddressValue';
 import exportExcel from '../common/util/exportExcel';
 import RemoveDialog from '../common/components/RemoveDialog';
+import { getCachedDevices, setCachedDevices } from '../common/util/deviceCache';
 
-const DeviceCard = ({
+const DeviceCard = memo(({
   item,
-  positions,
-  manager,
+  position,
   deviceReadonly,
   t,
   onConnections,
   onEdit,
   onRemove,
 }) => {
-  const position = positions[item.id];
+  const theme = useTheme();
+
+  if (!item) return null;
 
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: '12px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
+        minHeight: '80px',
         transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
-        },
+        '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.name}
-              </Typography>
-              <Chip
-                size="small"
-                label={formatStatus(item.status, t)}
-                sx={{
-                  height: 20,
-                  fontSize: '0.625rem',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  bgcolor: item.status === 'online' ? '#dcfce7' : item.status === 'offline' ? '#fee2e2' : '#f1f5f9',
-                  color: item.status === 'online' ? '#166534' : item.status === 'offline' ? '#991b1b' : '#64748b',
-                }}
-              />
-            </Box>
-            <Typography variant="body2" color="text.secondary">
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '60px' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" flexDirection="column" sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Box display="flex" alignItems="center" gap={1} mb={0.25}>
+            <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {item.name}
+            </Typography>
+            <Chip
+              size="small"
+              label={formatStatus(item.status, t)}
+              sx={{
+                height: 18,
+                fontSize: '9px',
+                fontWeight: '800',
+                borderRadius: '4px',
+                bgcolor: item.status === 'online' ? (theme.palette.mode === 'dark' ? 'rgba(22, 101, 52, 0.2)' : '#dcfce7') : (theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f1f5f9'),
+                color: item.status === 'online' ? (theme.palette.mode === 'dark' ? '#4ade80' : '#166534') : 'text.secondary',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            />
+          </Box>
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
               {item.uniqueId}
             </Typography>
-            <Box display="flex" gap={1} mt={0.5} flexWrap="wrap">
-              {/* {item.groupId && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {groups[item.groupId]?.name}
-                </Typography>
-              )} */}
-              {item.phone && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {item.phone}
-                </Typography>
-              )}
-              {item.model && (
-                <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                  {item.model}
-                </Typography>
-              )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '9px', fontWeight: '700', textTransform: 'uppercase' }}>
+                Seen:
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '11px' }}>
+                {item.status === 'online' ? 'Live Now' : formatTime(item.lastUpdate, 'minutes')}
+              </Typography>
             </Box>
-          </Box>
-
-          <Box display="flex" gap={1}>
-            {!deviceReadonly && (
-              <>
-                <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+              pl: 1.5,
+              minWidth: 0,
+              flex: 1,
+            }}>
+              <Typography variant="caption" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.disabled', fontSize: '11px' }}>
+                {position?.address || 'No Address'}
+              </Typography>
+            </Box>
           </Box>
         </Box>
 
-        <Box mt={2} display="flex" justifyContent="space-between" alignItems="flex-end" flexWrap="wrap" gap={2}>
-          <Box flex={1} minWidth={0}>
-            {position && (
-              <>
-                <Typography variant="caption" display="block" color="text.secondary" fontWeight="bold" sx={{ fontSize: '0.65rem', letterSpacing: '0.05em', mb: 0.5 }}>
-                  {t('positionAddress')}
-                </Typography>
-                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                  <AddressValue
-                    latitude={position.latitude}
-                    longitude={position.longitude}
-                    originalAddress={position.address}
-                  />
-                </Box>
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                  {formatTime(item.lastUpdate, 'minutes')}
-                </Typography>
-              </>
-            )}
-          </Box>
-
-          <Box display="flex" gap={1.5} alignItems="center">
-            {manager && (
-              <DeviceUsersValue deviceId={item.id} />
-            )}
-
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<LinkIcon />}
-              onClick={() => onConnections(item.id)}
-              sx={{
-                bgcolor: '#eef2ff', // Indigo-50
-                color: '#6366f1', // Indigo-500
-                textTransform: 'none',
-                fontWeight: 600,
-                borderRadius: '8px',
-                px: 2,
-                py: 0.8,
-                '&:hover': { bgcolor: '#e0e7ff' },
-              }}
-            >
-              {t('sharedConnections')}
-            </Button>
-          </Box>
+        {/* Right Section: Actions */}
+        <Box display="flex" alignItems="center" gap={1.5}>
+          {!deviceReadonly && (
+            <Box display="flex" gap={0.5}>
+              <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+                <EditIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+              <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Box>
+          )}
+          <Button
+            variant="contained"
+            disableElevation
+            startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
+            onClick={() => onConnections(item.id)}
+            sx={{
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
+              color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
+              textTransform: 'none',
+              fontSize: '11px',
+              fontWeight: '600',
+              borderRadius: '8px',
+              px: 1.5,
+              py: 0.5,
+              '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
+            }}
+          >
+            Connections
+          </Button>
         </Box>
       </CardContent>
     </Card>
   );
-};
+});
 
 const DevicesPage = () => {
   const theme = useTheme();
@@ -174,17 +166,38 @@ const DevicesPage = () => {
   const [items, setItems] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showAll, setShowAll] = usePersistedState('showAllDevices', false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
 
   useEffectAsync(async () => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams({ all: showAll });
-      const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
-      setItems(await response.json());
-    } finally {
+    const cachedDevices = getCachedDevices(showAll);
+
+    if (cachedDevices && cachedDevices.length > 0) {
+      setItems(cachedDevices);
       setLoading(false);
+
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } catch (error) {
+        console.error('Error fetching devices:', error);
+      }
+    } else {
+      setLoading(true);
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } finally {
+        setLoading(false);
+      }
     }
   }, [timestamp, showAll]);
 
@@ -213,11 +226,32 @@ const DevicesPage = () => {
     }
   };
 
+  const filteredItems = useMemo(() =>
+    items.filter(filterByKeyword(searchKeyword)),
+    [items, searchKeyword]
+  );
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredItems.slice(startIndex, endIndex);
+  }, [filteredItems, currentPage, itemsPerPage]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const handleSearch = (value) => {
+    setSearchKeyword(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceTitle']}>
-      <Box display="flex" flexWrap="wrap" gap={2} justifyContent="space-between" alignItems="center" mb={3}>
-        <SearchHeader keyword={searchKeyword} setKeyword={setSearchKeyword} />
-
+      {/* Top Actions Bar */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Box display="flex" gap={2} alignItems="center">
           <Button onClick={handleExport} variant="text" size="small">{t('reportExport')}</Button>
           {manager && (
@@ -234,28 +268,81 @@ const DevicesPage = () => {
             />
           )}
         </Box>
+
+        <Typography variant="body2" color="text.secondary">
+          {filteredItems.length} device{filteredItems.length !== 1 ? 's' : ''} total
+        </Typography>
       </Box>
 
-      {!loading ? (
+      {/* Search Bar */}
+      <Box mb={2}>
+        <TextField
+          variant="outlined"
+          placeholder={t('sharedSearch')}
+          value={searchKeyword}
+          onChange={(e) => handleSearch(e.target.value)}
+          size="small"
+          fullWidth
+          sx={{ maxWidth: '500px' }}
+        />
+      </Box>
+
+      {/* Pagination Info and Controls */}
+      {!loading && filteredItems.length > 0 && (
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="body2" color="text.secondary">
+            Page {currentPage} of {totalPages} • Showing {paginatedItems.length} devices
+          </Typography>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            size="small"
+            showFirstButton
+            showLastButton
+          />
+        </Box>
+      )}
+
+      {!loading && filteredItems.length > 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
-          {items.filter(filterByKeyword(searchKeyword)).map((item) => (
+          {paginatedItems.map((item) => item ? (
             <DeviceCard
               key={item.id}
               item={item}
-              positions={positions}
-              groups={groups}
-              manager={manager}
+              position={positions[item.id]}
               deviceReadonly={deviceReadonly}
               t={t}
               onConnections={(id) => navigate(`/settings/device/${id}/connections`)}
               onEdit={(id) => navigate(`/settings/device/${id}`)}
               onRemove={(id) => setRemovingId(id)}
             />
-          ))}
+          ) : null)}
+        </Box>
+      ) : !loading ? (
+        <Box sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {searchKeyword ? 'No devices match your search' : 'No devices found'}
+          </Typography>
         </Box>
       ) : (
         <Box sx={{ transform: 'translateY(-10%)' }}>
           <TruckLoader fullHeight={false} />
+        </Box>
+      )}
+
+      {/* Bottom Pagination */}
+      {!loading && filteredItems.length > 0 && totalPages > 1 && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
         </Box>
       )}
 

@@ -2,13 +2,11 @@ import {
     useState, useEffect, useContext, useMemo,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
-    Grid, Typography, Box, Avatar, IconButton, InputBase, Tooltip, useTheme,
+    Grid, Typography, Box, InputBase,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import { sessionActions } from '../store';
-import { nativePostMessage } from '../common/components/NativeInterface';
 
 import SearchIcon from '@mui/icons-material/Search';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -21,7 +19,6 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import SecurityIcon from '@mui/icons-material/Security';
 import HistoryIcon from '@mui/icons-material/History';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -127,42 +124,20 @@ const useStyles = makeStyles()((theme) => ({
         lineHeight: 1.1,
         maxWidth: '100%',
     },
-    footer: {
-        padding: theme.spacing(1, 2),
-        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(17, 24, 39, 0.5)' : 'rgba(243, 244, 246, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderTop: `1px solid ${theme.palette.divider}`,
-    },
-    userProfile: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: theme.spacing(1),
-        padding: theme.spacing(0.25, 1),
-        borderRadius: '15px',
-        cursor: 'pointer',
-        '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        },
-    },
 }));
 
 const ReportsDashboard = () => {
     const { classes } = useStyles();
     const navigate = useNavigate();
-    const theme = useTheme();
-    const dispatch = useDispatch();
     const windowContext = useContext(WindowModeContext);
 
-    const user = useSelector((state) => state.session.user);
     const devices = useSelector((state) => state.devices.items);
     const drivers = useSelector((state) => state.drivers.items);
 
     const [search, setSearch] = useState('');
     const [usersCount, setUsersCount] = useState(0);
 
-    const { onNavigate, onClose, onLaunch } = windowContext || {};
+    const { onNavigate } = windowContext || {};
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -205,13 +180,6 @@ const ReportsDashboard = () => {
         }
     };
 
-    const handleLogout = async () => {
-        await fetch('/api/session', { method: 'DELETE' });
-        nativePostMessage('logout');
-        navigate('/login');
-        dispatch(sessionActions.updateUser(null));
-        if (onClose) onClose();
-    };
 
     return (
         <Box className={classes.container}>
@@ -276,21 +244,6 @@ const ReportsDashboard = () => {
                 </section>
             </Box>
 
-            <footer className={classes.footer}>
-                <div className={classes.userProfile} onClick={() => onLaunch ? onLaunch({ id: 'account' }) : handleAction(`/settings/user/${user?.id}`)}>
-                    <Avatar sx={{ width: 24, height: 24, fontSize: '12px', bgcolor: theme.palette.primary.main }}>
-                        {user?.name?.[0] || 'U'}
-                    </Avatar>
-                    <Typography sx={{ fontSize: '12px', fontWeight: 600 }}>{user?.name || 'User'}</Typography>
-                </div>
-                <div className={classes.footerActions}>
-                    <Tooltip title="Logout">
-                        <IconButton size="small" onClick={handleLogout}>
-                            <PowerSettingsNewIcon sx={{ fontSize: 18 }} />
-                        </IconButton>
-                    </Tooltip>
-                </div>
-            </footer>
         </Box>
     );
 };

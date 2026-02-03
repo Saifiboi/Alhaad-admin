@@ -26,7 +26,7 @@ const useStyles = makeStyles()((theme) => ({
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     },
     dockItem: {
-        margin: theme.spacing(0, 0.25),
+        margin: '0 clamp(2px, 0.35vw, 5px)',
         transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         display: 'flex',
         flexDirection: 'column',
@@ -37,9 +37,9 @@ const useStyles = makeStyles()((theme) => ({
     },
     iconButton: {
         backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(0.75),
+        padding: 'clamp(6px, 0.65vw, 10px)',
         '& .MuiSvgIcon-root': {
-            fontSize: '1.25rem',
+            fontSize: 'clamp(1.1rem, 1.5vw, 1.5rem)',
         },
         boxShadow: theme.shadows[4],
         '&:hover': {
