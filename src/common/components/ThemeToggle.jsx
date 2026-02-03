@@ -21,6 +21,8 @@ const ThemeToggle = () => {
             },
         };
 
+        localStorage.setItem('traccar-theme', newDarkMode ? 'dark' : 'light');
+
         try {
             // Persist to backend
             const response = await fetch('/api/server', {

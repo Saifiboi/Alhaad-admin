@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ThemeProvider, useMediaQuery } from '@mui/material';
 import { CacheProvider } from '@emotion/react';
@@ -27,6 +28,10 @@ const AppThemeProvider = ({ children }) => {
   const darkMode = serverDarkMode !== undefined ? serverDarkMode : preferDarkMode;
 
   const themeInstance = theme(server, darkMode, direction);
+
+  useEffect(() => {
+    localStorage.setItem('traccar-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   return (
     <CacheProvider value={cache[direction]}>
