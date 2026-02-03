@@ -366,10 +366,32 @@ const MainPage = () => {
     }));
   };
 
+  // Dashboard/Home Handler
+  const handleDashboard = useCallback(() => {
+    setWindows((prev) => {
+      const minimzedWindows = {};
+      Object.keys(prev).forEach((id) => {
+        minimzedWindows[id] = { ...prev[id], minimized: true };
+      });
+      return minimzedWindows;
+    });
+    setDevicesOpen(true);
+  }, [setDevicesOpen]);
+
+  // Show Devices Handler
+  const handleShowDevices = useCallback(() => {
+    setDevicesOpen((prev) => !prev);
+  }, [setDevicesOpen]);
+
   // Window Mode Context Provider
   return (
     <WindowModeContext.Provider value={true}>
-      <GlobalNavbar onAccount={() => handleLaunch({ id: 'account' })} />
+      <GlobalNavbar
+        onAccount={() => handleLaunch({ id: 'account' })}
+        onDashboard={handleDashboard}
+        onShowDevices={handleShowDevices}
+        showNavigation={anyMaximized}
+      />
       <div className={classes.root}>
         {desktop && (
           <MainMap
@@ -412,7 +434,19 @@ const MainPage = () => {
               </div>
             )}
             <Paper className={classes.contentList} style={devicesOpen ? {} : { visibility: 'hidden' }}>
-              <DeviceList devices={filteredDevices} />
+              <DeviceList
+                devices={filteredDevices}
+                onSelect={(deviceId) => {
+                  dispatch(devicesActions.selectId(deviceId));
+                  setWindows((prev) => {
+                    const minimzedWindows = {};
+                    Object.keys(prev).forEach((id) => {
+                      minimzedWindows[id] = { ...prev[id], minimized: true };
+                    });
+                    return minimzedWindows;
+                  });
+                }}
+              />
             </Paper>
           </div>
         </div>
