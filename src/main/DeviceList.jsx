@@ -66,7 +66,6 @@ const DeviceList = ({ devices, onSelect }) => {
       rowHeight={72}
       rowProps={{ devices, onSelect }}
       overscanCount={10}
-      useIsScrolling
     />
   );
 };

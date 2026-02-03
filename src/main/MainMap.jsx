@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useDispatch } from 'react-redux';
@@ -28,6 +28,21 @@ const MainMap = ({ filteredPositions, selectedPosition }) => {
     dispatch(devicesActions.selectId(deviceId));
   }, [dispatch]);
 
+  const [paddingStart, setPaddingStart] = useState(280);
+
+  useEffect(() => {
+    const updatePadding = () => {
+      const width = Math.max(240, Math.min(340, window.innerWidth * 0.2));
+      const spacing = parseInt(theme.spacing(1.5), 10);
+      setPaddingStart(width + spacing);
+    };
+    window.addEventListener('resize', updatePadding);
+    updatePadding();
+    return () => window.removeEventListener('resize', updatePadding);
+  }, [theme]);
+
+  // ... (rest of return)
+
   return (
     <>
       <MapView>
@@ -49,7 +64,7 @@ const MainMap = ({ filteredPositions, selectedPosition }) => {
       <MapCurrentLocation />
       <MapGeocoder />
       {desktop && (
-        <MapPadding start={parseInt(theme.dimensions.drawerWidthDesktop, 10) + parseInt(theme.spacing(1.5), 10)} />
+        <MapPadding start={paddingStart} />
       )}
     </>
   );
