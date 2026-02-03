@@ -146,7 +146,9 @@ const StatusCard = ({
   const handleRemove = useCatch(async (removed) => {
     if (removed) {
       const response = await fetchOrThrow('/api/devices');
-      dispatch(devicesActions.refresh(await response.json()));
+      const devicesData = await response.json();
+      dispatch(devicesActions.refresh(devicesData));
+      // Cache is already updated by RemoveDialog
     }
     setRemoving(false);
   });

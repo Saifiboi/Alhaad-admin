@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -19,20 +19,19 @@ import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
 import usePersistedState from '../common/util/usePersistedState';
 import fetchOrThrow from '../common/util/fetchOrThrow';
-import AddressValue from '../common/components/AddressValue';
 import exportExcel from '../common/util/exportExcel';
 import RemoveDialog from '../common/components/RemoveDialog';
+import { getCachedDevices, setCachedDevices } from '../common/util/deviceCache';
 
-const DeviceCard = ({
+const DeviceCard = memo((({
   item,
-  positions,
+  position,
   deviceReadonly,
   t,
   onConnections,
   onEdit,
   onRemove,
 }) => {
-  const position = positions[item.id];
   const theme = useTheme();
 
   return (
@@ -110,17 +109,9 @@ const DeviceCard = ({
             <Typography variant="caption" sx={{ display: 'block', color: 'text.disabled', fontWeight: '800', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5 }}>
               Address
             </Typography>
-            <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.secondary', fontSize: '12px' }}>
-              {position ? (
-                <AddressValue
-                  latitude={position.latitude}
-                  longitude={position.longitude}
-                  originalAddress={position.address}
-                />
-              ) : (
-                <Typography variant="caption" color="primary" sx={{ fontWeight: '500', cursor: 'pointer' }}>Show Address</Typography>
-              )}
-            </Box>
+            <Typography variant="body2" sx={{ fontSize: '12px', color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {position?.address || 'No location'}
+            </Typography>
           </Box>
 
           <Button
@@ -151,7 +142,7 @@ const DeviceCard = ({
       </CardContent>
     </Card>
   );
-};
+}));
 
 const DevicesPage = () => {
   const theme = useTheme();
@@ -173,13 +164,35 @@ const DevicesPage = () => {
   const [removingId, setRemovingId] = useState(null);
 
   useEffectAsync(async () => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams({ all: showAll });
-      const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
-      setItems(await response.json());
-    } finally {
+    // Try cache first for faster loading
+    const cachedDevices = getCachedDevices(showAll);
+    if (cachedDevices) {
+      // Use cache immediately - no loader needed
+      setItems(cachedDevices);
       setLoading(false);
+      
+      // Fetch fresh data in background without showing loader
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } catch (error) {
+        console.error('Error fetching devices:', error);
+      }
+    } else {
+      // No cache - show loader and fetch
+      setLoading(true);
+      try {
+        const query = new URLSearchParams({ all: showAll });
+        const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
+        const devicesData = await response.json();
+        setItems(devicesData);
+        setCachedDevices(devicesData, showAll);
+      } finally {
+        setLoading(false);
+      }
     }
   }, [timestamp, showAll]);
 
@@ -208,6 +221,11 @@ const DevicesPage = () => {
     }
   };
 
+  const filteredItems = useMemo(() => 
+    items.filter(filterByKeyword(searchKeyword)),
+    [items, searchKeyword]
+  );
+
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceTitle']}>
       <Box display="flex" flexWrap="wrap" gap={2} justifyContent="space-between" alignItems="center" mb={3}>
@@ -233,12 +251,11 @@ const DevicesPage = () => {
 
       {!loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
-          {items.filter(filterByKeyword(searchKeyword)).map((item) => (
+          {filteredItems.map((item) => (
             <DeviceCard
               key={item.id}
               item={item}
-              positions={positions}
-              groups={groups}
+              position={positions[item.id]}
               deviceReadonly={deviceReadonly}
               t={t}
               onConnections={(id) => navigate(`/settings/device/${id}/connections`)}

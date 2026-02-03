@@ -7,6 +7,7 @@ import { useEffectAsync } from '../reactHelper';
 import DeviceRow from './DeviceRow';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import TruckLoader from '../common/components/TruckLoader';
+import { getCachedDevices, setCachedDevices } from '../common/util/deviceCache';
 
 const useStyles = makeStyles()((theme) => ({
   list: {
@@ -35,8 +36,19 @@ const DeviceList = ({ devices, onSelect }) => {
 
   useEffectAsync(async () => {
     try {
+      // Try to load from cache first
+      const cachedDevices = getCachedDevices();
+      if (cachedDevices) {
+        dispatch(devicesActions.refresh(cachedDevices));
+        setLoading(false);
+        return; // Don't fetch from API if we have cached data
+      }
+
+      // Only fetch from API if no cache exists
       const response = await fetchOrThrow('/api/devices');
-      dispatch(devicesActions.refresh(await response.json()));
+      const devicesData = await response.json();
+      dispatch(devicesActions.refresh(devicesData));
+      setCachedDevices(devicesData);
     } finally {
       setLoading(false);
     }
@@ -53,7 +65,8 @@ const DeviceList = ({ devices, onSelect }) => {
       rowCount={devices.length}
       rowHeight={72}
       rowProps={{ devices, onSelect }}
-      overscanCount={5}
+      overscanCount={10}
+      useIsScrolling
     />
   );
 };

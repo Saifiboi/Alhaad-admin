@@ -5,6 +5,7 @@ import { useTranslation } from './LocalizationProvider';
 import { useCatch } from '../../reactHelper';
 import { snackBarDurationLongMs } from '../util/duration';
 import fetchOrThrow from '../util/fetchOrThrow';
+import { removeCachedDevice } from '../util/deviceCache';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -27,6 +28,12 @@ const RemoveDialog = ({
 
   const handleRemove = useCatch(async () => {
     await fetchOrThrow(`/api/${endpoint}/${itemId}`, { method: 'DELETE' });
+    
+    // Remove from cache if it's a device
+    if (endpoint === 'devices') {
+      removeCachedDevice(itemId);
+    }
+    
     onResult(true);
   });
 
