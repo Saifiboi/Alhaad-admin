@@ -1,8 +1,20 @@
-import { useState, useMemo, memo, useCallback } from 'react';
+import {
+  useState, useMemo, memo,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, FormControlLabel, Switch, Card, CardContent, Typography, Box, IconButton, Chip, TextField, Pagination,
+  Button,
+  FormControlLabel,
+  Switch,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+  Chip,
+  TextField,
+  Pagination,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,7 +26,7 @@ import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import TruckLoader from '../common/components/TruckLoader';
-import SearchHeader, { filterByKeyword } from './components/SearchHeader';
+import { filterByKeyword } from './components/SearchHeader';
 import { formatStatus, formatTime } from '../common/util/formatter';
 import { useDeviceReadonly, useManager } from '../common/util/permissions';
 import usePersistedState from '../common/util/usePersistedState';
@@ -84,7 +96,16 @@ const DeviceCard = memo(({
                 {item.status === 'online' ? 'Live Now' : formatTime(item.lastUpdate, 'minutes')}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderLeft: '1px solid', borderColor: 'divider', pl: 1.5, minWidth: 0, flex: 1 }}>
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+              pl: 1.5,
+              minWidth: 0,
+              flex: 1,
+            }}>
               <Typography variant="caption" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', color: 'text.disabled', fontSize: '11px' }}>
                 {position?.address || 'No Address'}
               </Typography>
@@ -152,11 +173,11 @@ const DevicesPage = () => {
 
   useEffectAsync(async () => {
     const cachedDevices = getCachedDevices(showAll);
-    
+
     if (cachedDevices && cachedDevices.length > 0) {
       setItems(cachedDevices);
       setLoading(false);
-      
+
       try {
         const query = new URLSearchParams({ all: showAll });
         const response = await fetchOrThrow(`/api/devices?${query.toString()}`);
@@ -205,13 +226,13 @@ const DevicesPage = () => {
     }
   };
 
-  const filteredItems = useMemo(() => 
+  const filteredItems = useMemo(() =>
     items.filter(filterByKeyword(searchKeyword)),
     [items, searchKeyword]
   );
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  
+
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -247,7 +268,7 @@ const DevicesPage = () => {
             />
           )}
         </Box>
-        
+
         <Typography variant="body2" color="text.secondary">
           {filteredItems.length} device{filteredItems.length !== 1 ? 's' : ''} total
         </Typography>
@@ -272,9 +293,9 @@ const DevicesPage = () => {
           <Typography variant="body2" color="text.secondary">
             Page {currentPage} of {totalPages} • Showing {paginatedItems.length} devices
           </Typography>
-          <Pagination 
-            count={totalPages} 
-            page={currentPage} 
+          <Pagination
+            count={totalPages}
+            page={currentPage}
             onChange={handlePageChange}
             color="primary"
             size="small"
@@ -314,9 +335,9 @@ const DevicesPage = () => {
       {/* Bottom Pagination */}
       {!loading && filteredItems.length > 0 && totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={3}>
-          <Pagination 
-            count={totalPages} 
-            page={currentPage} 
+          <Pagination
+            count={totalPages}
+            page={currentPage}
             onChange={handlePageChange}
             color="primary"
             showFirstButton
