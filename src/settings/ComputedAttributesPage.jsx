@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography,
-  Container,
   IconButton,
   Card,
   CardContent,
@@ -36,7 +35,6 @@ const AttributeCard = ({ item, onEdit, onDelete, administrator }) => {
         borderColor: theme.palette.divider,
         bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
-        mb: 1,
         transition: 'all 0.2s',
         '&:active': { transform: 'scale(0.98)' },
       }}
@@ -142,23 +140,21 @@ const ComputedAttributesPage = () => {
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'sharedComputedAttributes']}>
       <SearchHeader keyword={searchKeyword} setKeyword={setSearchKeyword} />
-      <Container maxWidth="lg" sx={{ py: 2 }}>
-        {!loading ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            {items.filter(filterByKeyword(searchKeyword)).map((item) => (
-              <AttributeCard
-                key={item.id}
-                item={item}
-                onEdit={handleEdit}
-                onDelete={setRemovingId}
-                administrator={administrator}
-              />
-            ))}
-          </Box>
-        ) : (
-          <TruckLoader fullHeight={false} />
-        )}
-      </Container>
+      {!loading ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', mt: 2 }}>
+          {items.filter(filterByKeyword(searchKeyword)).map((item) => (
+            <AttributeCard
+              key={item.id}
+              item={item}
+              onEdit={handleEdit}
+              onDelete={setRemovingId}
+              administrator={administrator}
+            />
+          ))}
+        </Box>
+      ) : (
+        <TruckLoader fullHeight={false} />
+      )}
       <CollectionFab editPath="/settings/attribute" disabled={!administrator} />
       <RemoveDialog
         open={!!removingId}

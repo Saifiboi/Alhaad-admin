@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Card, CardContent, Typography, Box, IconButton, Chip
+  Card, CardContent, Typography, Box, IconButton, Chip, useTheme,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,59 +25,66 @@ const CommandCard = ({
   onEdit,
   onRemove,
 }) => {
+  const theme = useTheme();
+
   return (
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: '12px',
         border: '1px solid',
-        borderColor: 'divider',
+        borderColor: theme.palette.divider,
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         width: '100%',
         transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-          transform: 'translateY(-1px)',
-        },
+        '&:active': { transform: 'scale(0.98)' },
       }}
     >
-      <CardContent sx={{ p: '16px !important' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                {item.description}
+      <CardContent sx={{ p: '12px 16px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Left Section: Info */}
+        <Box display="flex" flexDirection="column" sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Box display="flex" alignItems="center" gap={1} mb={0.25}>
+            <Typography variant="body1" fontWeight="700" sx={{ fontSize: '0.95rem', color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {item.description}
+            </Typography>
+            <Chip
+              size="small"
+              label={t(prefixString('command', item.type))}
+              sx={{
+                height: 18,
+                fontSize: '9px',
+                fontWeight: '800',
+                borderRadius: '4px',
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f1f5f9',
+                color: 'text.secondary',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            />
+          </Box>
+          <Box display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '9px', fontWeight: '700', textTransform: 'uppercase' }}>
+                {t('commandSendSms')}:
               </Typography>
-            </Box>
-            <Box display="flex" gap={1} mt={0.5} flexWrap="wrap">
-              <Chip
-                size="small"
-                label={t(prefixString('command', item.type))}
-                sx={{
-                  height: 20,
-                  fontSize: '0.625rem',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  bgcolor: '#eef2ff',
-                  color: '#6366f1',
-                }}
-              />
-              <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 0.8, py: 0.2, borderRadius: 1 }}>
-                {t('commandSendSms')}: {formatBoolean(item.textChannel, t)}
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '11px' }}>
+                {formatBoolean(item.textChannel, t)}
               </Typography>
             </Box>
           </Box>
-
-          {!limitCommands && (
-            <Box display="flex" gap={1}>
-              <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.secondary', opacity: 0.7 }}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          )}
         </Box>
+
+        {/* Right Section: Actions */}
+        {!limitCommands && (
+          <Box display="flex" gap={0.5}>
+            <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+              <EditIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+            <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+              <DeleteIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
