@@ -143,6 +143,7 @@ const MainPage = () => {
   const [filterMap, setFilterMap] = usePersistedState('filterMap', false);
 
   const [devicesOpen, setDevicesOpen] = useState(desktop);
+  const [sidebarInFront, setSidebarInFront] = useState(false);
   const [eventsOpen, setEventsOpen] = useState(false);
 
   const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
@@ -381,7 +382,13 @@ const MainPage = () => {
 
   // Show Devices Handler
   const handleShowDevices = useCallback(() => {
-    setDevicesOpen((prev) => !prev);
+    setSidebarInFront((prev) => {
+      const newState = !prev;
+      if (newState) {
+        setDevicesOpen(true);
+      }
+      return newState;
+    });
   }, [setDevicesOpen]);
 
   // Window Mode Context Provider
@@ -406,8 +413,7 @@ const MainPage = () => {
           style={{
             height: sidebarHeight || `calc(100vh - 64px - ${theme.spacing(anyMaximized ? 0 : 1.5)})`,
             marginBottom: anyMaximized ? 0 : theme.spacing(1.5),
-            zIndex: anyMaximized ? 1600 : 3,
-            display: (desktop && !devicesOpen) ? 'none' : 'flex',
+            zIndex: (anyMaximized && sidebarInFront) ? 1600 : 3,
           }}
         >
           <Paper className={classes.header}>
@@ -436,7 +442,7 @@ const MainPage = () => {
                 />
               </div>
             )}
-            <Paper className={classes.contentList} style={devicesOpen ? {} : { visibility: 'hidden' }}>
+            <Paper className={classes.contentList} style={devicesOpen ? {} : { display: 'none' }}>
               <DeviceList
                 devices={filteredDevices}
                 onSelect={(deviceId) => {
