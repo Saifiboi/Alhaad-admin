@@ -193,7 +193,6 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
                             <Tooltip title="Dashboard">
                                 <IconButton
                                     onClick={onDashboard}
-                                    sx={{ color: 'text.primary' }}
                                 >
                                     <DashboardIcon />
                                 </IconButton>
@@ -201,7 +200,6 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
                             <Tooltip title="View Devices">
                                 <IconButton
                                     onClick={onShowDevices}
-                                    sx={{ color: 'text.primary' }}
                                 >
                                     <ViewListIcon />
                                 </IconButton>
@@ -214,7 +212,6 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
                                 e.stopPropagation();
                                 onEvents();
                             }}
-                            sx={{ color: 'text.primary' }}
                         >
                             <Badge badgeContent={events.length} color="error" invisible={events.length === 0}>
                                 <NotificationsIcon />
