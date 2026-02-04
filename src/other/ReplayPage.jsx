@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { replayActions } from '../store';
 import GlobalNavbar from '../common/components/GlobalNavbar';
+import EventsDrawer from '../main/EventsDrawer';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -105,6 +106,9 @@ const ReplayPage = () => {
   const from = searchParams.get('from');
   const to = searchParams.get('to');
   const [loading, setLoading] = useState(false);
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   const loaded = Boolean(from && to && !loading && positions.length);
 
@@ -179,7 +183,8 @@ const ReplayPage = () => {
 
   return (
     <div className={classes.root}>
-      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} />}
+      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} onEvents={onEventsClick} />}
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <MapView>
         <MapGeofence />
         <MapRoutePath positions={positions} />

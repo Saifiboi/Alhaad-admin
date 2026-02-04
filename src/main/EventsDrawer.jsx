@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Tooltip,
+  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Tooltip, useMediaQuery,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
@@ -30,6 +31,8 @@ const useStyles = makeStyles()((theme) => ({
 
 const EventsDrawer = ({ open, onClose }) => {
   const { classes } = useStyles();
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const t = useTranslation();
@@ -47,14 +50,17 @@ const EventsDrawer = ({ open, onClose }) => {
 
   return (
     <Drawer
+      variant={isDesktop ? 'persistent' : 'temporary'}
       anchor="right"
       open={open}
       onClose={onClose}
+      sx={{ zIndex: 2000 }}
       PaperProps={{
         sx: {
           width: (theme) => theme.dimensions.eventsDrawerWidth,
           marginTop: { md: '64px', xs: 0 },
           height: { md: 'calc(100% - 64px)', xs: '100%' },
+          zIndex: 2000,
         },
       }}
     >

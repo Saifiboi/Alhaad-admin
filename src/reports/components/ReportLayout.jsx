@@ -6,6 +6,8 @@ import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
 import GlobalNavbar from '../../common/components/GlobalNavbar';
 import BackIcon from '../../common/components/BackIcon';
+import EventsDrawer from '../../main/EventsDrawer';
+import { useState, useCallback } from 'react';
 
 const useStyles = makeStyles()((theme) => ({
     root: {
@@ -44,10 +46,14 @@ const ReportLayout = ({ children }) => {
     const { classes } = useStyles();
     const t = useTranslation();
     const navigate = useNavigate();
+    const [eventsOpen, setEventsOpen] = useState(false);
+
+    const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
     return (
         <div className={classes.root}>
-            <GlobalNavbar />
+            <GlobalNavbar onEvents={onEventsClick} />
+            <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
             <div className={classes.content}>
                 <div className={classes.main}>
                     <Box className={classes.header}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Divider, Typography, IconButton, Toolbar,
@@ -19,6 +19,7 @@ import MapScale from '../map/MapScale';
 import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import GlobalNavbar from '../common/components/GlobalNavbar';
+import EventsDrawer from '../main/EventsDrawer';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -64,6 +65,9 @@ const GeofencesPage = () => {
   const { classes } = useStyles();
 
   const [selectedGeofenceId, setSelectedGeofenceId] = useState();
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   const handleFile = (event) => {
     const files = Array.from(event.target.files);
@@ -97,7 +101,8 @@ const GeofencesPage = () => {
 
   return (
     <div className={classes.root}>
-      <GlobalNavbar onDashboard={() => navigate('/')} />
+      <GlobalNavbar onDashboard={() => navigate('/')} onEvents={onEventsClick} />
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <div className={classes.content}>
         <Paper square className={classes.drawer}>
           <Toolbar>

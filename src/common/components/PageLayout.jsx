@@ -19,6 +19,7 @@ import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
 import GlobalNavbar from './GlobalNavbar';
 import WindowModeContext from './WindowModeContext';
+import EventsDrawer from '../../main/EventsDrawer';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
   root: {
@@ -102,6 +103,9 @@ const PageLayout = ({
   const [searchParams] = useSearchParams();
 
   const [openDrawer, setOpenDrawer] = useState(!desktop && searchParams.has('menu'));
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   const toggleDrawer = () => setMiniVariant(!miniVariant);
 
@@ -136,7 +140,8 @@ const PageLayout = ({
 
   return (
     <>
-      <GlobalNavbar onDashboard={() => navigate('/')} />
+      <GlobalNavbar onDashboard={() => navigate('/')} onEvents={onEventsClick} />
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <div className={classes.root}>
         {desktop && menu ? (
           <Drawer
