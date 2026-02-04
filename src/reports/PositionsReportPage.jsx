@@ -161,40 +161,48 @@ const PositionsReportPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!loading ? items.slice(0, 4000).map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className={classes.columnAction} padding="none">
-                    {selectedItem === item ? (
-                      <IconButton size="small" onClick={() => setSelectedItem(null)} ref={selectedIcon}>
-                        <GpsFixedIcon fontSize="small" />
-                      </IconButton>
-                    ) : (
-                      <IconButton size="small" onClick={() => setSelectedItem(item)}>
-                        <LocationSearchingIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                  {columns.map((key) => (
-                    <TableCell key={key}>
-                      <PositionValue
-                        position={item}
-                        property={item.hasOwnProperty(key) ? key : null}
-                        attribute={item.hasOwnProperty(key) ? null : key}
+              {!loading ? (
+                items.length > 0 ? items.slice(0, 4000).map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className={classes.columnAction} padding="none">
+                      {selectedItem === item ? (
+                        <IconButton size="small" onClick={() => setSelectedItem(null)} ref={selectedIcon}>
+                          <GpsFixedIcon fontSize="small" />
+                        </IconButton>
+                      ) : (
+                        <IconButton size="small" onClick={() => setSelectedItem(item)}>
+                          <LocationSearchingIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </TableCell>
+                    {columns.map((key) => (
+                      <TableCell key={key}>
+                        <PositionValue
+                          position={item}
+                          property={item.hasOwnProperty(key) ? key : null}
+                          attribute={item.hasOwnProperty(key) ? null : key}
+                        />
+                      </TableCell>
+                    ))}
+                    <TableCell className={classes.actionCellPadding}>
+                      <CollectionActions
+                        itemId={item.id}
+                        endpoint="positions"
+                        readonly={readonly}
+                        setTimestamp={() => {
+                          setItems(items.filter((position) => position.id !== item.id));
+                        }}
                       />
                     </TableCell>
-                  ))}
-                  <TableCell className={classes.actionCellPadding}>
-                    <CollectionActions
-                      itemId={item.id}
-                      endpoint="positions"
-                      readonly={readonly}
-                      setTimestamp={() => {
-                        setItems(items.filter((position) => position.id !== item.id));
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              )) : (<TableShimmer columns={columns.length + 1} startAction />)}
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length + 2} align="center">
+                      {t('sharedNoData')}
+                    </TableCell>
+                  </TableRow>
+                )
+              ) : (<TableShimmer columns={columns.length + 2} startAction />)}
             </TableBody>
           </Table>
         </div>

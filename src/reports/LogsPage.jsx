@@ -48,7 +48,7 @@ const LogsPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {items.map((item, index) => (
+          {items.length > 0 ? items.map((item, index) => (
             <TableRow key={index}>
               <TableCell className={classes.columnAction} padding="none">
                 {item.deviceId ? (
@@ -67,7 +67,13 @@ const LogsPage = () => {
               <TableCell>{item.protocol}</TableCell>
               <TableCell>{item.data}</TableCell>
             </TableRow>
-          ))}
+          )) : (
+            <TableRow>
+              <TableCell colSpan={4} align="center">
+                {t('sharedNoData')}
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </ReportLayout>
