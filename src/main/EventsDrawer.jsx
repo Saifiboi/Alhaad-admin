@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Tooltip, useMediaQuery,
+  Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar, Typography, Tooltip, useMediaQuery, ClickAwayListener,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
@@ -49,78 +49,79 @@ const EventsDrawer = ({ open, onClose }) => {
   });
 
   return (
-    <Drawer
-      variant={isDesktop ? 'persistent' : 'temporary'}
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      sx={{ zIndex: 2000 }}
-      PaperProps={{
-        sx: {
-          width: (theme) => theme.dimensions.eventsDrawerWidth,
-          marginTop: { md: '64px', xs: 0 },
-          height: { md: 'calc(100% - 64px)', xs: '100%' },
-          zIndex: 2000,
-        },
-      }}
-    >
-      <Toolbar className={classes.toolbar} disableGutters>
-        <Typography variant="h6" className={classes.title}>
-          {t('reportEvents')}
-        </Typography>
-        <Tooltip title={t('sharedRemoveAll')}>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => dispatch(eventsActions.deleteAll())}
-          >
-            <DeleteSweepIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Toolbar>
-      <List className={classes.drawer} dense>
-        {events.map((event) => (
-          <ListItemButton
-            key={event.id}
-            onClick={() => navigate(`/event/${event.id}`)}
-            disabled={!event.id}
-            sx={{
-              maxHeight: '60px',
-              minHeight: '48px',
-              py: 1,
-            }}
-          >
-            <ListItemText
-              primary={`${devices[event.deviceId]?.name} • ${formatType(event)}`}
-              secondary={formatTime(event.eventTime, 'seconds')}
-              primaryTypographyProps={{
-                sx: {
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                },
-              }}
-              secondaryTypographyProps={{
-                sx: {
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                },
-              }}
-            />
+    <ClickAwayListener onClickAway={() => open && isDesktop && onClose()}>
+      <Drawer
+        variant={isDesktop ? 'persistent' : 'temporary'}
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        PaperProps={{
+          sx: {
+            width: (theme) => theme.dimensions.eventsDrawerWidth,
+            marginTop: { md: '64px', xs: 0 },
+            height: { md: 'calc(100% - 64px)', xs: '100%' },
+            zIndex: 2000,
+          },
+        }}
+      >
+        <Toolbar className={classes.toolbar} disableGutters>
+          <Typography variant="h6" className={classes.title}>
+            {t('reportEvents')}
+          </Typography>
+          <Tooltip title={t('sharedRemoveAll')}>
             <IconButton
               size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                dispatch(eventsActions.delete(event));
+              color="error"
+              onClick={() => dispatch(eventsActions.deleteAll())}
+            >
+              <DeleteSweepIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+        <List className={classes.drawer} dense>
+          {events.map((event) => (
+            <ListItemButton
+              key={event.id}
+              onClick={() => navigate(`/event/${event.id}`)}
+              disabled={!event.id}
+              sx={{
+                maxHeight: '60px',
+                minHeight: '48px',
+                py: 1,
               }}
             >
-              <DeleteIcon fontSize="small" className={classes.delete} />
-            </IconButton>
-          </ListItemButton>
-        ))}
-      </List>
-    </Drawer>
+              <ListItemText
+                primary={`${devices[event.deviceId]?.name} • ${formatType(event)}`}
+                secondary={formatTime(event.eventTime, 'seconds')}
+                primaryTypographyProps={{
+                  sx: {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  },
+                }}
+                secondaryTypographyProps={{
+                  sx: {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  },
+                }}
+              />
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch(eventsActions.delete(event));
+                }}
+              >
+                <DeleteIcon fontSize="small" className={classes.delete} />
+              </IconButton>
+            </ListItemButton>
+          ))}
+        </List>
+      </Drawer>
+    </ClickAwayListener>
   );
 };
 

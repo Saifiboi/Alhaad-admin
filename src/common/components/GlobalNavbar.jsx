@@ -210,7 +210,10 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
                     )}
                     <Tooltip title="Notifications">
                         <IconButton
-                            onClick={onEvents}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEvents();
+                            }}
                             sx={{ color: 'text.primary' }}
                         >
                             <Badge badgeContent={events.length} color="error" invisible={events.length === 0}>
