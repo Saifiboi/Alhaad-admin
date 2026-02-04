@@ -152,7 +152,7 @@ const Dock = ({ items, onLaunch, activeIds }) => {
 
     return (
         <Box className={classes.dockContainer}>
-            {items.filter(item => !item.hideInDock).map((item) => (
+            {items.filter(item => !item.hideInDock || activeIds.includes(item.id)).map((item) => (
                 <DockItem
                     key={item.id}
                     item={item}
