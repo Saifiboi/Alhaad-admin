@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import {
-  FormControl, InputLabel, Select, MenuItem, useTheme,
+  FormControl, InputLabel, Select, MenuItem, useTheme, Typography,
 } from '@mui/material';
 import {
   Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -35,6 +35,7 @@ const ChartReportPage = () => {
   const [types, setTypes] = useState(['speed']);
   const [selectedTypes, setSelectedTypes] = useState(['speed']);
   const [timeType, setTimeType] = useState('fixTime');
+  const [hasSearched, setHasSearched] = useState(false);
 
   const values = items.map((it) => selectedTypes.map((type) => it[type]).filter((value) => value != null));
   const minValue = values.length ? Math.min(...values) : 0;
@@ -42,6 +43,7 @@ const ChartReportPage = () => {
   const valueRange = maxValue - minValue;
 
   const onShow = useCatch(async ({ deviceIds, from, to }) => {
+    setHasSearched(true);
     const query = new URLSearchParams({ from, to });
     deviceIds.forEach((deviceId) => query.append('deviceId', deviceId));
     const response = await fetchOrThrow(`/api/reports/route?${query.toString()}`, {
@@ -50,9 +52,10 @@ const ChartReportPage = () => {
     const positions = await response.json();
     const keySet = new Set();
     const keyList = [];
-    const formattedPositions = positions.map((position) => {
+    const formattedPositions = positions.map((position, index) => {
       const data = { ...position, ...position.attributes };
       const formatted = {};
+      formatted.id = position.id || index;
       formatted.fixTime = dayjs(position.fixTime).valueOf();
       formatted.deviceTime = dayjs(position.deviceTime).valueOf();
       formatted.serverTime = dayjs(position.serverTime).valueOf();
@@ -95,8 +98,13 @@ const ChartReportPage = () => {
         keySet.delete(key);
       }
     });
-    setTypes([...keyList, ...keySet]);
+    const newTypes = [...keyList, ...keySet];
+    setTypes(newTypes);
     setItems(formattedPositions);
+    // Auto-select the first type if none selected
+    if (selectedTypes.length === 0 && newTypes.length > 0) {
+      setSelectedTypes([newTypes[0]]);
+    }
   });
 
   const colorPalette = [
@@ -144,7 +152,7 @@ const ChartReportPage = () => {
           </FormControl>
         </div>
       </ReportFilter>
-      {items.length > 0 && (
+      {items.length > 0 ? (
         <div className={classes.chart}>
           <ResponsiveContainer>
             <LineChart
@@ -160,6 +168,8 @@ const ChartReportPage = () => {
                 tickFormatter={(value) => formatTime(value, 'time')}
                 domain={['dataMin', 'dataMax']}
                 scale="time"
+                allowDuplicatedCategory={false}
+                minTickGap={50}
               />
               <YAxis
                 stroke={theme.palette.text.primary}
@@ -181,6 +191,7 @@ const ChartReportPage = () => {
               />
               {selectedTypes.map((type, index) => (
                 <Line
+                  key={type}
                   type="monotone"
                   dataKey={type}
                   stroke={colorPalette[index % colorPalette.length]}
@@ -192,7 +203,18 @@ const ChartReportPage = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      )}
+      ) : hasSearched ? (
+        <Typography
+          color="textSecondary"
+          sx={{
+            textAlign: 'center',
+            marginTop: 4,
+            fontSize: '1.1rem',
+          }}
+        >
+          {t('reportNoData')}
+        </Typography>
+      ) : null}
     </ReportLayout>
   );
 };
