@@ -16,6 +16,9 @@ import {
   TextField,
   Pagination,
   Tooltip,
+  Select,
+  MenuItem,
+  FormControl,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -164,7 +167,7 @@ const DevicesPage = () => {
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
+  const [itemsPerPage, setItemsPerPage] = usePersistedState('devicesItemsPerPage', 20);
 
   useEffectAsync(async () => {
     const cachedDevices = getCachedDevices(showAll);
@@ -238,6 +241,11 @@ const DevicesPage = () => {
     setCurrentPage(value);
   };
 
+  const handleItemsPerPageChange = (event) => {
+    setItemsPerPage(event.target.value);
+    setCurrentPage(1);
+  };
+
   const handleSearch = (value) => {
     setSearchKeyword(value);
     setCurrentPage(1); // Reset to first page when searching
@@ -285,9 +293,22 @@ const DevicesPage = () => {
       {/* Pagination Info and Controls */}
       {!loading && filteredItems.length > 0 && (
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="body2" color="text.secondary">
-            Page {currentPage} of {totalPages} • Showing {paginatedItems.length} devices
-          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="body2" color="text.secondary">
+              Page {currentPage} of {totalPages} • Showing {paginatedItems.length} devices
+            </Typography>
+            <FormControl size="small" variant="outlined">
+              <Select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                sx={{ fontSize: '11px', height: '28px' }}
+              >
+                <MenuItem value={20} sx={{ fontSize: '11px' }}>20 per page</MenuItem>
+                <MenuItem value={50} sx={{ fontSize: '11px' }}>50 per page</MenuItem>
+                <MenuItem value={100} sx={{ fontSize: '11px' }}>100 per page</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           <Pagination
             count={totalPages}
             page={currentPage}
@@ -327,19 +348,7 @@ const DevicesPage = () => {
         </Box>
       )}
 
-      {/* Bottom Pagination */}
-      {!loading && filteredItems.length > 0 && totalPages > 1 && (
-        <Box display="flex" justifyContent="center" mt={3}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            color="primary"
-            showFirstButton
-            showLastButton
-          />
-        </Box>
-      )}
+
 
       <CollectionFab editPath="/settings/device" />
 
