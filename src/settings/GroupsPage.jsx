@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Card, CardContent, Typography, Box, IconButton, Button, useTheme
+  Card, CardContent, Typography, Box, IconButton, Button, useTheme, Tooltip
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import PublishIcon from '@mui/icons-material/Publish';
@@ -12,6 +12,7 @@ import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import TruckLoader from '../common/components/TruckLoader';
+import { useTranslation } from '../common/components/LocalizationProvider';
 import SearchHeader, { filterByKeyword } from './components/SearchHeader';
 import { useRestriction } from '../common/util/permissions';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -21,6 +22,7 @@ const GroupCard = ({
   item, limitCommands, onConnections, onCommand, onEdit, onRemove,
 }) => {
   const theme = useTheme();
+  const t = useTranslation();
 
   return (
     <Card
@@ -44,59 +46,37 @@ const GroupCard = ({
         </Box>
 
         {/* Right Section: Actions */}
-        <Box display="flex" alignItems="center" gap={1.5}>
-          <Box display="flex" gap={0.5}>
+        <Box display="flex" alignItems="center" gap={1}>
+          <Tooltip title={t('sharedEdit')}>
             <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
               <EditIcon sx={{ fontSize: 20 }} />
             </IconButton>
+          </Tooltip>
+          <Tooltip title={t('sharedRemove')}>
             <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
               <DeleteIcon sx={{ fontSize: 20 }} />
             </IconButton>
-          </Box>
-          <Box display="flex" gap={1}>
-            {!limitCommands && (
-              <Button
-                variant="contained"
-                disableElevation
-                startIcon={<PublishIcon sx={{ fontSize: 16 }} />}
+          </Tooltip>
+          {!limitCommands && (
+            <Tooltip title={t('deviceCommand')}>
+              <IconButton
+                size="small"
                 onClick={() => onCommand(item.id)}
-                sx={{
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
-                  color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
-                  textTransform: 'none',
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  borderRadius: '8px',
-                  px: 1.5,
-                  py: 0.5,
-                  '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
-                }}
+                sx={{ color: 'text.disabled', '&:hover': { color: 'primary.main' } }}
               >
-                Command
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
+                <PublishIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title={t('sharedConnections')}>
+            <IconButton
+              size="small"
               onClick={() => onConnections(item.id)}
-              sx={{
-                bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f8fafc',
-                color: 'text.primary',
-                textTransform: 'none',
-                fontSize: '11px',
-                fontWeight: '600',
-                borderRadius: '8px',
-                px: 1.5,
-                py: 0.5,
-                border: '1px solid',
-                borderColor: 'divider',
-                '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 1)' : '#f1f5f9' },
-              }}
+              sx={{ color: 'text.disabled', '&:hover': { color: 'primary.main' } }}
             >
-              Connections
-            </Button>
-          </Box>
+              <LinkIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </CardContent>
     </Card>
