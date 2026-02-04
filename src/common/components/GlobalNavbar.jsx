@@ -13,6 +13,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
+import BackIcon from './BackIcon';
 
 const useStyles = makeStyles()((theme) => ({
     appBar: {
@@ -103,7 +104,9 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNavigation }) => {
+const GlobalNavbar = ({
+    onAccount, onDashboard, onShowDevices, onEvents, showNavigation, onBack,
+}) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -180,11 +183,22 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
     return (
         <AppBar position="fixed" className={classes.appBar} elevation={0}>
             <Toolbar className={classes.toolbar}>
-                <Box className={classes.logoSection} onClick={handleLogoClick}>
-                    <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
-                    <Typography variant="h6" className={classes.appName}>
-                        AL-HAAD
-                    </Typography>
+                <Box display="flex" alignItems="center">
+                    {onBack && (
+                        <IconButton
+                            color="inherit"
+                            onClick={onBack}
+                            sx={{ mr: 1 }}
+                        >
+                            <BackIcon />
+                        </IconButton>
+                    )}
+                    <Box className={classes.logoSection} onClick={handleLogoClick}>
+                        <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
+                        <Typography variant="h6" className={classes.appName}>
+                            AL-HAAD
+                        </Typography>
+                    </Box>
                 </Box>
 
                 <Box className={classes.userSection}>
