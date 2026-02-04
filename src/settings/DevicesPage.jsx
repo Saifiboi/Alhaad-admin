@@ -15,6 +15,7 @@ import {
   Chip,
   TextField,
   Pagination,
+  Tooltip,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import EditIcon from '@mui/icons-material/Edit';
@@ -117,33 +118,27 @@ const DeviceCard = memo(({
         <Box display="flex" alignItems="center" gap={1.5}>
           {!deviceReadonly && (
             <Box display="flex" gap={0.5}>
-              <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
-                <EditIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-              <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
-                <DeleteIcon sx={{ fontSize: 20 }} />
-              </IconButton>
+              <Tooltip title={t('sharedEdit')}>
+                <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
+                  <EditIcon sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={t('sharedRemove')}>
+                <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
+                  <DeleteIcon sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Tooltip>
             </Box>
           )}
-          <Button
-            variant="contained"
-            disableElevation
-            startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
-            onClick={() => onConnections(item.id)}
-            sx={{
-              bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
-              color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
-              textTransform: 'none',
-              fontSize: '11px',
-              fontWeight: '600',
-              borderRadius: '8px',
-              px: 1.5,
-              py: 0.5,
-              '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
-            }}
-          >
-            Connections
-          </Button>
+          <Tooltip title={t('sharedConnections')}>
+            <IconButton
+              size="small"
+              onClick={() => onConnections(item.id)}
+              sx={{ color: 'text.disabled', '&:hover': { color: 'primary.main' } }}
+            >
+              <LinkIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </CardContent>
     </Card>
