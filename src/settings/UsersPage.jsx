@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Switch, FormControlLabel,
-  Card, CardContent, Typography, IconButton, Box, Button, Chip, useTheme
+  Card, CardContent, Typography, IconButton, Box, Button, Chip, useTheme, Tooltip
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
@@ -24,6 +24,7 @@ const UserCard = ({
   item, manager, onLogin, onConnections, onEdit, onRemove,
 }) => {
   const theme = useTheme();
+  const t = useTranslation();
   const isExpired = item.expirationTime && new Date(item.expirationTime) < new Date();
 
   return (
@@ -77,59 +78,37 @@ const UserCard = ({
         </Box>
 
         {/* Right Section: Actions */}
-        <Box display="flex" alignItems="center" gap={1.5}>
-          <Box display="flex" gap={0.5}>
+        <Box display="flex" alignItems="center" gap={1}>
+          <Tooltip title={t('sharedEdit')}>
             <IconButton size="small" onClick={() => onEdit(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
               <EditIcon sx={{ fontSize: 20 }} />
             </IconButton>
+          </Tooltip>
+          <Tooltip title={t('sharedRemove')}>
             <IconButton size="small" onClick={() => onRemove(item.id)} sx={{ color: 'text.disabled', '&:hover': { color: 'error.light' } }}>
               <DeleteIcon sx={{ fontSize: 20 }} />
             </IconButton>
-          </Box>
-          <Box display="flex" gap={1}>
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<LinkIcon sx={{ fontSize: 16 }} />}
+          </Tooltip>
+          <Tooltip title={t('sharedConnections')}>
+            <IconButton
+              size="small"
               onClick={() => onConnections(item.id)}
-              sx={{
-                bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.2)' : '#eff6ff',
-                color: theme.palette.mode === 'dark' ? '#60a5fa' : '#2563eb',
-                textTransform: 'none',
-                fontSize: '11px',
-                fontWeight: '600',
-                borderRadius: '8px',
-                px: 1.5,
-                py: 0.5,
-                '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(30, 58, 138, 0.3)' : '#dbeafe' },
-              }}
+              sx={{ color: 'text.disabled', '&:hover': { color: 'primary.main' } }}
             >
-              Connections
-            </Button>
-            {manager && (
-              <Button
-                variant="contained"
-                disableElevation
-                startIcon={<LoginIcon sx={{ fontSize: 16 }} />}
+              <LinkIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
+          {manager && (
+            <Tooltip title={t('loginLogin')}>
+              <IconButton
+                size="small"
                 onClick={() => onLogin(item.id)}
-                sx={{
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(31, 41, 55, 1)' : '#f8fafc',
-                  color: 'text.primary',
-                  textTransform: 'none',
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  borderRadius: '8px',
-                  px: 1.5,
-                  py: 0.5,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 1)' : '#f1f5f9' },
-                }}
+                sx={{ color: 'text.disabled', '&:hover': { color: 'primary.main' } }}
               >
-                Login
-              </Button>
-            )}
-          </Box>
+                <LoginIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       </CardContent>
     </Card>
