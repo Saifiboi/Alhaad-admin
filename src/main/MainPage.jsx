@@ -146,7 +146,7 @@ const MainPage = () => {
   const [sidebarInFront, setSidebarInFront] = useState(false);
   const [eventsOpen, setEventsOpen] = useState(false);
 
-  const onEventsClick = useCallback(() => setEventsOpen(true), [setEventsOpen]);
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), [setEventsOpen]);
 
   // Window Manager State
   const [windows, setWindows] = useState({});
@@ -398,6 +398,7 @@ const MainPage = () => {
         onAccount={() => handleLaunch({ id: 'account' })}
         onDashboard={handleDashboard}
         onShowDevices={handleShowDevices}
+        onEvents={onEventsClick}
         showNavigation={anyMaximized}
       />
       <div className={classes.root}>

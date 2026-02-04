@@ -9,6 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
@@ -102,7 +103,7 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, showNavigation }) => {
+const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNavigation }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -206,6 +207,14 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, showNavigation })
                             </Tooltip>
                         </>
                     )}
+                    <Tooltip title="Notifications">
+                        <IconButton
+                            onClick={onEvents}
+                            sx={{ color: 'text.primary' }}
+                        >
+                            <NotificationsIcon />
+                        </IconButton>
+                    </Tooltip>
                     <ThemeToggle />
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>
