@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-    AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton
+    AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton, Badge,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -108,6 +108,7 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
+    const events = useSelector((state) => state.events.items);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -212,7 +213,9 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, onEvents, showNav
                             onClick={onEvents}
                             sx={{ color: 'text.primary' }}
                         >
-                            <NotificationsIcon />
+                            <Badge badgeContent={events.length} color="error" invisible={events.length === 0}>
+                                <NotificationsIcon />
+                            </Badge>
                         </IconButton>
                     </Tooltip>
                     <ThemeToggle />
