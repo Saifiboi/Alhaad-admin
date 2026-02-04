@@ -110,9 +110,15 @@ const DesktopWindow = ({
             }}
             onMouseDown={() => onFocus(id)}
             onTouchStart={() => onFocus(id)}
-            onDragStop={(e, d) => onDragStop(id, d.x, d.y)}
+            onDragStop={(e, d) => {
+                const navbarHeight = 64;
+                const constrainedY = Math.max(navbarHeight, d.y);
+                onDragStop(id, d.x, constrainedY);
+            }}
             onResizeStop={(e, direction, ref, delta, position) => {
-                onResizeStop(id, ref.offsetWidth, ref.offsetHeight, position.x, position.y);
+                const navbarHeight = 64;
+                const constrainedY = Math.max(navbarHeight, position.y);
+                onResizeStop(id, ref.offsetWidth, ref.offsetHeight, position.x, constrainedY);
             }}
         >
             <Paper className={classes.window} elevation={0} sx={{ height: '100%' }}>
