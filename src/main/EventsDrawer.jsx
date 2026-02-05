@@ -82,7 +82,10 @@ const EventsDrawer = ({ open, onClose }) => {
           {events.map((event) => (
             <ListItemButton
               key={event.id}
-              onClick={() => navigate(`/event/${event.id}`)}
+              onClick={() => {
+                onClose();
+                navigate(`/event/${event.id}`);
+              }}
               disabled={!event.id}
               sx={{
                 maxHeight: '60px',

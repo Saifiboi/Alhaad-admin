@@ -14,6 +14,8 @@ import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 import GlobalNavbar from '../common/components/GlobalNavbar';
+import EventsDrawer from '../main/EventsDrawer';
+import { useCallback } from 'react';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -38,6 +40,9 @@ const PositionPage = () => {
   const { id } = useParams();
 
   const [item, setItem] = useState();
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   useEffectAsync(async () => {
     if (id) {
@@ -61,7 +66,13 @@ const PositionPage = () => {
 
   return (
     <div className={classes.root}>
-      <GlobalNavbar onBack={() => navigate(-1)} />
+      <GlobalNavbar
+        onBack={() => navigate(-1)}
+        onDashboard={() => navigate('/')}
+        onEvents={onEventsClick}
+        showNavigation
+      />
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <div className={classes.content}>
         <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
           <Toolbar>

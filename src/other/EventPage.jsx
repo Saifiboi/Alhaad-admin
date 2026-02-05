@@ -17,6 +17,7 @@ import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import GlobalNavbar from '../common/components/GlobalNavbar';
 import AddressValue from '../common/components/AddressValue';
+import EventsDrawer from '../main/EventsDrawer';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -78,6 +79,9 @@ const EventPage = () => {
 
   const [event, setEvent] = useState();
   const [position, setPosition] = useState();
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   const devices = useSelector((state) => state.devices.items);
 
@@ -115,7 +119,15 @@ const EventPage = () => {
 
   return (
     <div className={classes.root}>
-      {desktop && <GlobalNavbar onAccount={() => navigate('/settings/user')} />}
+      {desktop && (
+        <GlobalNavbar
+          onDashboard={() => navigate('/')}
+          onAccount={() => navigate('/settings/user')}
+          onEvents={onEventsClick}
+          showNavigation
+        />
+      )}
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <div className={classes.content}>
         <Paper square className={classes.drawer}>
           <Toolbar>

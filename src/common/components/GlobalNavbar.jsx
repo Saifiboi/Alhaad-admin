@@ -204,20 +204,24 @@ const GlobalNavbar = ({
                 <Box className={classes.userSection}>
                     {showNavigation && (
                         <>
-                            <Tooltip title="Dashboard">
-                                <IconButton
-                                    onClick={onDashboard}
-                                >
-                                    <DashboardIcon />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="View Devices">
-                                <IconButton
-                                    onClick={onShowDevices}
-                                >
-                                    <ViewListIcon />
-                                </IconButton>
-                            </Tooltip>
+                            {onDashboard && (
+                                <Tooltip title="Dashboard">
+                                    <IconButton
+                                        onClick={onDashboard}
+                                    >
+                                        <DashboardIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                            {onShowDevices && (
+                                <Tooltip title="View Devices">
+                                    <IconButton
+                                        onClick={onShowDevices}
+                                    >
+                                        <ViewListIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
                         </>
                     )}
                     <Tooltip title="Notifications">
