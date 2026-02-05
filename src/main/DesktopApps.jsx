@@ -12,6 +12,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import LayersIcon from '@mui/icons-material/Layers';
+import ShareIcon from '@mui/icons-material/Share';
 
 export const desktopApps = [
     {
@@ -110,5 +111,11 @@ export const desktopApps = [
         title: 'Reports',
         icon: <DescriptionIcon />,
         path: '/reports/dashboard',
+    },
+    {
+        id: 'share',
+        title: 'Share',
+        icon: <ShareIcon />,
+        hideInDock: true,
     },
 ];

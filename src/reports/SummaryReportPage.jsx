@@ -149,16 +149,24 @@ const SummaryReportPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!loading ? items.map((item) => (
-            <TableRow key={(`${item.deviceId}_${Date.parse(item.startTime)}`)}>
-              <TableCell>{devices[item.deviceId].name}</TableCell>
-              {columns.map((key) => (
-                <TableCell key={key}>
-                  {formatValue(item, key)}
+          {!loading ? (
+            items.length > 0 ? items.map((item) => (
+              <TableRow key={(`${item.deviceId}_${Date.parse(item.startTime)}`)}>
+                <TableCell>{devices[item.deviceId].name}</TableCell>
+                {columns.map((key) => (
+                  <TableCell key={key}>
+                    {formatValue(item, key)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )) : (
+              <TableRow>
+                <TableCell colSpan={columns.length + 1} align="center">
+                  {t('sharedNoData')}
                 </TableCell>
-              ))}
-            </TableRow>
-          )) : (<TableShimmer columns={columns.length + 1} />)}
+              </TableRow>
+            )
+          ) : (<TableShimmer columns={columns.length + 1} />)}
         </TableBody>
       </Table>
     </ReportLayout>

@@ -85,13 +85,21 @@ const CombinedReportPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!loading ? items.flatMap((item) => item.events.map((event, index) => (
-                <TableRow key={event.id}>
-                  <TableCell>{index ? '' : devices[item.deviceId].name}</TableCell>
-                  <TableCell>{formatTime(event.eventTime, 'seconds')}</TableCell>
-                  <TableCell>{t(prefixString('event', event.type))}</TableCell>
-                </TableRow>
-              ))) : (<TableShimmer columns={3} />)}
+              {!loading ? (
+                items.length > 0 ? items.flatMap((item) => item.events.map((event, index) => (
+                  <TableRow key={event.id}>
+                    <TableCell>{index ? '' : devices[item.deviceId].name}</TableCell>
+                    <TableCell>{formatTime(event.eventTime, 'seconds')}</TableCell>
+                    <TableCell>{t(prefixString('event', event.type))}</TableCell>
+                  </TableRow>
+                ))) : (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      {t('sharedNoData')}
+                    </TableCell>
+                  </TableRow>
+                )
+              ) : (<TableShimmer columns={3} />)}
             </TableBody>
           </Table>
         </div>

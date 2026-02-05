@@ -48,17 +48,17 @@ const LogsPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {items.map((item, index) => (
+          {items.length > 0 ? items.map((item, index) => (
             <TableRow key={index}>
               <TableCell className={classes.columnAction} padding="none">
                 {item.deviceId ? (
                   <IconButton color="success" size="small" disabled>
-                    <CheckCircleOutlineIcon fontSize="small" />
+                    <CheckCircleOutlineIcon className={classes.columnActionIcon} />
                   </IconButton>
                 ) : (
                   <Tooltip title={t('loginRegister')}>
                     <IconButton color="error" size="small" onClick={() => registerDevice(item.uniqueId)}>
-                      <HelpOutlineIcon fontSize="small" />
+                      <HelpOutlineIcon className={classes.columnActionIcon} />
                     </IconButton>
                   </Tooltip>
                 )}
@@ -67,7 +67,13 @@ const LogsPage = () => {
               <TableCell>{item.protocol}</TableCell>
               <TableCell>{item.data}</TableCell>
             </TableRow>
-          ))}
+          )) : (
+            <TableRow>
+              <TableCell colSpan={4} align="center">
+                {t('sharedNoData')}
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </ReportLayout>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-    AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton
+    AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton, Badge,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,9 +9,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
 import { sessionActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
+import BackIcon from './BackIcon';
 
 const useStyles = makeStyles()((theme) => ({
     appBar: {
@@ -102,11 +104,14 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, showNavigation }) => {
+const GlobalNavbar = ({
+    onAccount, onDashboard, onShowDevices, onEvents, showNavigation, onBack,
+}) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
+    const events = useSelector((state) => state.events.items);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -178,34 +183,59 @@ const GlobalNavbar = ({ onAccount, onDashboard, onShowDevices, showNavigation })
     return (
         <AppBar position="fixed" className={classes.appBar} elevation={0}>
             <Toolbar className={classes.toolbar}>
-                <Box className={classes.logoSection} onClick={handleLogoClick}>
-                    <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
-                    <Typography variant="h6" className={classes.appName}>
-                        AL-HAAD
-                    </Typography>
+                <Box display="flex" alignItems="center">
+                    {onBack && (
+                        <IconButton
+                            color="inherit"
+                            onClick={onBack}
+                            sx={{ mr: 1 }}
+                        >
+                            <BackIcon />
+                        </IconButton>
+                    )}
+                    <Box className={classes.logoSection} onClick={handleLogoClick}>
+                        <img src="/traccar-logo.jpeg" alt="Traccar Logo" className={classes.logoImage} />
+                        <Typography variant="h6" className={classes.appName}>
+                            AL-HAAD
+                        </Typography>
+                    </Box>
                 </Box>
 
                 <Box className={classes.userSection}>
                     {showNavigation && (
                         <>
-                            <Tooltip title="Dashboard">
-                                <IconButton
-                                    onClick={onDashboard}
-                                    sx={{ color: 'text.primary' }}
-                                >
-                                    <DashboardIcon />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="View Devices">
-                                <IconButton
-                                    onClick={onShowDevices}
-                                    sx={{ color: 'text.primary' }}
-                                >
-                                    <ViewListIcon />
-                                </IconButton>
-                            </Tooltip>
+                            {onDashboard && (
+                                <Tooltip title="Dashboard">
+                                    <IconButton
+                                        onClick={onDashboard}
+                                    >
+                                        <DashboardIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                            {onShowDevices && (
+                                <Tooltip title="View Devices">
+                                    <IconButton
+                                        onClick={onShowDevices}
+                                    >
+                                        <ViewListIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
                         </>
                     )}
+                    <Tooltip title="Notifications">
+                        <IconButton
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEvents();
+                            }}
+                        >
+                            <Badge badgeContent={events.length} color="error" invisible={events.length === 0}>
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
+                    </Tooltip>
                     <ThemeToggle />
                     <Box className={classes.userInfo} onClick={handleUserClick}>
                         <Typography className={classes.userEmail}>

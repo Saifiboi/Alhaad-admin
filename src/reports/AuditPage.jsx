@@ -56,15 +56,23 @@ const AuditPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!loading ? items.map((item) => (
-            <TableRow key={item.id}>
-              {columns.map((key) => (
-                <TableCell key={key}>
-                  {key === 'actionTime' ? formatTime(item[key], 'minutes') : item[key]}
+          {!loading ? (
+            items.length > 0 ? items.map((item) => (
+              <TableRow key={item.id}>
+                {columns.map((key) => (
+                  <TableCell key={key}>
+                    {key === 'actionTime' ? formatTime(item[key], 'minutes') : item[key]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} align="center">
+                  {t('sharedNoData')}
                 </TableCell>
-              ))}
-            </TableRow>
-          )) : (<TableShimmer columns={columns.length} />)}
+              </TableRow>
+            )
+          ) : (<TableShimmer columns={columns.length} />)}
         </TableBody>
       </Table>
     </ReportLayout>

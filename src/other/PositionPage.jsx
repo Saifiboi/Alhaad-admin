@@ -14,6 +14,8 @@ import BackIcon from '../common/components/BackIcon';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 import GlobalNavbar from '../common/components/GlobalNavbar';
+import EventsDrawer from '../main/EventsDrawer';
+import { useCallback } from 'react';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -38,6 +40,9 @@ const PositionPage = () => {
   const { id } = useParams();
 
   const [item, setItem] = useState();
+  const [eventsOpen, setEventsOpen] = useState(false);
+
+  const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
 
   useEffectAsync(async () => {
     if (id) {
@@ -61,19 +66,22 @@ const PositionPage = () => {
 
   return (
     <div className={classes.root}>
-      <GlobalNavbar />
-      <AppBar position="sticky" color="inherit">
-        <Toolbar>
-          <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate(-1)}>
-            <BackIcon />
-          </IconButton>
-          <Typography variant="h6">
-            {deviceName}
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <GlobalNavbar
+        onBack={() => navigate(-1)}
+        onDashboard={() => navigate('/')}
+        onEvents={onEventsClick}
+        showNavigation
+      />
+      <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
       <div className={classes.content}>
-        <Container maxWidth="sm">
+        <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
+          <Toolbar>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              {deviceName}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Container maxWidth="sm" sx={{ mt: 2 }}>
           <Paper>
             <Table>
               <TableHead>
@@ -84,17 +92,17 @@ const PositionPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {item && Object.getOwnPropertyNames(item).filter((it) => it !== 'attributes').map((property) => (
+                {item && Object.getOwnPropertyNames(item).filter((it) => it !== 'attributes').map((property) => (property !== 'id' && property !== 'deviceId') && (
                   <TableRow key={property}>
                     <TableCell>{property}</TableCell>
-                    <TableCell><strong>{positionAttributes[property]?.name}</strong></TableCell>
+                    <TableCell><strong>{positionAttributes[property]?.name || property}</strong></TableCell>
                     <TableCell><PositionValue position={item} property={property} /></TableCell>
                   </TableRow>
                 ))}
                 {item && Object.getOwnPropertyNames(item.attributes).map((attribute) => (
                   <TableRow key={attribute}>
                     <TableCell>{attribute}</TableCell>
-                    <TableCell><strong>{positionAttributes[attribute]?.name}</strong></TableCell>
+                    <TableCell><strong>{positionAttributes[attribute]?.name || attribute}</strong></TableCell>
                     <TableCell><PositionValue position={item} attribute={attribute} /></TableCell>
                   </TableRow>
                 ))}

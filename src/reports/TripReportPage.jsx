@@ -210,32 +210,40 @@ const TripReportPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!loading ? items.map((item) => (
-                <TableRow key={item.startPositionId}>
-                  <TableCell className={classes.columnAction} padding="none">
-                    <div className={classes.columnActionContainer}>
-                      {selectedItem === item ? (
-                        <IconButton size="small" onClick={() => setSelectedItem(null)}>
-                          <GpsFixedIcon fontSize="small" />
+              {!loading ? (
+                items.length > 0 ? items.map((item) => (
+                  <TableRow key={item.startPositionId}>
+                    <TableCell className={classes.columnAction} padding="none">
+                      <div className={classes.columnActionContainer}>
+                        {selectedItem === item ? (
+                          <IconButton size="small" onClick={() => setSelectedItem(null)}>
+                            <GpsFixedIcon fontSize="small" />
+                          </IconButton>
+                        ) : (
+                          <IconButton size="small" onClick={() => setSelectedItem(item)}>
+                            <LocationSearchingIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                        <IconButton size="small" onClick={() => navigateToReplay(item)}>
+                          <RouteIcon fontSize="small" />
                         </IconButton>
-                      ) : (
-                        <IconButton size="small" onClick={() => setSelectedItem(item)}>
-                          <LocationSearchingIcon fontSize="small" />
-                        </IconButton>
-                      )}
-                      <IconButton size="small" onClick={() => navigateToReplay(item)}>
-                        <RouteIcon fontSize="small" />
-                      </IconButton>
-                    </div>
-                  </TableCell>
-                  <TableCell>{devices[item.deviceId].name}</TableCell>
-                  {columns.map((key) => (
-                    <TableCell key={key}>
-                      {formatValue(item, key)}
+                      </div>
                     </TableCell>
-                  ))}
-                </TableRow>
-              )) : (<TableShimmer columns={columns.length + 2} startAction />)}
+                    <TableCell>{devices[item.deviceId].name}</TableCell>
+                    {columns.map((key) => (
+                      <TableCell key={key}>
+                        {formatValue(item, key)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length + 2} align="center">
+                      {t('sharedNoData')}
+                    </TableCell>
+                  </TableRow>
+                )
+              ) : (<TableShimmer columns={columns.length + 2} startAction />)}
             </TableBody>
           </Table>
         </div>
