@@ -51,26 +51,30 @@ const useStyles = makeStyles()((theme) => ({
     },
     contentScroll: {
         flex: 1,
-        overflow: 'hidden',
+        overflow: 'auto',
         padding: theme.spacing(0, 2, 1, 2),
     },
     statsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: theme.spacing(1.5),
         marginBottom: theme.spacing(1.5),
+        width: '100%',
     },
     statCard: {
         backgroundColor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 0.3)' : 'rgba(255, 255, 255, 0.4)',
         backdropFilter: 'blur(10px)',
         borderRadius: '12px',
-        padding: theme.spacing(1, 1.5),
+        padding: theme.spacing(1.5, 2),
         display: 'flex',
         alignItems: 'center',
-        gap: theme.spacing(1),
+        gap: theme.spacing(1.5),
         border: '1px solid rgba(255, 255, 255, 0.1)',
-        justifyContent: 'center',
+        width: '100%',
     },
     statIconBox: {
         backgroundColor: 'rgba(249, 115, 22, 0.1)',
-        padding: theme.spacing(0.75),
+        padding: theme.spacing(1),
         borderRadius: '8px',
         display: 'flex',
         color: theme.palette.primary.main,
@@ -104,17 +108,27 @@ const useStyles = makeStyles()((theme) => ({
         },
     },
     appIconBox: {
-        width: 44,
-        height: 44,
+        width: 'clamp(40px, 5vw, 52px)',
+        height: 'clamp(40px, 5vw, 52px)',
         backgroundColor: theme.palette.mode === 'dark' ? 'rgba(55, 65, 81, 0.8)' : '#fff',
-        borderRadius: '10px',
+        borderRadius: '12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: theme.spacing(0.5),
-        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+        marginBottom: theme.spacing(1),
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         border: `1px solid ${theme.palette.divider}`,
         transition: 'transform 0.15s ease, background-color 0.15s ease',
+        width: '100%',
+        aspectRatio: '1/1',
+        maxWidth: '100px',
+    },
+    reportsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+        gap: theme.spacing(2),
+        width: '100%',
+        justifyContent: 'center',
     },
     appIconLabel: {
         fontSize: '10.5px',
@@ -155,17 +169,17 @@ const ReportsDashboard = () => {
     }, []);
 
     const allReports = useMemo(() => [
-        { id: 'combined', title: 'Combined', icon: <BarChartIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/combined' },
-        { id: 'route', title: 'Positions', icon: <TimelineIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/route' },
-        { id: 'event', title: 'Events', icon: <EventIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/events' },
-        { id: 'trips', title: 'Trips', icon: <DescriptionIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/trips' },
-        { id: 'stops', title: 'Stops', icon: <ListAltIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/stops' },
-        { id: 'summary', title: 'Summary', icon: <AssignmentIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/summary' },
-        { id: 'chart', title: 'Chart', icon: <InsertChartIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/chart' },
-        { id: 'statistics', title: 'Statistics', icon: <FormatListBulletedIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/statistics' },
-        { id: 'audit', title: 'Audit', icon: <SecurityIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/audit' },
-        { id: 'logs', title: 'Logs', icon: <HistoryIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/logs' },
-        { id: 'scheduled', title: 'Scheduled', icon: <ScheduleIcon sx={{ color: '#f97316', fontSize: 22 }} />, path: '/reports/scheduled' },
+        { id: 'combined', title: 'Combined', icon: <BarChartIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/combined' },
+        { id: 'route', title: 'Positions', icon: <TimelineIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/route' },
+        { id: 'event', title: 'Events', icon: <EventIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/events' },
+        { id: 'trips', title: 'Trips', icon: <DescriptionIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/trips' },
+        { id: 'stops', title: 'Stops', icon: <ListAltIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/stops' },
+        { id: 'summary', title: 'Summary', icon: <AssignmentIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/summary' },
+        { id: 'chart', title: 'Chart', icon: <InsertChartIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/chart' },
+        { id: 'statistics', title: 'Statistics', icon: <FormatListBulletedIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/statistics' },
+        { id: 'audit', title: 'Audit', icon: <SecurityIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/audit' },
+        { id: 'logs', title: 'Logs', icon: <HistoryIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/logs' },
+        { id: 'scheduled', title: 'Scheduled', icon: <ScheduleIcon sx={{ color: '#f97316', fontSize: 'clamp(20px, 3.2vw, 28px)' }} />, path: '/reports/scheduled' },
     ], []);
 
     const filteredReports = useMemo(() => {
@@ -180,12 +194,11 @@ const ReportsDashboard = () => {
         }
     };
 
-
     return (
         <Box className={classes.container}>
             <Box className={classes.searchSection}>
                 <div className={classes.searchBar}>
-                    <SearchIcon sx={{ color: 'text.secondary', mr: 1, fontSize: 18 }} />
+                    <SearchIcon sx={{ color: 'text.secondary', mr: 1, fontSize: 'clamp(18px, 2.5vw, 24px)' }} />
                     <InputBase
                         placeholder="Search reports..."
                         value={search}
@@ -197,53 +210,44 @@ const ReportsDashboard = () => {
             </Box>
 
             <Box className={classes.contentScroll}>
-                <Grid container spacing={1.5} className={classes.statsGrid}>
-                    <Grid size={4}>
-                        <div className={classes.statCard}>
-                            <div className={classes.statIconBox}><PeopleIcon sx={{ fontSize: 18 }} /></div>
-                            <div>
-                                <div className={classes.statValue}>{usersCount || 0}</div>
-                                <div className={classes.statLabel}>Users</div>
-                            </div>
+                <div className={classes.statsGrid}>
+                    <div className={classes.statCard}>
+                        <div className={classes.statIconBox}><PeopleIcon sx={{ fontSize: 'clamp(18px, 2.5vw, 24px)' }} /></div>
+                        <div>
+                            <div className={classes.statValue}>{usersCount || 0}</div>
+                            <div className={classes.statLabel}>Users</div>
                         </div>
-                    </Grid>
-                    <Grid size={4}>
-                        <div className={classes.statCard}>
-                            <div className={classes.statIconBox}><DirectionsCarIcon sx={{ fontSize: 18 }} /></div>
-                            <div>
-                                <div className={classes.statValue}>{Object.keys(devices).length}</div>
-                                <div className={classes.statLabel}>Devices</div>
-                            </div>
+                    </div>
+                    <div className={classes.statCard}>
+                        <div className={classes.statIconBox}><DirectionsCarIcon sx={{ fontSize: 'clamp(18px, 2.5vw, 24px)' }} /></div>
+                        <div>
+                            <div className={classes.statValue}>{Object.keys(devices).length}</div>
+                            <div className={classes.statLabel}>Devices</div>
                         </div>
-                    </Grid>
-                    <Grid size={4}>
-                        <div className={classes.statCard}>
-                            <div className={classes.statIconBox}><PersonPinIcon sx={{ fontSize: 18 }} /></div>
-                            <div>
-                                <div className={classes.statValue}>{Object.keys(drivers).length}</div>
-                                <div className={classes.statLabel}>Drivers</div>
-                            </div>
+                    </div>
+                    <div className={classes.statCard}>
+                        <div className={classes.statIconBox}><PersonPinIcon sx={{ fontSize: 'clamp(18px, 2.5vw, 24px)' }} /></div>
+                        <div>
+                            <div className={classes.statValue}>{Object.keys(drivers).length}</div>
+                            <div className={classes.statLabel}>Drivers</div>
                         </div>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
 
                 <section>
                     <Typography className={classes.sectionTitle}>Available Reports</Typography>
-                    <Grid container spacing={1.5} columns={5}>
+                    <div className={classes.reportsGrid}>
                         {filteredReports.map((report) => (
-                            <Grid size={1} key={report.id}>
-                                <div className={classes.appIconCard} onClick={() => handleAction(report)}>
-                                    <div className={`${classes.appIconBox} iconBox`}>
-                                        {report.icon}
-                                    </div>
-                                    <Typography className={classes.appIconLabel}>{report.title}</Typography>
+                            <div className={classes.appIconCard} key={report.id} onClick={() => handleAction(report)}>
+                                <div className={`${classes.appIconBox} iconBox`}>
+                                    {report.icon}
                                 </div>
-                            </Grid>
+                                <Typography className={classes.appIconLabel}>{report.title}</Typography>
+                            </div>
                         ))}
-                    </Grid>
+                    </div>
                 </section>
             </Box>
-
         </Box>
     );
 };

@@ -53,12 +53,12 @@ const LogsPage = () => {
               <TableCell className={classes.columnAction} padding="none">
                 {item.deviceId ? (
                   <IconButton color="success" size="small" disabled>
-                    <CheckCircleOutlineIcon fontSize="small" />
+                    <CheckCircleOutlineIcon className={classes.columnActionIcon} />
                   </IconButton>
                 ) : (
                   <Tooltip title={t('loginRegister')}>
                     <IconButton color="error" size="small" onClick={() => registerDevice(item.uniqueId)}>
-                      <HelpOutlineIcon fontSize="small" />
+                      <HelpOutlineIcon className={classes.columnActionIcon} />
                     </IconButton>
                   </Tooltip>
                 )}

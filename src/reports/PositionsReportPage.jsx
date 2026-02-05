@@ -166,7 +166,7 @@ const PositionsReportPage = () => {
                   <TableRow key={item.id}>
                     <TableCell className={classes.columnAction} padding="none">
                       {selectedItem === item ? (
-                        <IconButton size="small" onClick={() => setSelectedItem(null)} ref={selectedIcon}>
+                        <IconButton size="small" onClick={() => setSelectedItem(null)}>
                           <GpsFixedIcon fontSize="small" />
                         </IconButton>
                       ) : (
