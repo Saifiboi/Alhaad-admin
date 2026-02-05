@@ -37,7 +37,7 @@ const ChartReportPage = () => {
   const [timeType, setTimeType] = useState('fixTime');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const values = items.map((it) => selectedTypes.map((type) => it[type]).filter((value) => value != null));
+  const values = items.flatMap((it) => selectedTypes.map((type) => it[type]).filter((value) => value != null));
   const minValue = values.length ? Math.min(...values) : 0;
   const maxValue = values.length ? Math.max(...values) : 100;
   const valueRange = maxValue - minValue;
@@ -66,23 +66,23 @@ const ChartReportPage = () => {
           const definition = positionAttributes[key] || {};
           switch (definition.dataType) {
             case 'speed':
-              if (key == 'obdSpeed') {
-                formatted[key] = speedFromKnots(speedToKnots(value, 'kmh'), speedUnit).toFixed(2);
+              if (key === 'obdSpeed') {
+                formatted[key] = speedFromKnots(speedToKnots(value, 'kmh'), speedUnit);
               } else {
-                formatted[key] = speedFromKnots(value, speedUnit).toFixed(2);
+                formatted[key] = speedFromKnots(value, speedUnit);
               }
               break;
             case 'altitude':
-              formatted[key] = altitudeFromMeters(value, altitudeUnit).toFixed(2);
+              formatted[key] = altitudeFromMeters(value, altitudeUnit);
               break;
             case 'distance':
-              formatted[key] = distanceFromMeters(value, distanceUnit).toFixed(2);
+              formatted[key] = distanceFromMeters(value, distanceUnit);
               break;
             case 'volume':
-              formatted[key] = volumeFromLiters(value, volumeUnit).toFixed(2);
+              formatted[key] = volumeFromLiters(value, volumeUnit);
               break;
             case 'hours':
-              formatted[key] = (value / 1000).toFixed(2);
+              formatted[key] = value / 1000;
               break;
             default:
               formatted[key] = value;
@@ -180,7 +180,7 @@ const ChartReportPage = () => {
               <CartesianGrid stroke={theme.palette.divider} strokeDasharray="3 3" />
               <Tooltip
                 contentStyle={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
-                formatter={(value, key) => [value, positionAttributes[key]?.name || key]}
+                formatter={(value, key) => [Number.isFinite(value) ? value.toFixed(2) : value, positionAttributes[key]?.name || key]}
                 labelFormatter={(value) => formatTime(value, 'seconds')}
               />
               <Brush
@@ -212,7 +212,7 @@ const ChartReportPage = () => {
             fontSize: '1.1rem',
           }}
         >
-          {t('reportNoData')}
+          {t('sharedNoData')}
         </Typography>
       ) : null}
     </ReportLayout>
