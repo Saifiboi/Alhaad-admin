@@ -1,0 +1,512 @@
+import React, { useMemo, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    Grid,
+    Card,
+    Typography,
+    Box,
+    useTheme,
+    IconButton,
+    Button,
+    Avatar,
+    Select,
+    MenuItem,
+    Badge,
+} from '@mui/material';
+import {
+    LocalShipping,
+    Map as MapIcon,
+    History,
+    Build,
+    Settings,
+    Notifications,
+    Analytics,
+    ArrowUpward,
+    ArrowDownward,
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../common/components/LocalizationProvider';
+import GlobalNavbar from '../common/components/GlobalNavbar';
+import EventsDrawer from './EventsDrawer';
+import { useEffectAsync } from '../reactHelper';
+import fetchOrThrow from '../common/util/fetchOrThrow';
+import { windowsActions } from '../store';
+
+const StatCard = ({ title, value, detail, color }) => {
+    const theme = useTheme();
+    return (
+        <Card
+            sx={{
+                p: { xs: 2.5, sm: 3 },
+                borderRadius: '16px',
+                background: theme.palette.mode === 'dark' 
+                    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' 
+                    : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '140px',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: theme.palette.mode === 'dark' 
+                    ? '0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -1px rgb(0 0 0 / 0.2)' 
+                    : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: `linear-gradient(90deg, ${color || theme.palette.primary.main}, ${color || theme.palette.primary.main}dd)`,
+                    opacity: 0.8,
+                },
+                '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: theme.palette.mode === 'dark'
+                        ? '0 20px 25px -5px rgb(0 0 0 / 0.4), 0 10px 10px -5px rgb(0 0 0 / 0.2)'
+                        : '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+                    '&::before': {
+                        height: '5px',
+                        opacity: 1,
+                    },
+                },
+            }}
+        >
+            <Typography
+                variant="caption"
+                sx={{
+                    color: 'text.secondary',
+                    fontWeight: 700,
+                    mb: 'auto',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    fontSize: '11px',
+                    opacity: 0.8,
+                }}
+            >
+                {title}
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+                <Typography
+                    sx={{
+                        fontSize: { xs: '40px', sm: '48px' },
+                        fontWeight: 800,
+                        color: color || theme.palette.primary.main,
+                        lineHeight: 1,
+                        mb: detail ? 0.5 : 0,
+                        letterSpacing: '-0.02em',
+                    }}
+                >
+                    {value}
+                </Typography>
+                {detail && (
+                    <Typography 
+                        variant="caption" 
+                        sx={{ 
+                            color: 'text.disabled', 
+                            fontWeight: 600, 
+                            fontSize: '11px',
+                            display: 'block',
+                        }}
+                    >
+                        {detail}
+                    </Typography>
+                )}
+            </Box>
+        </Card>
+    );
+};
+
+const DashboardPage = () => {
+    const theme = useTheme();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const t = useTranslation();
+
+    const devices = useSelector((state) => state.devices.items);
+    const geofences = useSelector((state) => state.geofences.items);
+    const drivers = useSelector((state) => state.drivers.items);
+    const user = useSelector((state) => state.session.user);
+
+    const [eventsOpen, setEventsOpen] = useState(false);
+    const [stats, setStats] = useState([]);
+
+    useEffectAsync(async () => {
+        const from = new Date();
+        from.setDate(from.getDate() - 7);
+        const query = new URLSearchParams({
+            from: from.toISOString(),
+            to: new Date().toISOString()
+        });
+        const response = await fetchOrThrow(`/api/statistics?${query.toString()}`);
+        const data = await response.json();
+        setStats(data);
+    }, []);
+
+    const onEventsClick = useCallback(() => setEventsOpen((prev) => !prev), []);
+
+    const handleLiveMapClick = useCallback(() => {
+        navigate('/', { state: { minimizeWindows: true } });
+    }, [navigate]);
+
+    const deviceList = useMemo(() => Object.values(devices), [devices]);
+    const geofenceList = useMemo(() => Object.values(geofences), [geofences]);
+    const driverList = useMemo(() => Object.values(drivers), [drivers]);
+
+    const activeCount = deviceList.filter((d) => d.status === 'online').length;
+    const idleCount = deviceList.filter((d) => d.status === 'unknown').length;
+    const offlineCount = deviceList.length - activeCount - idleCount;
+
+    return (
+        <>
+            <GlobalNavbar onLiveMap={handleLiveMapClick} onDashboard={() => navigate('/dashboard')} onEvents={onEventsClick} />
+            <EventsDrawer open={eventsOpen} onClose={() => setEventsOpen(false)} />
+
+            <Box sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100vw',
+                height: '100vh',
+                paddingTop: '64px',
+                background: theme.palette.background.gradient,
+                backgroundAttachment: 'fixed',
+                overflowY: 'auto',
+                zIndex: 1,
+            }}>
+                <Box sx={{
+                    maxWidth: '1400px',
+                    margin: '0 auto',
+                    px: { xs: 2, sm: 3, md: 4 },
+                    py: { xs: 3, md: 4 },
+                }}>
+                    {/* Header Section */}
+                    <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                        <Box>
+                            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5, fontSize: { xs: '24px', md: '32px' } }}>
+                                Fleet Analytics
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '14px' }}>
+                                Real-time performance overview
+                            </Typography>
+                        </Box>
+                        <Button
+                            variant="contained"
+                            startIcon={<MapIcon />}
+                            onClick={() => navigate('/')}
+                            sx={{
+                                borderRadius: '8px',
+                                px: 3,
+                                py: 1.2,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                bgcolor: theme.palette.primary.main,
+                                '&:hover': { bgcolor: theme.palette.primary.dark },
+                            }}
+                        >
+                            Live Map
+                        </Button>
+                    </Box>
+
+                    {/* Stats Cards Row */}
+                    <Grid container spacing={3} sx={{ mb: 3 }}>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <StatCard 
+                                title="Total Vehicles" 
+                                value={deviceList.length} 
+                                color={theme.palette.primary.main} 
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <StatCard 
+                                title="Online Now" 
+                                value={activeCount} 
+                                color="#10b981" 
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <StatCard 
+                                title="Active Geofences" 
+                                value={geofenceList.length} 
+                                color="#3b82f6" 
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <StatCard 
+                                title="Total Drivers" 
+                                value={driverList.length} 
+                                color="#8b5cf6" 
+                            />
+                        </Grid>
+                    </Grid>
+
+                    {/* Charts Row */}
+                    <Grid container spacing={3}>
+                        {/* Vehicle Activity Chart */}
+                        <Grid item xs={12} lg={8}>
+                            <Card sx={{
+                                p: 3,
+                                borderRadius: '12px',
+                                background: theme.palette.mode === 'dark' ? '#1e293b' : '#ffffff',
+                                border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
+                                height: '100%',
+                                minHeight: '400px',
+                                boxShadow: theme.palette.mode === 'dark' 
+                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)' 
+                                    : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
+                            }}>
+                                <Box sx={{ mb: 3 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '18px' }}>
+                                            Vehicle Activity
+                                        </Typography>
+                                        <Box sx={{ 
+                                            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', 
+                                            px: 2, 
+                                            py: 0.75, 
+                                            borderRadius: '6px' 
+                                        }}>
+                                            <Typography variant="caption" sx={{ 
+                                                fontSize: '10px', 
+                                                fontWeight: 700, 
+                                                color: 'text.secondary', 
+                                                letterSpacing: '0.05em' 
+                                            }}>
+                                                7 DAY OVERVIEW
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '13px' }}>
+                                        Active devices across fleet
+                                    </Typography>
+                                </Box>
+                                
+                                <Box sx={{ height: 300, position: 'relative', mt: 2 }}>
+                                    {stats.length > 0 ? (
+                                        <>
+                                            <svg width="100%" height="280" viewBox="0 0 400 100" preserveAspectRatio="none">
+                                                <defs>
+                                                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="0%" stopColor={theme.palette.primary.main} stopOpacity="0.2" />
+                                                        <stop offset="100%" stopColor={theme.palette.primary.main} stopOpacity="0" />
+                                                    </linearGradient>
+                                                </defs>
+                                                <path
+                                                    d={`M 0,${100 - (stats[0].activeDevices / Math.max(...stats.map(s => s.activeDevices), 1)) * 85} 
+                                                       ${stats.map((s, i) => `L ${(i / (stats.length - 1)) * 400},${100 - (s.activeDevices / Math.max(...stats.map(s => s.activeDevices), 1)) * 85}`).join(' ')}
+                                                       V 100 H 0 Z`}
+                                                    fill="url(#chartGradient)"
+                                                />
+                                                <path
+                                                    d={`M 0,${100 - (stats[0].activeDevices / Math.max(...stats.map(s => s.activeDevices), 1)) * 85} 
+                                                       ${stats.map((s, i) => `L ${(i / (stats.length - 1)) * 400},${100 - (s.activeDevices / Math.max(...stats.map(s => s.activeDevices), 1)) * 85}`).join(' ')}`}
+                                                    fill="none"
+                                                    stroke={theme.palette.primary.main}
+                                                    strokeWidth="3"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                {stats.map((s, i) => (
+                                                    <circle
+                                                        key={i}
+                                                        cx={(i / (stats.length - 1)) * 400}
+                                                        cy={100 - (s.activeDevices / Math.max(...stats.map(s => s.activeDevices), 1)) * 85}
+                                                        r="4"
+                                                        fill={theme.palette.primary.main}
+                                                    />
+                                                ))}
+                                            </svg>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, px: 1 }}>
+                                                {stats.map((s, i) => (
+                                                    <Typography key={i} variant="caption" sx={{ 
+                                                        fontSize: '11px', 
+                                                        fontWeight: 600, 
+                                                        color: 'text.secondary' 
+                                                    }}>
+                                                        {new Date(s.captureTime).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+                                                    </Typography>
+                                                ))}
+                                            </Box>
+                                        </>
+                                    ) : (
+                                        <Box sx={{ 
+                                            height: '100%', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center' 
+                                        }}>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Loading activity data...
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </Box>
+                            </Card>
+                        </Grid>
+
+                        {/* Fleet Status Pie Chart */}
+                        <Grid item xs={12} lg={4}>
+                            <Card sx={{
+                                p: 3,
+                                borderRadius: '12px',
+                                background: theme.palette.mode === 'dark' ? '#1e293b' : '#ffffff',
+                                border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
+                                height: '100%',
+                                minHeight: '400px',
+                                boxShadow: theme.palette.mode === 'dark' 
+                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)' 
+                                    : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}>
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '18px', mb: 1 }}>
+                                        Fleet Status
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '13px' }}>
+                                        Current operational overview
+                                    </Typography>
+                                </Box>
+                                
+                                <Box sx={{ 
+                                    flex: 1, 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    gap: 3,
+                                    py: 2,
+                                }}>
+                                    {/* Donut Chart */}
+                                    <Box sx={{ position: 'relative', width: 180, height: 180, flexShrink: 0 }}>
+                                        <svg viewBox="0 0 36 36" style={{ 
+                                            transform: 'rotate(-90deg)', 
+                                            width: '100%', 
+                                            height: '100%',
+                                        }}>
+                                            {/* Background circle */}
+                                            <circle 
+                                                cx="18" 
+                                                cy="18" 
+                                                r="15.915" 
+                                                fill="transparent" 
+                                                stroke={theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'} 
+                                                strokeWidth="3.5" 
+                                            />
+                                            {/* Offline segment (red) */}
+                                            <circle
+                                                cx="18" 
+                                                cy="18" 
+                                                r="15.915" 
+                                                fill="transparent"
+                                                stroke="#ef4444"
+                                                strokeWidth="3.5"
+                                                strokeDasharray={`${deviceList.length ? (offlineCount / deviceList.length) * 100 : 0} 100`}
+                                                strokeLinecap="round"
+                                            />
+                                            {/* Online segment (green) */}
+                                            <circle
+                                                cx="18" 
+                                                cy="18" 
+                                                r="15.915" 
+                                                fill="transparent"
+                                                stroke="#10b981"
+                                                strokeWidth="3.5"
+                                                strokeDasharray={`${deviceList.length ? (activeCount / deviceList.length) * 100 : 0} 100`}
+                                                strokeDashoffset={`${deviceList.length ? -(offlineCount / deviceList.length) * 100 : 0}`}
+                                                strokeLinecap="round"
+                                            />
+                                            {/* Idle segment (amber) */}
+                                            <circle
+                                                cx="18" 
+                                                cy="18" 
+                                                r="15.915" 
+                                                fill="transparent"
+                                                stroke="#f59e0b"
+                                                strokeWidth="3.5"
+                                                strokeDasharray={`${deviceList.length ? (idleCount / deviceList.length) * 100 : 0} 100`}
+                                                strokeDashoffset={`${deviceList.length ? -((offlineCount + activeCount) / deviceList.length) * 100 : 0}`}
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+                                        <Box sx={{ 
+                                            position: 'absolute', 
+                                            inset: 0, 
+                                            display: 'flex', 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center' 
+                                        }}>
+                                            <Typography sx={{ fontSize: '36px', fontWeight: 800, lineHeight: 1 }}>
+                                                {deviceList.length}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ 
+                                                color: 'text.secondary', 
+                                                fontWeight: 700, 
+                                                textTransform: 'uppercase', 
+                                                fontSize: '10px', 
+                                                mt: 0.5,
+                                                letterSpacing: '0.05em',
+                                            }}>
+                                                Total
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Status Legend */}
+                                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        {[
+                                            { label: 'Online Now', count: activeCount, color: '#10b981' },
+                                            { label: 'Offline', count: offlineCount, color: '#ef4444' },
+                                            { label: 'No Recent Data', count: idleCount, color: '#f59e0b' },
+                                        ].map((status, index) => (
+                                            <Box 
+                                                key={status.label} 
+                                                sx={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'space-between',
+                                                    pb: index < 2 ? 2 : 0,
+                                                    borderBottom: index < 2 ? `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}` : 'none',
+                                                }}
+                                            >
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                    <Box sx={{ 
+                                                        width: 12, 
+                                                        height: 12, 
+                                                        borderRadius: '50%', 
+                                                        bgcolor: status.color,
+                                                        boxShadow: `0 0 8px ${status.color}50`,
+                                                    }} />
+                                                    <Typography variant="body2" sx={{ 
+                                                        fontWeight: 600, 
+                                                        color: 'text.primary', 
+                                                        fontSize: '13px',
+                                                    }}>
+                                                        {status.label}
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{ fontWeight: 700, fontSize: '16px' }}>
+                                                    {status.count}
+                                                </Typography>
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </Box>
+                            </Card>
+                        </Grid>
+                    </Grid>
+
+                </Box>
+            </Box>
+        </>
+    );
+};
+
+export default DashboardPage;

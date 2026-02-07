@@ -61,6 +61,7 @@ import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import AuditPage from './reports/AuditPage';
 import ReportsDashboard from './reports/ReportsDashboard';
+import DashboardPage from './main/DashboardPage';
 
 import { useTheme, useMediaQuery, Typography } from '@mui/material';
 
@@ -122,6 +123,7 @@ const Navigation = () => {
       <Route path="/change-server" element={<ChangeServerPage />} />
       <Route path="/*" element={<App />}>
         <Route index element={<MainPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
 
         <Route path="replay" element={<ReplayPage />} />
         <Route path="geofences" element={<GeofencesPage />} />

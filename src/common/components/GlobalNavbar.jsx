@@ -3,11 +3,12 @@ import {
     AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip, IconButton, Badge,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { makeStyles } from 'tss-react/mui';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import MapIcon from '@mui/icons-material/Map';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
@@ -105,16 +106,18 @@ const useStyles = makeStyles()((theme) => ({
 }));
 
 const GlobalNavbar = ({
-    onAccount, onDashboard, onShowDevices, onEvents, showNavigation, onBack,
+    onAccount, onLiveMap, onDashboard, onShowDevices, onEvents, showNavigation, onBack,
 }) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
     const events = useSelector((state) => state.events.items);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+    const isOnDashboard = location.pathname === '/dashboard';
 
     const getInitials = (name, email) => {
         if (name) {
@@ -204,14 +207,23 @@ const GlobalNavbar = ({
                 </Box>
 
                 <Box className={classes.userSection}>
+                    {!isOnDashboard && (
+                        <Tooltip title="Dashboard">
+                            <IconButton
+                                onClick={onDashboard}
+                            >
+                                <DashboardIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
                     {showNavigation && (
                         <>
-                            {onDashboard && (
-                                <Tooltip title="Dashboard">
+                            {onLiveMap && (
+                                <Tooltip title="Live Map">
                                     <IconButton
-                                        onClick={onDashboard}
+                                        onClick={onLiveMap}
                                     >
-                                        <DashboardIcon />
+                                        <MapIcon />
                                     </IconButton>
                                 </Tooltip>
                             )}

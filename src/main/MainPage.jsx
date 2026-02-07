@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DeviceList from './DeviceList';
 import StatusCard from '../common/components/StatusCard';
 import { devicesActions, replayActions, errorsActions, windowsActions } from '../store';
@@ -107,6 +107,7 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const t = useTranslation();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -154,6 +155,14 @@ const MainPage = () => {
   const [sidebarHeight, setSidebarHeight] = useState(null);
 
   const anyMaximized = useMemo(() => Object.values(windows).some((w) => w.maximized && !w.minimized), [windows]);
+
+  // Handle navigation state - minimize windows if requested
+  useEffect(() => {
+    if (location.state?.minimizeWindows) {
+      dispatch(windowsActions.minimizeAll());
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, dispatch, navigate, location.pathname]);
 
   // Detect Dock position and adjust sidebar height
   useEffect(() => {
@@ -319,12 +328,18 @@ const MainPage = () => {
     dispatch(windowsActions.setSize({ id, width, height, x, y }));
   };
 
-  // Dashboard/Home Handler
-  const handleDashboard = useCallback(() => {
+  // Live Map Handler - minimizes windows to reset view
+  const handleLiveMap = useCallback(() => {
     dispatch(devicesActions.selectId(null));
     dispatch(windowsActions.minimizeAll());
     setDevicesOpen(true);
   }, [dispatch, setDevicesOpen]);
+
+  // Dashboard Handler - minimize all windows and navigate
+  const handleDashboard = useCallback(() => {
+    dispatch(windowsActions.minimizeAll());
+    navigate('/dashboard');
+  }, [dispatch, navigate]);
 
   // Show Devices Handler
   const handleShowDevices = useCallback(() => {
@@ -342,6 +357,7 @@ const MainPage = () => {
     <WindowModeContext.Provider value={true}>
       <GlobalNavbar
         onAccount={() => handleLaunch({ id: 'account' })}
+        onLiveMap={handleLiveMap}
         onDashboard={handleDashboard}
         onShowDevices={handleShowDevices}
         onEvents={onEventsClick}
