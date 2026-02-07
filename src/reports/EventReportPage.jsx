@@ -235,6 +235,7 @@ const EventReportPage = () => {
                       updateReportParams(searchParams, setSearchParams, 'eventType', values)
                     }}
                     multiple
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     {allEventTypes.map(([key, string]) => (
                       <MenuItem key={key} value={key}>{t(string)}</MenuItem>

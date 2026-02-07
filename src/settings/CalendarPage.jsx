@@ -128,6 +128,7 @@ const CalendarPage = () => {
                   label={t('sharedType')}
                   value={simple ? 'simple' : 'custom'}
                   onChange={(e) => setItem({ ...item, data: (e.target.value === 'simple' ? simpleCalendar() : null) })}
+                  MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                 >
                   <MenuItem value="simple">{t('calendarSimple')}</MenuItem>
                   <MenuItem value="custom">{t('reportCustom')}</MenuItem>
@@ -159,6 +160,7 @@ const CalendarPage = () => {
                       label={t('calendarRecurrence')}
                       value={rule.frequency}
                       onChange={(e) => setItem({ ...item, data: updateCalendar(lines, 7, formatRule({ frequency: e.target.value })) })}
+                      MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                     >
                       {['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY'].map((it) => (
                         <MenuItem key={it} value={it}>{t(prefixString('calendar', it.toLowerCase()))}</MenuItem>
@@ -173,6 +175,7 @@ const CalendarPage = () => {
                         label={t('calendarDays')}
                         value={rule.by}
                         onChange={(e) => setItem({ ...item, data: updateCalendar(lines, 7, formatRule({ ...rule, by: e.target.value })) })}
+                        MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                       >
                         {rule.frequency === 'WEEKLY' ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((it) => (
                           <MenuItem key={it} value={it.substring(0, 2).toUpperCase()}>{t(prefixString('calendar', it))}</MenuItem>
@@ -182,8 +185,7 @@ const CalendarPage = () => {
                       </Select>
                     </FormControl>
                   )}
-                </>
-              ) : (
+                </>              ) : (
                 <MuiFileInput
                   className={classes.fullWidth}
                   placeholder={t('sharedSelectFile')}

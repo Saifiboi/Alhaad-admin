@@ -20,6 +20,11 @@ const ColumnSelect = ({
           onChange={(e) => setColumns(e.target.value)}
           multiple
           disabled={disabled}
+          MenuProps={{
+            disablePortal: false,
+            PaperProps: { sx: { zIndex: 9999 } },
+            sx: { zIndex: 9999 },
+          }}
         >
           {columnsArray.map(([key, string]) => (
             <MenuItem key={key} value={key}>{rawValues ? string : t(string)}</MenuItem>

@@ -302,6 +302,25 @@ const DevicesPage = () => {
                 value={itemsPerPage}
                 onChange={handleItemsPerPageChange}
                 sx={{ fontSize: '11px', height: '28px' }}
+                MenuProps={{
+                  disablePortal: false,
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  PaperProps: {
+                    sx: {
+                      zIndex: 9999,
+                    },
+                  },
+                  sx: {
+                    zIndex: 9999,
+                  },
+                }}
               >
                 <MenuItem value={20} sx={{ fontSize: '11px' }}>20 per page</MenuItem>
                 <MenuItem value={50} sx={{ fontSize: '11px' }}>50 per page</MenuItem>

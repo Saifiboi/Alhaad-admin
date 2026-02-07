@@ -133,6 +133,7 @@ const ComputedAttributePage = () => {
                     label={t('sharedType')}
                     value={item.type || ''}
                     onChange={(e) => setItem({ ...item, type: e.target.value })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="string">{t('sharedTypeString')}</MenuItem>
                     <MenuItem value="number">{t('sharedTypeNumber')}</MenuItem>

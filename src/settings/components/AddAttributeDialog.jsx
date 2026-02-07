@@ -58,6 +58,7 @@ const AddAttributeDialog = ({ open, onResult, definitions }) => {
           }
           renderOption={(props, option) => <li {...props}>{option.name || option}</li>}
           renderInput={(params) => <TextField {...params} label={t('sharedAttribute')} />}
+          slotProps={{ popper: { sx: { zIndex: 9999 } } }}
         />
         <FormControl
           fullWidth
@@ -68,6 +69,7 @@ const AddAttributeDialog = ({ open, onResult, definitions }) => {
             label={t('sharedType')}
             value={type || 'string'}
             onChange={(e) => setType(e.target.value)}
+            MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
           >
             <MenuItem value="string">{t('sharedTypeString')}</MenuItem>
             <MenuItem value="number">{t('sharedTypeNumber')}</MenuItem>

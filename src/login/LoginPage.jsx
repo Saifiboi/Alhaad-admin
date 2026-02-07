@@ -165,6 +165,11 @@ const LoginPage = () => {
                 fontWeight: 600,
                 color: theme.palette.text.primary,
               }}
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               {languageList.map((lang) => (
                 <MenuItem key={lang.code} value={lang.code}>

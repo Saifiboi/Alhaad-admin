@@ -263,6 +263,7 @@ const UserPage = () => {
                     label={t('mapDefault')}
                     value={item.map || 'locationIqStreets'}
                     onChange={(e) => setItem({ ...item, map: e.target.value })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     {mapStyles.filter((style) => style.available).map((style) => (
                       <MenuItem key={style.id} value={style.id}>
@@ -277,6 +278,7 @@ const UserPage = () => {
                     label={t('settingsCoordinateFormat')}
                     value={item.coordinateFormat || 'dd'}
                     onChange={(e) => setItem({ ...item, coordinateFormat: e.target.value })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="dd">{t('sharedDecimalDegrees')}</MenuItem>
                     <MenuItem value="ddm">{t('sharedDegreesDecimalMinutes')}</MenuItem>
@@ -289,6 +291,7 @@ const UserPage = () => {
                     label={t('settingsSpeedUnit')}
                     value={(item.attributes && item.attributes.speedUnit) || 'kn'}
                     onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, speedUnit: e.target.value } })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="kn">{t('sharedKn')}</MenuItem>
                     <MenuItem value="kmh">{t('sharedKmh')}</MenuItem>
@@ -301,6 +304,7 @@ const UserPage = () => {
                     label={t('settingsDistanceUnit')}
                     value={(item.attributes && item.attributes.distanceUnit) || 'km'}
                     onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, distanceUnit: e.target.value } })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="km">{t('sharedKm')}</MenuItem>
                     <MenuItem value="mi">{t('sharedMi')}</MenuItem>
@@ -313,6 +317,7 @@ const UserPage = () => {
                     label={t('settingsAltitudeUnit')}
                     value={(item.attributes && item.attributes.altitudeUnit) || 'm'}
                     onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, altitudeUnit: e.target.value } })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="m">{t('sharedMeters')}</MenuItem>
                     <MenuItem value="ft">{t('sharedFeet')}</MenuItem>
@@ -324,6 +329,7 @@ const UserPage = () => {
                     label={t('settingsVolumeUnit')}
                     value={(item.attributes && item.attributes.volumeUnit) || 'ltr'}
                     onChange={(e) => setItem({ ...item, attributes: { ...item.attributes, volumeUnit: e.target.value } })}
+                    MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                   >
                     <MenuItem value="ltr">{t('sharedLiter')}</MenuItem>
                     <MenuItem value="usGal">{t('sharedUsGallon')}</MenuItem>

@@ -54,6 +54,13 @@ const SelectField = ({
               multiple
               value={value}
               onChange={onChange}
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: {
+                  sx: { zIndex: 9999 },
+                },
+                sx: { zIndex: 9999 },
+              }}
             >
               {items.map((item) => (
                 <MenuItem key={keyGetter(item)} value={keyGetter(item)}>{titleGetter(item)}</MenuItem>
@@ -73,6 +80,11 @@ const SelectField = ({
             value={value}
             onChange={(_, value) => onChange({ target: { value: value ? keyGetter(value) : emptyValue } })}
             renderInput={(params) => <TextField {...params} label={label} helperText={helperText} />}
+            slotProps={{
+              popper: {
+                sx: { zIndex: 9999 },
+              },
+            }}
           />
         )}
       </FormControl>

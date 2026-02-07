@@ -147,6 +147,7 @@ const MaintenancePage = () => {
                   label={t('sharedType')}
                   value={item.type || ''}
                   onChange={(e) => setItem({ ...item, type: e.target.value, start: 0, period: 0 })}
+                  MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                 >
                   {convertToList(positionAttributes).map(({ key, name }) => (
                     <MenuItem key={key} value={key}>{name}</MenuItem>

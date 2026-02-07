@@ -123,6 +123,7 @@ const PreferencesPage = () => {
                         }
                       }}
                       multiple
+                      MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                     >
                       {mapStyles.map((style) => (
                         <MenuItem key={style.id} value={style.id}>
@@ -145,6 +146,7 @@ const PreferencesPage = () => {
                           navigate(`/settings/user/${user.id}?${query.toString()}`);
                         }
                       }}
+                      MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                     >
                       <MenuItem value="">{'\u00a0'}</MenuItem>
                       {mapOverlays.map((overlay) => (
@@ -180,6 +182,7 @@ const PreferencesPage = () => {
                       <li {...props}>{option.name ? option.name : (positionAttributes[option]?.name || option)}</li>
                     )}
                     renderInput={(params) => <TextField {...params} label={t('attributePopupInfo')} />}
+                    slotProps={{ popper: { sx: { zIndex: 9999 } } }}
                   />
                   <FormControl>
                     <InputLabel>{t('mapLiveRoutes')}</InputLabel>
@@ -187,6 +190,7 @@ const PreferencesPage = () => {
                       label={t('mapLiveRoutes')}
                       value={attributes.mapLiveRoutes || 'none'}
                       onChange={(e) => setAttributes({ ...attributes, mapLiveRoutes: e.target.value })}
+                      MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                     >
                       <MenuItem value="none">{t('sharedDisabled')}</MenuItem>
                       <MenuItem value="selected">{t('deviceSelected')}</MenuItem>
@@ -199,6 +203,7 @@ const PreferencesPage = () => {
                       label={t('mapDirection')}
                       value={attributes.mapDirection || 'selected'}
                       onChange={(e) => setAttributes({ ...attributes, mapDirection: e.target.value })}
+                      MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
                     >
                       <MenuItem value="none">{t('sharedDisabled')}</MenuItem>
                       <MenuItem value="selected">{t('deviceSelected')}</MenuItem>

@@ -72,7 +72,7 @@ const CommandGroupPage = () => {
             <AccordionDetails className={classes.grid}>
               <FormControl>
                 <InputLabel>{t('sharedType')}</InputLabel>
-                <Select label={t('sharedType')} value="custom" disabled>
+                <Select label={t('sharedType')} value="custom" disabled MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}>
                   <MenuItem value="custom">{t('commandCustom')}</MenuItem>
                 </Select>
               </FormControl>

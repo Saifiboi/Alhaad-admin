@@ -132,6 +132,7 @@ const SummaryReportPage = () => {
                 label={t('sharedType')}
                 value={daily}
                 onChange={(e) => updateReportParams(searchParams, setSearchParams, 'daily', [String(e.target.value)])}
+                MenuProps={{ disablePortal: false, PaperProps: { sx: { zIndex: 9999 } }, sx: { zIndex: 9999 } }}
               >
                 <MenuItem value={false}>{t('reportSummary')}</MenuItem>
                 <MenuItem value>{t('reportDaily')}</MenuItem>

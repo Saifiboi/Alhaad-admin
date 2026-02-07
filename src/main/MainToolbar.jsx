@@ -134,6 +134,11 @@ const MainToolbar = ({
               value={filter.statuses}
               onChange={(e) => setFilter({ ...filter, statuses: e.target.value })}
               multiple
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               <MenuItem value="online">{`${t('deviceStatusOnline')} (${deviceStatusCount('online')})`}</MenuItem>
               <MenuItem value="offline">{`${t('deviceStatusOffline')} (${deviceStatusCount('offline')})`}</MenuItem>
@@ -147,6 +152,11 @@ const MainToolbar = ({
               value={filter.groups}
               onChange={(e) => setFilter({ ...filter, groups: e.target.value })}
               multiple
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               {Object.values(groups).sort((a, b) => a.name.localeCompare(b.name)).map((group) => (
                 <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
@@ -160,6 +170,11 @@ const MainToolbar = ({
               value={filterSort}
               onChange={(e) => setFilterSort(e.target.value)}
               displayEmpty
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               <MenuItem value="">{'\u00a0'}</MenuItem>
               <MenuItem value="name">{t('sharedName')}</MenuItem>

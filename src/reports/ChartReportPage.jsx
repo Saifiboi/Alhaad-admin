@@ -129,6 +129,11 @@ const ChartReportPage = () => {
               onChange={(e) => setSelectedTypes(e.target.value)}
               multiple
               disabled={!items.length}
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               {types.map((key) => (
                 <MenuItem key={key} value={key}>{positionAttributes[key]?.name || key}</MenuItem>
@@ -144,6 +149,11 @@ const ChartReportPage = () => {
               value={timeType}
               onChange={(e) => setTimeType(e.target.value)}
               disabled={!items.length}
+              MenuProps={{
+                disablePortal: false,
+                PaperProps: { sx: { zIndex: 9999 } },
+                sx: { zIndex: 9999 },
+              }}
             >
               <MenuItem value="fixTime">{t('positionFixTime')}</MenuItem>
               <MenuItem value="deviceTime">{t('positionDeviceTime')}</MenuItem>
