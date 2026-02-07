@@ -300,6 +300,7 @@ const MainPage = () => {
 
   const handleMinimizeWindow = (id) => {
     dispatch(windowsActions.minimize(id));
+    dispatch(windowsActions.setMaximized({ id, maximized: false }));
   };
 
   const handleFocusWindow = (id) => {

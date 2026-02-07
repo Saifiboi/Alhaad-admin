@@ -30,6 +30,7 @@ const { actions, reducer } = createSlice({
         minimizeAll(state) {
             Object.keys(state.items).forEach((id) => {
                 state.items[id].minimized = true;
+                state.items[id].maximized = false;
             });
             saveState(state);
         },
@@ -59,12 +60,22 @@ const { actions, reducer } = createSlice({
         minimize(state, action) {
             if (state.items[action.payload]) {
                 state.items[action.payload].minimized = !state.items[action.payload].minimized;
+                if (state.items[action.payload].minimized) {
+                    state.items[action.payload].maximized = false;
+                }
             }
             saveState(state);
         },
         maximize(state, action) {
             if (state.items[action.payload]) {
                 state.items[action.payload].maximized = !state.items[action.payload].maximized;
+            }
+            saveState(state);
+        },
+        setMaximized(state, action) {
+            const { id, maximized } = action.payload;
+            if (state.items[id]) {
+                state.items[id].maximized = maximized;
             }
             saveState(state);
         },
