@@ -261,7 +261,11 @@ const GlobalNavbar = ({
                             sx: {
                                 mt: 1,
                                 minWidth: 180,
+                                zIndex: 9999,
                             },
+                        }}
+                        sx={{
+                            zIndex: 9999,
                         }}
                     >
                         <MenuItem onClick={handleAccount}>

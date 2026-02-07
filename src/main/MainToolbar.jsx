@@ -98,12 +98,13 @@ const MainToolbar = ({
         marginThreshold={0}
         slotProps={{
           paper: {
-            style: { width: `calc(${toolbarRef.current?.clientWidth}px - ${theme.spacing(4)})` },
+            style: { width: `calc(${toolbarRef.current?.clientWidth}px - ${theme.spacing(4)})`, zIndex: 9999 },
           },
         }}
         elevation={1}
         disableAutoFocus
         disableEnforceFocus
+        sx={{ zIndex: 9999 }}
       >
         {filteredDevices.slice(0, 3).map((_, index) => (
           <DeviceRow key={filteredDevices[index].id} devices={filteredDevices} index={index} />
@@ -125,6 +126,12 @@ const MainToolbar = ({
           vertical: 'bottom',
           horizontal: 'left',
         }}
+        slotProps={{
+          paper: {
+            sx: { zIndex: 9999 },
+          },
+        }}
+        sx={{ zIndex: 9999 }}
       >
         <div className={classes.filterPanel}>
           <FormControl>
