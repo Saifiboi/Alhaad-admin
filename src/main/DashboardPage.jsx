@@ -37,21 +37,21 @@ const StatCard = ({ title, value, detail, color }) => {
     return (
         <Card
             sx={{
-                p: { xs: 2.5, sm: 3 },
-                borderRadius: '16px',
-                background: theme.palette.mode === 'dark' 
-                    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' 
+                p: { xs: 2, sm: 2.5 },
+                borderRadius: '12px',
+                background: theme.palette.mode === 'dark'
+                    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
                     : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
                 border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                height: '140px',
+                height: '120px',
                 position: 'relative',
                 overflow: 'hidden',
-                boxShadow: theme.palette.mode === 'dark' 
-                    ? '0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -1px rgb(0 0 0 / 0.2)' 
-                    : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)',
+                boxShadow: theme.palette.mode === 'dark'
+                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)'
+                    : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&::before': {
                     content: '""',
@@ -64,14 +64,10 @@ const StatCard = ({ title, value, detail, color }) => {
                     opacity: 0.8,
                 },
                 '&:hover': {
-                    transform: 'translateY(-4px)',
+                    transform: 'translateY(-2px)',
                     boxShadow: theme.palette.mode === 'dark'
-                        ? '0 20px 25px -5px rgb(0 0 0 / 0.4), 0 10px 10px -5px rgb(0 0 0 / 0.2)'
-                        : '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-                    '&::before': {
-                        height: '5px',
-                        opacity: 1,
-                    },
+                        ? '0 4px 12px 0 rgb(0 0 0 / 0.4)'
+                        : '0 4px 12px 0 rgb(0 0 0 / 0.15)',
                 },
             }}
         >
@@ -89,10 +85,10 @@ const StatCard = ({ title, value, detail, color }) => {
             >
                 {title}
             </Typography>
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 1.5 }}>
                 <Typography
                     sx={{
-                        fontSize: { xs: '40px', sm: '48px' },
+                        fontSize: { xs: '32px', sm: '36px' },
                         fontWeight: 800,
                         color: color || theme.palette.primary.main,
                         lineHeight: 1,
@@ -103,11 +99,11 @@ const StatCard = ({ title, value, detail, color }) => {
                     {value}
                 </Typography>
                 {detail && (
-                    <Typography 
-                        variant="caption" 
-                        sx={{ 
-                            color: 'text.disabled', 
-                            fontWeight: 600, 
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: 'text.disabled',
+                            fontWeight: 600,
                             fontSize: '11px',
                             display: 'block',
                         }}
@@ -214,42 +210,170 @@ const DashboardPage = () => {
                         </Button>
                     </Box>
 
-                    {/* Stats Cards Row */}
-                    <Grid container spacing={3} sx={{ mb: 3 }}>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <StatCard 
-                                title="Total Vehicles" 
-                                value={deviceList.length} 
-                                color={theme.palette.primary.main} 
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <StatCard 
-                                title="Online Now" 
-                                value={activeCount} 
-                                color="#10b981" 
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <StatCard 
-                                title="Active Geofences" 
-                                value={geofenceList.length} 
-                                color="#3b82f6" 
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <StatCard 
-                                title="Total Drivers" 
-                                value={driverList.length} 
-                                color="#8b5cf6" 
-                            />
-                        </Grid>
-                    </Grid>
+                    <Grid container spacing={2}>
+                        {/* First Row: Fleet Status Donut + Stats Cards */}
+                        <Grid item xs={12} md={3} lg={2.5}>
+                            <Card sx={{
+                                p: 2,
+                                borderRadius: '12px',
+                                background: theme.palette.mode === 'dark' ? '#1e293b' : '#ffffff',
+                                border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
+                                height: '100%',
+                                minHeight: '130px',
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)'
+                                    : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                            }}>
+                                {/* Donut Chart */}
+                                <Box sx={{ position: 'relative', width: 90, height: 90, flexShrink: 0 }}>
+                                    <svg viewBox="0 0 36 36" style={{
+                                        transform: 'rotate(-90deg)',
+                                        width: '100%',
+                                        height: '100%',
+                                    }}>
+                                        <circle
+                                            cx="18"
+                                            cy="18"
+                                            r="15.915"
+                                            fill="transparent"
+                                            stroke={theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}
+                                            strokeWidth="3.5"
+                                        />
+                                        <circle
+                                            cx="18"
+                                            cy="18"
+                                            r="15.915"
+                                            fill="transparent"
+                                            stroke="#ef4444"
+                                            strokeWidth="3.5"
+                                            strokeDasharray={`${deviceList.length ? (offlineCount / deviceList.length) * 100 : 0} 100`}
+                                            strokeLinecap="round"
+                                        />
+                                        <circle
+                                            cx="18"
+                                            cy="18"
+                                            r="15.915"
+                                            fill="transparent"
+                                            stroke="#10b981"
+                                            strokeWidth="3.5"
+                                            strokeDasharray={`${deviceList.length ? (activeCount / deviceList.length) * 100 : 0} 100`}
+                                            strokeDashoffset={`${deviceList.length ? -(offlineCount / deviceList.length) * 100 : 0}`}
+                                            strokeLinecap="round"
+                                        />
+                                        <circle
+                                            cx="18"
+                                            cy="18"
+                                            r="15.915"
+                                            fill="transparent"
+                                            stroke="#f59e0b"
+                                            strokeWidth="3.5"
+                                            strokeDasharray={`${deviceList.length ? (idleCount / deviceList.length) * 100 : 0} 100`}
+                                            strokeDashoffset={`${deviceList.length ? -((offlineCount + activeCount) / deviceList.length) * 100 : 0}`}
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <Typography sx={{ fontSize: '24px', fontWeight: 800, lineHeight: 1 }}>
+                                            {deviceList.length}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{
+                                            color: 'text.secondary',
+                                            fontWeight: 700,
+                                            textTransform: 'uppercase',
+                                            fontSize: '8px',
+                                            mt: 0.5,
+                                            letterSpacing: '0.05em',
+                                        }}>
+                                            Total
+                                        </Typography>
+                                    </Box>
+                                </Box>
 
-                    {/* Charts Row */}
-                    <Grid container spacing={3}>
-                        {/* Vehicle Activity Chart */}
-                        <Grid item xs={12} lg={8}>
+                                {/* Status Legend */}
+                                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    {[
+                                        { label: 'Online', count: activeCount, color: '#10b981' },
+                                        { label: 'Offline', count: offlineCount, color: '#ef4444' },
+                                        { label: 'No Data', count: idleCount, color: '#f59e0b' },
+                                    ].map((status) => (
+                                        <Box
+                                            key={status.label}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                            }}
+                                        >
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                <Box sx={{
+                                                    width: 7,
+                                                    height: 7,
+                                                    borderRadius: '50%',
+                                                    bgcolor: status.color,
+                                                }} />
+                                                <Typography variant="caption" sx={{
+                                                    fontWeight: 600,
+                                                    color: 'text.secondary',
+                                                    fontSize: '11px',
+                                                }}>
+                                                    {status.label}
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{ fontWeight: 700, fontSize: '12px' }}>
+                                                {status.count}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Card>
+                        </Grid>
+
+                        {/* Stats Cards */}
+                        <Grid item xs={12} md={9} lg={9.5}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6} md={6} lg={3}>
+                                    <StatCard
+                                        title="Total Vehicles"
+                                        value={deviceList.length}
+                                        color={theme.palette.primary.main}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={6} lg={3}>
+                                    <StatCard
+                                        title="Online Now"
+                                        value={activeCount}
+                                        color="#10b981"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={6} lg={3}>
+                                    <StatCard
+                                        title="Active Geofences"
+                                        value={geofenceList.length}
+                                        color="#3b82f6"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={6} lg={3}>
+                                    <StatCard
+                                        title="Total Drivers"
+                                        value={driverList.length}
+                                        color="#8b5cf6"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        {/* Second Row: Vehicle Activity Chart */}
+                        <Grid item xs={12}>
                             <Card sx={{
                                 p: 3,
                                 borderRadius: '12px',
@@ -257,8 +381,8 @@ const DashboardPage = () => {
                                 border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
                                 height: '100%',
                                 minHeight: '400px',
-                                boxShadow: theme.palette.mode === 'dark' 
-                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)' 
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)'
                                     : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
                             }}>
                                 <Box sx={{ mb: 3 }}>
@@ -266,27 +390,29 @@ const DashboardPage = () => {
                                         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '18px' }}>
                                             Vehicle Activity
                                         </Typography>
-                                        <Box sx={{ 
-                                            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', 
-                                            px: 2, 
-                                            py: 0.75, 
-                                            borderRadius: '6px' 
-                                        }}>
-                                            <Typography variant="caption" sx={{ 
-                                                fontSize: '10px', 
-                                                fontWeight: 700, 
-                                                color: 'text.secondary', 
-                                                letterSpacing: '0.05em' 
-                                            }}>
-                                                7 DAY OVERVIEW
-                                            </Typography>
-                                        </Box>
+                                        <Badge
+                                            badgeContent="7 DAY OVERVIEW"
+                                            sx={{
+                                                '& .MuiBadge-badge': {
+                                                    position: 'relative',
+                                                    transform: 'none',
+                                                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                                                    color: 'text.secondary',
+                                                    fontSize: '10px',
+                                                    fontWeight: 700,
+                                                    letterSpacing: '0.05em',
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                    borderRadius: '6px',
+                                                }
+                                            }}
+                                        />
                                     </Box>
                                     <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '13px' }}>
                                         Active devices across fleet
                                     </Typography>
                                 </Box>
-                                
+
                                 <Box sx={{ height: 300, position: 'relative', mt: 2 }}>
                                     {stats.length > 0 ? (
                                         <>
@@ -324,10 +450,10 @@ const DashboardPage = () => {
                                             </svg>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, px: 1 }}>
                                                 {stats.map((s, i) => (
-                                                    <Typography key={i} variant="caption" sx={{ 
-                                                        fontSize: '11px', 
-                                                        fontWeight: 600, 
-                                                        color: 'text.secondary' 
+                                                    <Typography key={i} variant="caption" sx={{
+                                                        fontSize: '11px',
+                                                        fontWeight: 600,
+                                                        color: 'text.secondary'
                                                     }}>
                                                         {new Date(s.captureTime).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                                                     </Typography>
@@ -335,169 +461,17 @@ const DashboardPage = () => {
                                             </Box>
                                         </>
                                     ) : (
-                                        <Box sx={{ 
-                                            height: '100%', 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            justifyContent: 'center' 
+                                        <Box sx={{
+                                            height: '100%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}>
                                             <Typography variant="body2" color="text.secondary">
                                                 Loading activity data...
                                             </Typography>
                                         </Box>
                                     )}
-                                </Box>
-                            </Card>
-                        </Grid>
-
-                        {/* Fleet Status Pie Chart */}
-                        <Grid item xs={12} lg={4}>
-                            <Card sx={{
-                                p: 3,
-                                borderRadius: '12px',
-                                background: theme.palette.mode === 'dark' ? '#1e293b' : '#ffffff',
-                                border: `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
-                                height: '100%',
-                                minHeight: '400px',
-                                boxShadow: theme.palette.mode === 'dark' 
-                                    ? '0 1px 3px 0 rgb(0 0 0 / 0.3)' 
-                                    : '0 1px 3px 0 rgb(0 0 0 / 0.1)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '18px', mb: 1 }}>
-                                        Fleet Status
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '13px' }}>
-                                        Current operational overview
-                                    </Typography>
-                                </Box>
-                                
-                                <Box sx={{ 
-                                    flex: 1, 
-                                    display: 'flex', 
-                                    flexDirection: 'column', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center',
-                                    gap: 3,
-                                    py: 2,
-                                }}>
-                                    {/* Donut Chart */}
-                                    <Box sx={{ position: 'relative', width: 180, height: 180, flexShrink: 0 }}>
-                                        <svg viewBox="0 0 36 36" style={{ 
-                                            transform: 'rotate(-90deg)', 
-                                            width: '100%', 
-                                            height: '100%',
-                                        }}>
-                                            {/* Background circle */}
-                                            <circle 
-                                                cx="18" 
-                                                cy="18" 
-                                                r="15.915" 
-                                                fill="transparent" 
-                                                stroke={theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'} 
-                                                strokeWidth="3.5" 
-                                            />
-                                            {/* Offline segment (red) */}
-                                            <circle
-                                                cx="18" 
-                                                cy="18" 
-                                                r="15.915" 
-                                                fill="transparent"
-                                                stroke="#ef4444"
-                                                strokeWidth="3.5"
-                                                strokeDasharray={`${deviceList.length ? (offlineCount / deviceList.length) * 100 : 0} 100`}
-                                                strokeLinecap="round"
-                                            />
-                                            {/* Online segment (green) */}
-                                            <circle
-                                                cx="18" 
-                                                cy="18" 
-                                                r="15.915" 
-                                                fill="transparent"
-                                                stroke="#10b981"
-                                                strokeWidth="3.5"
-                                                strokeDasharray={`${deviceList.length ? (activeCount / deviceList.length) * 100 : 0} 100`}
-                                                strokeDashoffset={`${deviceList.length ? -(offlineCount / deviceList.length) * 100 : 0}`}
-                                                strokeLinecap="round"
-                                            />
-                                            {/* Idle segment (amber) */}
-                                            <circle
-                                                cx="18" 
-                                                cy="18" 
-                                                r="15.915" 
-                                                fill="transparent"
-                                                stroke="#f59e0b"
-                                                strokeWidth="3.5"
-                                                strokeDasharray={`${deviceList.length ? (idleCount / deviceList.length) * 100 : 0} 100`}
-                                                strokeDashoffset={`${deviceList.length ? -((offlineCount + activeCount) / deviceList.length) * 100 : 0}`}
-                                                strokeLinecap="round"
-                                            />
-                                        </svg>
-                                        <Box sx={{ 
-                                            position: 'absolute', 
-                                            inset: 0, 
-                                            display: 'flex', 
-                                            flexDirection: 'column', 
-                                            alignItems: 'center', 
-                                            justifyContent: 'center' 
-                                        }}>
-                                            <Typography sx={{ fontSize: '36px', fontWeight: 800, lineHeight: 1 }}>
-                                                {deviceList.length}
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ 
-                                                color: 'text.secondary', 
-                                                fontWeight: 700, 
-                                                textTransform: 'uppercase', 
-                                                fontSize: '10px', 
-                                                mt: 0.5,
-                                                letterSpacing: '0.05em',
-                                            }}>
-                                                Total
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-
-                                    {/* Status Legend */}
-                                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                        {[
-                                            { label: 'Online Now', count: activeCount, color: '#10b981' },
-                                            { label: 'Offline', count: offlineCount, color: '#ef4444' },
-                                            { label: 'No Recent Data', count: idleCount, color: '#f59e0b' },
-                                        ].map((status, index) => (
-                                            <Box 
-                                                key={status.label} 
-                                                sx={{ 
-                                                    display: 'flex', 
-                                                    alignItems: 'center', 
-                                                    justifyContent: 'space-between',
-                                                    pb: index < 2 ? 2 : 0,
-                                                    borderBottom: index < 2 ? `1px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}` : 'none',
-                                                }}
-                                            >
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                    <Box sx={{ 
-                                                        width: 12, 
-                                                        height: 12, 
-                                                        borderRadius: '50%', 
-                                                        bgcolor: status.color,
-                                                        boxShadow: `0 0 8px ${status.color}50`,
-                                                    }} />
-                                                    <Typography variant="body2" sx={{ 
-                                                        fontWeight: 600, 
-                                                        color: 'text.primary', 
-                                                        fontSize: '13px',
-                                                    }}>
-                                                        {status.label}
-                                                    </Typography>
-                                                </Box>
-                                                <Typography sx={{ fontWeight: 700, fontSize: '16px' }}>
-                                                    {status.count}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
                                 </Box>
                             </Card>
                         </Grid>
