@@ -11,7 +11,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ThemeToggle from './ThemeToggle';
-import { sessionActions } from '../../store';
+import { sessionActions, windowsActions } from '../../store';
 import { nativePostMessage } from './NativeInterface';
 import BackIcon from './BackIcon';
 
@@ -140,6 +140,8 @@ const GlobalNavbar = ({
 
     const handleAccount = () => {
         handleClose();
+        // Minimize all windows before opening account
+        dispatch(windowsActions.minimizeAll());
         if (onAccount) {
             onAccount();
         } else {
